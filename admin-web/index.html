@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>零售市场调研管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+        }
+        .header {
+            background: #1976d2;
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1976d2;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .card-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #1976d2;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #1565c0;
+        }
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #45a049;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.875rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #1976d2;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            font-weight: 600;
+            color: #666;
+            font-size: 0.875rem;
+        }
+        .badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .badge-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        .badge-pending {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-body {
+            padding: 1.5rem;
+        }
+        .modal-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+        .item-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 2fr auto;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            align-items: center;
+        }
+        .item-row input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .photo-thumbnail {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 1rem;
+        }
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .tab.active {
+            border-bottom-color: #1976d2;
+            color: #1976d2;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #dateFilter {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📊 零售市场调研管理系统</h1>
+    </header>
+
+    <div class="container">
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>今日任务数</h3>
+                <div class="value" id="statTasks">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>调研品类数</h3>
+                <div class="value" id="statItems">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>今日提交数</h3>
+                <div class="value" id="statRecords">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>完成率</h3>
+                <div class="value" id="statRate">-</div>
+            </div>
+        </div>
+
+        <!-- 主内容 -->
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('tasks')">📋 调研任务</div>
+                <div class="tab" onclick="switchTab('records')">📝 调研记录</div>
+                <div class="tab" onclick="switchTab('surveyors')">👥 调研人员</div>
+            </div>
+
+            <!-- 任务管理 -->
+            <div id="tab-tasks" class="tab-content active">
+                <div class="card-header">
+                    <h2>调研任务列表</h2>
+                    <button class="btn btn-primary" onclick="openTaskModal()">+ 新建任务</button>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>任务标题</th>
+                                <th>品类数量</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="taskTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 调研记录 -->
+            <div id="tab-records" class="tab-content">
+                <div class="card-header">
+                    <h2>调研记录</h2>
+                    <div>
+                        <input type="date" id="dateFilter" onchange="loadRecords()">
+                        <button class="btn btn-success" onclick="exportData()">📥 导出Excel</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>调研人员</th>
+                                <th>超市</th>
+                                <th>品类</th>
+                                <th>商品</th>
+                                <th>价格</th>
+                                <th>照片</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 调研人员 -->
+            <div id="tab-surveyors" class="tab-content">
+                <div class="card-header">
+                    <h2>调研人员管理</h2>
+                    <button class="btn btn-primary" onclick="openSurveyorModal()">+ 添加人员</button>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>用户名</th>
+                                <th>姓名</th>
+                                <th>电话</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="surveyorTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新建任务弹窗 -->
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>新建调研任务</h2>
+                <button class="close-btn" onclick="closeTaskModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>任务标题</label>
+                    <input type="text" class="form-control" id="taskTitle" placeholder="如：2024-01-30 生鲜品类调研">
+                </div>
+                <div class="form-group">
+                    <label>调研日期</label>
+                    <input type="date" class="form-control" id="taskDate">
+                </div>
+                <div class="form-group">
+                    <label>任务说明</label>
+                    <textarea class="form-control" id="taskDesc" rows="2"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>调研品类</label>
+                    <div id="itemsList"></div>
+                    <button class="btn btn-primary" onclick="addItemRow()" style="margin-top:0.5rem;">+ 添加品类</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeTaskModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveTask()">保存任务</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加人员弹窗 -->
+    <div id="surveyorModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h2>添加调研人员</h2>
+                <button class="close-btn" onclick="closeSurveyorModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>用户名</label>
+                    <input type="text" class="form-control" id="surveyorUsername">
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" class="form-control" id="surveyorPassword">
+                </div>
+                <div class="form-group">
+                    <label>姓名</label>
+                    <input type="text" class="form-control" id="surveyorName">
+                </div>
+                <div class="form-group">
+                    <label>电话</label>
+                    <input type="tel" class="form-control" id="surveyorPhone">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeSurveyorModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveSurveyor()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 照片预览弹窗 -->
+    <div id="photoModal" class="modal" onclick="closePhotoModal()">
+        <div class="modal-content" style="max-width: 90%; max-height: 90%; background: transparent;" onclick="event.stopPropagation()">
+            <img id="photoPreview" style="width: 100%; max-height: 80vh; object-fit: contain; border-radius: 8px;">
+        </div>
+    </div>
+
+    <!-- 任务详情弹窗 -->
+    <div id="taskDetailModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2>📋 任务详情</h2>
+                <button class="close-btn" onclick="closeTaskDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>任务标题</label>
+                    <div id="detailTitle" class="form-control" style="background: #f5f5f5;">-</div>
+                </div>
+                <div class="form-group">
+                    <label>调研日期</label>
+                    <div id="detailDate" class="form-control" style="background: #f5f5f5;">-</div>
+                </div>
+                <div class="form-group">
+                    <label>任务说明</label>
+                    <div id="detailDesc" class="form-control" style="background: #f5f5f5; min-height: 60px;">-</div>
+                </div>
+                <div class="form-group">
+                    <label>调研品类列表</label>
+                    <table style="width: 100%; margin-top: 10px;">
+                        <thead>
+                            <tr style="background: #f5f5f5;">
+                                <th style="padding: 10px; text-align: left;">序号</th>
+                                <th style="padding: 10px; text-align: left;">类别</th>
+                                <th style="padding: 10px; text-align: left;">商品名称</th>
+                                <th style="padding: 10px; text-align: left;">规格</th>
+                                <th style="padding: 10px; text-align: left;">说明</th>
+                            </tr>
+                        </thead>
+                        <tbody id="detailItems"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeTaskDetailModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API基础地址
+        const API_BASE = 'http://localhost:8000';
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 设置默认日期为今天
+            document.getElementById('taskDate').valueAsDate = new Date();
+            document.getElementById('dateFilter').valueAsDate = new Date();
+            
+            loadStatistics();
+            loadTasks();
+            loadRecords();
+            loadSurveyors();
+            
+            // 添加默认的品类行
+            addItemRow();
+        });
+
+        // 加载统计数据
+        async function loadStatistics() {
+            try {
+                const date = new Date().toISOString().split('T')[0];
+                const res = await fetch(`${API_BASE}/api/statistics/daily?date=${date}`);
+                const data = await res.json();
+                
+                document.getElementById('statTasks').textContent = data.total_tasks;
+                document.getElementById('statItems').textContent = data.total_items;
+                document.getElementById('statRecords').textContent = data.completed_records;
+                document.getElementById('statRate').textContent = data.completion_rate + '%';
+            } catch (e) {
+                console.error('加载统计失败', e);
+            }
+        }
+
+        // 加载任务列表
+        async function loadTasks() {
+            try {
+                const res = await fetch(`${API_BASE}/api/tasks`);
+                const tasks = await res.json();
+                
+                const tbody = document.getElementById('taskTable');
+                tbody.innerHTML = tasks.map(t => `
+                    <tr>
+                        <td>${t.date}</td>
+                        <td>${t.title}</td>
+                        <td>${t.item_count}</td>
+                        <td><span class="badge ${t.status === 'active' ? 'badge-success' : 'badge-pending'}">${t.status === 'active' ? '进行中' : '已完成'}</span></td>
+                        <td><button class="btn btn-primary" onclick="viewTask(${t.id})">查看</button></td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error('加载任务失败', e);
+            }
+        }
+
+        // 加载调研记录
+        async function loadRecords() {
+            try {
+                const date = document.getElementById('dateFilter').value;
+                let url = `${API_BASE}/api/records`;
+                if (date) url += `?date=${date}`;
+                
+                const res = await fetch(url);
+                const records = await res.json();
+                
+                const tbody = document.getElementById('recordTable');
+                tbody.innerHTML = records.map(r => `
+                    <tr>
+                        <td>${new Date(r.created_at).toLocaleString()}</td>
+                        <td>${r.surveyor_name}</td>
+                        <td>${r.store_name}</td>
+                        <td>${r.category}</td>
+                        <td>${r.product_name}</td>
+                        <td>¥${r.price.toFixed(2)}</td>
+                        <td>${r.photo_path ? `<img src="${API_BASE}${r.photo_path}" class="photo-thumbnail" onclick="viewPhoto('${API_BASE}${r.photo_path}')">` : '-'}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="7" style="text-align:center;color:#999;">暂无数据</td></tr>';
+            } catch (e) {
+                console.error('加载记录失败', e);
+            }
+        }
+
+        // 加载调研人员
+        async function loadSurveyors() {
+            try {
+                const res = await fetch(`${API_BASE}/api/surveyors`);
+                const surveyors = await res.json();
+                
+                const tbody = document.getElementById('surveyorTable');
+                tbody.innerHTML = surveyors.map(s => `
+                    <tr>
+                        <td>${s.username}</td>
+                        <td>${s.name}</td>
+                        <td>${s.phone || '-'}</td>
+                        <td><span class="badge ${s.is_active ? 'badge-success' : 'badge-pending'}">${s.is_active ? '正常' : '禁用'}</span></td>
+                    </tr>
+                `).join('');
+            } catch (e) {
+                console.error('加载人员失败', e);
+            }
+        }
+
+        // 切换标签页
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            
+            // 刷新数据
+            if (tab === 'tasks') loadTasks();
+            if (tab === 'records') loadRecords();
+            if (tab === 'surveyors') loadSurveyors();
+        }
+
+        // 任务弹窗
+        function openTaskModal() {
+            document.getElementById('taskModal').classList.add('active');
+        }
+        function closeTaskModal() {
+            document.getElementById('taskModal').classList.remove('active');
+        }
+
+        // 添加品类行
+        function addItemRow() {
+            const container = document.getElementById('itemsList');
+            const row = document.createElement('div');
+            row.className = 'item-row';
+            row.innerHTML = `
+                <input placeholder="类别" class="item-category">
+                <input placeholder="商品名称" class="item-name">
+                <input placeholder="规格" class="item-spec">
+                <input placeholder="说明（选填）" class="item-desc">
+                <button class="btn" onclick="this.parentElement.remove()" style="background:#ff4444;color:white;">删除</button>
+            `;
+            container.appendChild(row);
+        }
+
+        // 保存任务
+        async function saveTask() {
+            const title = document.getElementById('taskTitle').value;
+            const date = document.getElementById('taskDate').value;
+            const desc = document.getElementById('taskDesc').value;
+            
+            if (!title || !date) {
+                alert('请填写任务标题和日期');
+                return;
+            }
+
+            // 收集品类数据
+            const items = [];
+            document.querySelectorAll('.item-row').forEach((row, idx) => {
+                const category = row.querySelector('.item-category').value;
+                const name = row.querySelector('.item-name').value;
+                const spec = row.querySelector('.item-spec').value;
+                const itemDesc = row.querySelector('.item-desc').value;
+                
+                if (category && name) {
+                    items.push({
+                        category,
+                        product_name: name,
+                        product_spec: spec,
+                        description: itemDesc,
+                        sort_order: idx
+                    });
+                }
+            });
+
+            if (items.length === 0) {
+                alert('请至少添加一个品类');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/tasks`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title, date, description: desc, items })
+                });
+                
+                if (res.ok) {
+                    alert('任务创建成功！');
+                    closeTaskModal();
+                    loadTasks();
+                    loadStatistics();
+                    // 清空表单
+                    document.getElementById('taskTitle').value = '';
+                    document.getElementById('taskDesc').value = '';
+                    document.getElementById('itemsList').innerHTML = '';
+                    addItemRow();
+                } else {
+                    alert('创建失败，请重试');
+                }
+            } catch (e) {
+                alert('网络错误，请检查后端服务是否运行');
+            }
+        }
+
+        // 人员弹窗
+        function openSurveyorModal() {
+            document.getElementById('surveyorModal').classList.add('active');
+        }
+        function closeSurveyorModal() {
+            document.getElementById('surveyorModal').classList.remove('active');
+        }
+
+        // 保存人员
+        async function saveSurveyor() {
+            const username = document.getElementById('surveyorUsername').value;
+            const password = document.getElementById('surveyorPassword').value;
+            const name = document.getElementById('surveyorName').value;
+            const phone = document.getElementById('surveyorPhone').value;
+
+            if (!username || !password || !name) {
+                alert('请填写完整信息');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/surveyors`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password, name, phone })
+                });
+                
+                if (res.ok) {
+                    alert('添加成功！');
+                    closeSurveyorModal();
+                    loadSurveyors();
+                    // 清空表单
+                    document.getElementById('surveyorUsername').value = '';
+                    document.getElementById('surveyorPassword').value = '';
+                    document.getElementById('surveyorName').value = '';
+                    document.getElementById('surveyorPhone').value = '';
+                } else {
+                    alert('添加失败，用户名可能已存在');
+                }
+            } catch (e) {
+                alert('网络错误，请检查后端服务是否运行');
+            }
+        }
+
+        // 查看照片
+        function viewPhoto(url) {
+            document.getElementById('photoPreview').src = url;
+            document.getElementById('photoModal').classList.add('active');
+        }
+        function closePhotoModal() {
+            document.getElementById('photoModal').classList.remove('active');
+        }
+
+        // 导出数据（简化版，实际可以生成CSV或Excel）
+        function exportData() {
+            const date = document.getElementById('dateFilter').value;
+            alert(`导出功能：将导出 ${date || '所有'} 的调研数据\n\n实际项目中这里可以生成Excel文件下载`);
+        }
+
+        async function viewTask(id) {
+            try {
+                const res = await fetch(`${API_BASE}/api/tasks/${id}`);
+                const task = await res.json();
+                
+                // 填充任务信息
+                document.getElementById('detailTitle').textContent = task.title || '-';
+                document.getElementById('detailDate').textContent = task.date || '-';
+                document.getElementById('detailDesc').textContent = task.description || '无说明';
+                
+                // 填充品类列表
+                const itemsHtml = task.items.map((item, index) => `
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px;">${index + 1}</td>
+                        <td style="padding: 10px;">${item.category}</td>
+                        <td style="padding: 10px;">${item.product_name}</td>
+                        <td style="padding: 10px;">${item.product_spec || '-'}</td>
+                        <td style="padding: 10px; color: #666;">${item.description || '-'}</td>
+                    </tr>
+                `).join('') || '<tr><td colspan="5" style="text-align: center; padding: 20px; color: #999;">暂无品类数据</td></tr>';
+                
+                document.getElementById('detailItems').innerHTML = itemsHtml;
+                
+                // 显示弹窗
+                document.getElementById('taskDetailModal').classList.add('active');
+            } catch (e) {
+                alert('获取任务详情失败：' + e.message);
+            }
+        }
+        
+        function closeTaskDetailModal() {
+            document.getElementById('taskDetailModal').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
