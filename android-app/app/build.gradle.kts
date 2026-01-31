@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.yourcompany.retailsurvey"
-    compileSdk = 34
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.yourcompany.retailsurvey"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0.0"
 
@@ -58,7 +58,7 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.8.2")
     
     // Compose
-    implementation(platform("androidx.compose:compose-bom:2023.10.01"))
+    implementation(platform("androidx.compose:compose-bom:2023.06.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
