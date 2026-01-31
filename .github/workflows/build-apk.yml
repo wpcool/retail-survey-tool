@@ -19,7 +19,7 @@ jobs:
       with:
         python-version: '3.11'
         
-    - name: Install dependencies
+    - name: Install system dependencies
       run: |
         sudo apt-get update
         sudo apt-get install -y \
@@ -31,20 +31,51 @@ jobs:
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
       
-    - name: Prepare build
+    - name: Install Android SDK components
       run: |
-        # 修复 buildozer.spec 中的本地路径
+        # 安装必要的 SDK 组件
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" "ndk;25.2.9519653"
+        
+        # 设置环境变量
+        echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+        echo "ANDROID_SDK=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+        echo "ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
+        
+        # 添加到 PATH
+        echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
+        echo "$ANDROID_SDK_ROOT/build-tools/33.0.0" >> $GITHUB_PATH
+        
+    - name: Prepare buildozer.spec
+      run: |
+        # 移除本地 macOS 路径配置
         sed -i 's|android.sdk_path = .*|# android.sdk_path =|' buildozer.spec
         sed -i 's|android.ndk_path = .*|# android.ndk_path =|' buildozer.spec
         sed -i 's|android.ndk = 29|android.ndk = 25|' buildozer.spec
         
+        # 设置正确的 SDK/NDK 路径
+        echo "" >> buildozer.spec
+        echo "# GitHub Actions paths" >> buildozer.spec
+        echo "android.sdk_path = /usr/local/lib/android/sdk" >> buildozer.spec
+        echo "android.ndk_path = /usr/local/lib/android/sdk/ndk/25.2.9519653" >> buildozer.spec
+        
+        echo "=== Buildozer Spec (Android section) ==="
+        cat buildozer.spec | grep -E "^(android|# GitHub)" || true
+        
     - name: Build APK
       run: |
         export JAVA_HOME=$JAVA_HOME_17_X64
+        export ANDROID_HOME=/usr/local/lib/android/sdk
+        export ANDROID_SDK=/usr/local/lib/android/sdk
+        export ANDROID_NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653
+        
+        # 确保 buildozer 目录存在
+        mkdir -p ~/.buildozer/android/platform
+        
         buildozer android debug
       timeout-minutes: 45
       
     - name: Check APK exists
+      if: always()
       run: |
         echo "=== Checking for APK files ==="
         ls -la bin/ 2>/dev/null || echo "No bin directory"
@@ -55,7 +86,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: build-logs
-        path: mobile-app/.buildozer/android/platform/build-*/build.log
+        path: |
+          mobile-app/.buildozer/android/platform/build-*/build.log
+          mobile-app/bin/*.log
         retention-days: 3
         if-no-files-found: ignore
         
