@@ -34,9 +34,15 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = false
     }
     kotlinOptions {
         jvmTarget = "17"
+    }
+    
+    // 禁用 JDK 镜像转换
+    tasks.withType<JavaCompile>().configureEach {
+        options.isFork = false
     }
     buildFeatures {
         compose = true
