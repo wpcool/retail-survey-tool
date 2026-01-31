@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "com.yourcompany.retailsurvey"
-    compileSdk = 36
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.yourcompany.retailsurvey"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0.0"
 
