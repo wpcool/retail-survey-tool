@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     defaults:
       run:
         working-directory: mobile-app
@@ -15,7 +15,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       
-    - uses: actions/setup-python@v5
+    - name: Setup Python
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
         
@@ -25,70 +26,89 @@ jobs:
         sudo apt-get install -y \
           git zip unzip openjdk-17-jdk \
           autoconf libtool pkg-config \
-          zlib1g-dev libncurses5-dev cmake libffi-dev libssl-dev automake
+          zlib1g-dev libncurses5-dev cmake libffi-dev libssl-dev automake \
+          ccache
+        
+        # 配置 ccache 加速构建
+        echo "CCACHE_COMPRESS=1" >> $GITHUB_ENV
+        echo "CCACHE_MAXSIZE=5G" >> $GITHUB_ENV
+        
         pip install buildozer cython
         
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
-      
+      with:
+        cmdline-tools-version: 10406996
+        
     - name: Install Android SDK components
       run: |
         # 安装必要的 SDK 组件
+        yes | sdkmanager --licenses || true
         sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0" "ndk;25.2.9519653"
         
-        # 设置环境变量
-        echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-        echo "ANDROID_SDK=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-        echo "ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/25.2.9519653" >> $GITHUB_ENV
-        
-        # 添加到 PATH
-        echo "$ANDROID_SDK_ROOT/platform-tools" >> $GITHUB_PATH
-        echo "$ANDROID_SDK_ROOT/build-tools/33.0.0" >> $GITHUB_PATH
+        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+        echo "SDK 内容:"
+        ls -la $ANDROID_SDK_ROOT/
+        echo "NDK 内容:"
+        ls -la $ANDROID_SDK_ROOT/ndk/ || echo "NDK 目录不存在"
         
     - name: Prepare buildozer.spec
       run: |
-        # 移除本地 macOS 路径配置
-        sed -i 's|android.sdk_path = .*|# android.sdk_path =|' buildozer.spec
-        sed -i 's|android.ndk_path = .*|# android.ndk_path =|' buildozer.spec
-        sed -i 's|android.ndk = 29|android.ndk = 25|' buildozer.spec
+        # 备份原始配置
+        cp buildozer.spec buildozer.spec.backup
         
-        # 设置正确的 SDK/NDK 路径
-        echo "" >> buildozer.spec
-        echo "# GitHub Actions paths" >> buildozer.spec
-        echo "android.sdk_path = /usr/local/lib/android/sdk" >> buildozer.spec
-        echo "android.ndk_path = /usr/local/lib/android/sdk/ndk/25.2.9519653" >> buildozer.spec
+        # 使用 sed 完全替换 sdk_path 和 ndk_path 行
+        sed -i '/^android\.sdk_path/d' buildozer.spec
+        sed -i '/^android\.ndk_path/d' buildozer.spec
+        sed -i '/^android\.ndk = /d' buildozer.spec
+        
+        # 在文件末尾添加正确的配置
+        cat >> buildozer.spec << 'EOF'
+
+# GitHub Actions 配置
+android.ndk = 25
+android.sdk_path = /usr/local/lib/android/sdk
+android.ndk_path = /usr/local/lib/android/sdk/ndk/25.2.9519653
+EOF
         
         echo "=== Buildozer Spec (Android section) ==="
-        cat buildozer.spec | grep -E "^(android|# GitHub)" || true
+        grep -E "^android" buildozer.spec || true
         
     - name: Build APK
       run: |
         export JAVA_HOME=$JAVA_HOME_17_X64
         export ANDROID_HOME=/usr/local/lib/android/sdk
-        export ANDROID_SDK=/usr/local/lib/android/sdk
-        export ANDROID_NDK=/usr/local/lib/android/sdk/ndk/25.2.9519653
+        export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
         
-        # 确保 buildozer 目录存在
-        mkdir -p ~/.buildozer/android/platform
+        echo "=== 环境变量 ==="
+        echo "JAVA_HOME: $JAVA_HOME"
+        echo "ANDROID_HOME: $ANDROID_HOME"
+        echo "ANDROID_SDK_ROOT: $ANDROID_SDK_ROOT"
+        java -version
         
+        # 清理之前的构建（避免缓存问题）
+        rm -rf .buildozer/android/platform/build-*/build/bootstrap_builds
+        
+        # 开始构建
         buildozer android debug
-      timeout-minutes: 45
+      timeout-minutes: 60
       
     - name: Check APK exists
       if: always()
+      working-directory: retail-survey-tool
       run: |
         echo "=== Checking for APK files ==="
-        ls -la bin/ 2>/dev/null || echo "No bin directory"
-        find . -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
+        ls -la mobile-app/bin/ 2>/dev/null || echo "No bin directory"
+        find mobile-app -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
         
-    - name: Upload logs (always)
+    - name: Upload logs
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: build-logs
         path: |
-          mobile-app/.buildozer/android/platform/build-*/build.log
-          mobile-app/bin/*.log
+          retail-survey-tool/mobile-app/.buildozer/android/platform/build-*/build.log
+          retail-survey-tool/mobile-app/bin/*.log
         retention-days: 3
         if-no-files-found: ignore
         
@@ -97,6 +117,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: retail-survey-apk
-        path: mobile-app/bin/*.apk
+        path: retail-survey-tool/mobile-app/bin/*.apk
         retention-days: 7
         if-no-files-found: warn
