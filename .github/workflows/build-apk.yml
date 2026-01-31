@@ -130,11 +130,10 @@ jobs:
       
     - name: Check APK exists
       if: always()
-      working-directory: retail-survey-tool
       run: |
         echo "=== Checking for APK files ==="
-        ls -la mobile-app/bin/ 2>/dev/null || echo "No bin directory"
-        find mobile-app -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
+        ls -la bin/ 2>/dev/null || echo "No bin directory"
+        find . -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
         
     - name: Upload logs
       if: always()
@@ -142,8 +141,8 @@ jobs:
       with:
         name: build-logs
         path: |
-          retail-survey-tool/mobile-app/.buildozer/android/platform/build-*/build.log
-          retail-survey-tool/mobile-app/bin/*.log
+          .buildozer/android/platform/build-*/build.log
+          bin/*.log
         retention-days: 3
         if-no-files-found: ignore
         
@@ -152,6 +151,6 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: retail-survey-apk
-        path: retail-survey-tool/mobile-app/bin/*.apk
+        path: bin/*.apk
         retention-days: 7
         if-no-files-found: warn
