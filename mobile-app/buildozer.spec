@@ -22,7 +22,7 @@ source.exclude_dirs = tests, bin, venv, __pycache__, .git
 version = 1.0.0
 
 # 依赖
-requirements = python3,kivy==2.3.0,kivymd==1.1.1,requests==2.31.0,pillow==10.2.0,urllib3,charset-normalizer,idna,certifi
+requirements = python3,kivy==2.3.0,kivymd==1.1.1,requests==2.31.0,pillow==10.2.0,urllib3,charset-normalizer,idna,certifi,pyjnius==1.6.1
 
 # 设置图标（可选）
 # icon.filename = icon.png
