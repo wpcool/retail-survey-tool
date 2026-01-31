@@ -81,13 +81,11 @@ jobs:
         sed -i '/^# android\.ndk_path/d' buildozer.spec
         
         # 在文件末尾添加正确的配置
-        cat >> buildozer.spec << 'EOF'
-
-# GitHub Actions 配置
-android.ndk = 25
-android.sdk_path = /usr/local/lib/android/sdk
-android.ndk_path = /usr/local/lib/android/sdk/ndk/25.2.9519653
-EOF
+        echo "" >> buildozer.spec
+        echo "# GitHub Actions 配置" >> buildozer.spec
+        echo "android.ndk = 25" >> buildozer.spec
+        echo "android.sdk_path = /usr/local/lib/android/sdk" >> buildozer.spec
+        echo "android.ndk_path = /usr/local/lib/android/sdk/ndk/25.2.9519653" >> buildozer.spec
         
         echo "=== Buildozer Spec (Android section) ==="
         grep -E "^(android|#)" buildozer.spec | tail -20
