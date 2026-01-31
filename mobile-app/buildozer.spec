@@ -34,11 +34,12 @@ fullscreen = 0
 android.api = 33
 android.minapi = 21
 android.sdk = 33
-android.ndk = 25
+android.ndk = 29
 android.archs = arm64-v8a
 
-# SDK/NDK 路径将在 GitHub Actions 中自动设置
-# 本地路径已移除
+# 本地 macOS 路径配置
+android.sdk_path = /Users/wangpeng/Documents/WorkSpace/Develop/MyCode/LSR/MarketSearchTools/retail-survey-tool/mobile-app/.buildozer/android/platform/android-sdk
+android.ndk_path = /Users/wangpeng/Library/Android/sdk/ndk/29.0.14206865
 
 # Android权限
 android.permissions = INTERNET,CAMERA,WRITE_EXTERNAL_STORAGE,READ_EXTERNAL_STORAGE,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION
@@ -54,6 +55,3 @@ android.enable_androidx = True
 # 日志级别
 log_level = 2
 warn_on_root = 1
-
-# python-for-android 配置
-p4a.branch = develop
