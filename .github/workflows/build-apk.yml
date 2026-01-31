@@ -100,6 +100,20 @@ jobs:
         echo "=== Buildozer Spec (Android section) ==="
         grep -E "^(android|#)" buildozer.spec | tail -20
         
+    - name: Prepare build environment
+      run: |
+        # 确保 buildozer 目录结构正确
+        mkdir -p ~/.buildozer/android/platform
+        
+        # 如果存在旧的 p4a，删除它以便重新下载最新版本
+        rm -rf ~/.buildozer/android/platform/python-for-android
+        
+        # 克隆 develop 分支的 python-for-android（包含最新的 pyjnius 修复）
+        git clone --depth 1 --branch develop https://github.com/kivy/python-for-android.git ~/.buildozer/android/platform/python-for-android
+        
+        echo "=== Python for Android 版本 ==="
+        cd ~/.buildozer/android/platform/python-for-android && git log --oneline -1
+        
     - name: Build APK
       run: |
         # 确保 buildozer 的 SDK 目录存在并链接到正确的位置

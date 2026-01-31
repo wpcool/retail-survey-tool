@@ -69,3 +69,6 @@ log_level = 2
 
 # 警告颜色
 warn_on_root = 1
+
+# 使用更新的 python-for-android
+android.p4a_branch = develop
