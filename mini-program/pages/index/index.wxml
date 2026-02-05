@@ -1,0 +1,98 @@
+<!-- 首页 - 任务列表 -->
+<view class="container">
+  <!-- 欢迎卡片 -->
+  <view class="welcome-card {{hasTask ? 'has-task' : ''}}">
+    <view class="welcome-left">
+      <view class="welcome-icon">👋</view>
+      <view class="welcome-text">
+        <text class="welcome-name">欢迎, {{userInfo.name || '调研员'}}</text>
+        <text class="welcome-date">{{today}}</text>
+      </view>
+    </view>
+    <view class="welcome-status {{hasTask ? 'has-task' : ''}}">
+      {{hasTask ? '有任务' : '今日休息'}}
+    </view>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="stats-grid">
+    <view class="stat-item">
+      <text class="stat-value">{{stats.today}}</text>
+      <text class="stat-label">今日任务</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{stats.completed}}</text>
+      <text class="stat-label">已完成</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-value">{{stats.pending}}</text>
+      <text class="stat-label">待完成</text>
+    </view>
+  </view>
+
+  <!-- 任务列表 -->
+  <view class="task-section">
+    <view class="section-header">
+      <text class="section-title">今日调研任务</text>
+      <text class="section-action" bindtap="refreshTasks">刷新 ↻</text>
+    </view>
+
+    <!-- 加载中 -->
+    <view class="loading" wx:if="{{loading}}">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:elif="{{!hasTask}}">
+      <text class="empty-icon">📭</text>
+      <text class="empty-title">暂无今日任务</text>
+      <text class="empty-desc">休息一下吧，明天继续努力！</text>
+    </view>
+
+    <!-- 任务卡片列表 -->
+    <view class="task-list" wx:else>
+      <view 
+        class="task-card" 
+        wx:for="{{tasks}}" 
+        wx:key="id"
+        bindtap="onSelectTask"
+        data-task="{{item}}"
+      >
+        <view class="task-header">
+          <text class="task-title">{{item.title}}</text>
+          <text class="task-status status-{{item.status}}">
+            {{item.status === 'active' ? '进行中' : '已完成'}}
+          </text>
+        </view>
+        
+        <view class="task-info">
+          <view class="info-item">
+            <text class="info-icon">📅</text>
+            <text class="info-text">{{item.date}}</text>
+          </view>
+          <view class="info-item">
+            <text class="info-icon">📊</text>
+            <text class="info-text">{{item.item_count}}个商品</text>
+          </view>
+        </view>
+
+        <view class="task-desc" wx:if="{{item.description}}">
+          {{item.description}}
+        </view>
+
+        <view class="task-footer">
+          <text class="task-time">{{item.created_at}}</text>
+          <button 
+            class="btn-start" 
+            type="primary" 
+            size="mini"
+            catchtap="onStartSurvey"
+            data-task="{{item}}"
+            wx:if="{{item.status === 'active'}}"
+          >开始调研</button>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,86 @@
+<!-- 我的页面 -->
+<view class="container">
+  <!-- 用户信息卡片 -->
+  <view class="user-card">
+    <view class="user-avatar">
+      {{userInfo.name ? userInfo.name.charAt(0) : '?'}}
+    </view>
+    <view class="user-info">
+      <view class="user-name">{{userInfo.name || '未登录'}}</view>
+      <view class="user-role">调研员</view>
+    </view>
+  </view>
+
+  <!-- 统计概览 -->
+  <view class="stats-card">
+    <view class="stat-item" bindtap="viewRecords">
+      <view class="stat-number">{{stats.totalRecords}}</view>
+      <view class="stat-label">总记录</view>
+    </view>
+    <view class="stat-item" bindtap="viewRecords">
+      <view class="stat-number">{{stats.todayRecords}}</view>
+      <view class="stat-label">今日</view>
+    </view>
+    <view class="stat-item" bindtap="viewTasks">
+      <view class="stat-number">{{stats.completedTasks}}</view>
+      <view class="stat-label">已完成任务</view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-title">数据管理</view>
+    <view class="menu-list">
+      <view class="menu-item" bindtap="viewRecords">
+        <view class="menu-left">
+          <view class="menu-icon icon-record">📝</view>
+          <text class="menu-text">调研记录</text>
+        </view>
+        <view class="menu-right">
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+      
+      <view class="menu-item" bindtap="viewTasks">
+        <view class="menu-left">
+          <view class="menu-icon icon-task">📋</view>
+          <text class="menu-text">我的任务</text>
+        </view>
+        <view class="menu-right">
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 设置菜单 -->
+  <view class="menu-section">
+    <view class="menu-title">设置</view>
+    <view class="menu-list">
+      <view class="menu-item" bindtap="openSettings">
+        <view class="menu-left">
+          <view class="menu-icon icon-settings">⚙️</view>
+          <text class="menu-text">设置</text>
+        </view>
+        <view class="menu-right">
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+      
+      <view class="menu-item" bindtap="openAbout">
+        <view class="menu-left">
+          <view class="menu-icon icon-about">ℹ️</view>
+          <text class="menu-text">关于</text>
+        </view>
+        <view class="menu-right">
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退出登录 -->
+  <view class="logout-section">
+    <button class="btn-logout" bindtap="logout">退出登录</button>
+  </view>
+</view>

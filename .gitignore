@@ -1,34 +1,39 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-venv/
-env/
-ENV/
-
-# Buildozer / Android
-.buildozer/
-bin/
+# Android
+android-app/.gradle/
+android-app/**/build/
+android-app/**/captures/
+android-app/**/externalNativeBuild/
+android-app/**/.cxx/
+android-app/local.properties
+android-app/*.iml
+android-app/.idea/
 *.apk
 *.aab
-*.keystore
+*.dex
+
+# Mobile app build
+mobile-app/build/
+mobile-app/dist/
+mobile-app/node_modules/
+
+# Python
+backend/__pycache__/
+backend/*.py[cod]
+backend/*$py.class
+backend/venv/
+backend/.env
 
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Data
-data/
-*.db
-*.sqlite
-
 # Logs
 *.log
+build_log.txt

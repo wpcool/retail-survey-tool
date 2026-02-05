@@ -26,6 +26,12 @@ class SurveyorResponse(SurveyorBase):
         from_attributes = True
 
 
+class SurveyorUpdate(BaseModel):
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
 # ========== 调研任务相关 ==========
 class SurveyItemBase(BaseModel):
     category: str
@@ -66,6 +72,13 @@ class SurveyTaskResponse(SurveyTaskBase):
     
     class Config:
         from_attributes = True
+
+
+class SurveyTaskUpdate(BaseModel):
+    title: Optional[str] = None
+    date: Optional[str] = None
+    description: Optional[str] = None
+    status: Optional[str] = None
 
 
 class SurveyTaskSimple(BaseModel):

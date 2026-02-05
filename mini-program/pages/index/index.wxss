@@ -1,0 +1,282 @@
+.container {
+  padding: 24rpx;
+  padding-bottom: 48rpx;
+}
+
+/* 欢迎卡片 */
+.welcome-card {
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+  border-radius: 32rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  box-shadow: 0 8rpx 32rpx rgba(99, 102, 241, 0.3);
+}
+
+.welcome-left {
+  display: flex;
+  align-items: center;
+}
+
+.welcome-icon {
+  font-size: 48rpx;
+  margin-right: 20rpx;
+}
+
+.welcome-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.welcome-name {
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.welcome-date {
+  font-size: 24rpx;
+  opacity: 0.8;
+}
+
+.welcome-status {
+  padding: 12rpx 24rpx;
+  border-radius: 40rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.welcome-status.has-task {
+  background: #10b981;
+}
+
+/* 统计网格 */
+.stats-grid {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 32rpx;
+}
+
+.stat-item {
+  flex: 1;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 32rpx 24rpx;
+  margin: 0 8rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.stat-item:first-child {
+  margin-left: 0;
+}
+
+.stat-item:last-child {
+  margin-right: 0;
+}
+
+.stat-value {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #64748b;
+}
+
+/* 任务区域 */
+.task-section {
+  background: #fff;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.section-action {
+  font-size: 26rpx;
+  color: #6366f1;
+  font-weight: 500;
+}
+
+.section-action:active {
+  opacity: 0.7;
+}
+
+/* 任务列表 */
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.task-card {
+  background: #f8fafc;
+  border-radius: 24rpx;
+  padding: 28rpx;
+  border: 2rpx solid #e2e8f0;
+  transition: all 0.3s;
+}
+
+.task-card:active {
+  background: #f1f5f9;
+  transform: translateY(4rpx);
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20rpx;
+}
+
+.task-title {
+  flex: 1;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1e293b;
+  margin-right: 16rpx;
+  line-height: 1.4;
+}
+
+.task-status {
+  padding: 8rpx 20rpx;
+  border-radius: 40rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.task-status.status-active {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.task-status.status-done {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+.task-info {
+  display: flex;
+  gap: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.info-icon {
+  font-size: 28rpx;
+}
+
+.info-text {
+  font-size: 26rpx;
+  color: #64748b;
+}
+
+.task-desc {
+  font-size: 26rpx;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 20rpx;
+  padding: 16rpx;
+  background: #fff;
+  border-radius: 16rpx;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 20rpx;
+  border-top: 2rpx solid #e2e8f0;
+}
+
+.task-time {
+  font-size: 24rpx;
+  color: #94a3b8;
+}
+
+.btn-start {
+  margin: 0 !important;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  font-weight: 600 !important;
+}
+
+/* 加载 */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx;
+}
+
+.loading-spinner {
+  width: 60rpx;
+  height: 60rpx;
+  border: 6rpx solid #e2e8f0;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20rpx;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #64748b;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 100rpx 40rpx;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+  opacity: 0.6;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  color: #334155;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #94a3b8;
+}

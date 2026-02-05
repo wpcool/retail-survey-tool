@@ -15,6 +15,11 @@ from datetime import datetime
 from models import get_db, SessionLocal, Surveyor, SurveyTask, SurveyItem, SurveyRecord
 from schemas import *
 
+
+# ========== 请求模型 ==========
+class PasswordResetRequest(BaseModel):
+    new_password: str
+
 # 创建应用
 app = FastAPI(title="零售市场调研API", version="1.0.0")
 
@@ -49,7 +54,15 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 # ========== 健康检查 ==========
 @app.get("/")
 def root():
-    return {"message": "零售市场调研API服务运行中", "version": "1.0.0"}
+    return {"message": "零售市场调研API服务运行中", "version": "1.0.0", "admin": "/admin"}
+
+
+# ========== 管理后台 ==========
+@app.get("/admin")
+def admin_page():
+    """重定向到管理后台页面"""
+    from fastapi.responses import RedirectResponse
+    return RedirectResponse(url="/static/index.html")
 
 
 # ========== 登录相关 ==========
@@ -97,6 +110,58 @@ def create_surveyor(surveyor: SurveyorCreate, db: Session = Depends(get_db)):
 def list_surveyors(db: Session = Depends(get_db)):
     """获取所有调研人员"""
     return db.query(Surveyor).all()
+
+
+@app.get("/api/surveyors/{surveyor_id}", response_model=SurveyorResponse)
+def get_surveyor(surveyor_id: int, db: Session = Depends(get_db)):
+    """获取调研人员详情"""
+    surveyor = db.query(Surveyor).filter(Surveyor.id == surveyor_id).first()
+    if not surveyor:
+        raise HTTPException(status_code=404, detail="人员不存在")
+    return surveyor
+
+
+@app.put("/api/surveyors/{surveyor_id}", response_model=SurveyorResponse)
+def update_surveyor(surveyor_id: int, surveyor_update: SurveyorUpdate, db: Session = Depends(get_db)):
+    """更新调研人员信息"""
+    surveyor = db.query(Surveyor).filter(Surveyor.id == surveyor_id).first()
+    if not surveyor:
+        raise HTTPException(status_code=404, detail="人员不存在")
+    
+    if surveyor_update.name is not None:
+        surveyor.name = surveyor_update.name
+    if surveyor_update.phone is not None:
+        surveyor.phone = surveyor_update.phone
+    if surveyor_update.is_active is not None:
+        surveyor.is_active = surveyor_update.is_active
+    
+    db.commit()
+    db.refresh(surveyor)
+    return surveyor
+
+
+@app.post("/api/surveyors/{surveyor_id}/reset-password")
+def reset_surveyor_password(surveyor_id: int, request: PasswordResetRequest, db: Session = Depends(get_db)):
+    """重置调研人员密码"""
+    surveyor = db.query(Surveyor).filter(Surveyor.id == surveyor_id).first()
+    if not surveyor:
+        raise HTTPException(status_code=404, detail="人员不存在")
+    
+    surveyor.password_hash = get_password_hash(request.new_password)
+    db.commit()
+    return {"success": True, "message": "密码重置成功"}
+
+
+@app.delete("/api/surveyors/{surveyor_id}")
+def delete_surveyor(surveyor_id: int, db: Session = Depends(get_db)):
+    """删除调研人员"""
+    surveyor = db.query(Surveyor).filter(Surveyor.id == surveyor_id).first()
+    if not surveyor:
+        raise HTTPException(status_code=404, detail="人员不存在")
+    
+    db.delete(surveyor)
+    db.commit()
+    return {"success": True, "message": "删除成功"}
 
 
 # ========== 调研任务管理 ==========
@@ -158,6 +223,39 @@ def get_task(task_id: int, db: Session = Depends(get_db)):
     if not task:
         raise HTTPException(status_code=404, detail="任务不存在")
     return task
+
+
+@app.put("/api/tasks/{task_id}", response_model=SurveyTaskResponse)
+def update_task(task_id: int, task_update: SurveyTaskUpdate, db: Session = Depends(get_db)):
+    """更新调研任务"""
+    task = db.query(SurveyTask).filter(SurveyTask.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="任务不存在")
+    
+    if task_update.title is not None:
+        task.title = task_update.title
+    if task_update.date is not None:
+        task.date = task_update.date
+    if task_update.description is not None:
+        task.description = task_update.description
+    if task_update.status is not None:
+        task.status = task_update.status
+    
+    db.commit()
+    db.refresh(task)
+    return task
+
+
+@app.delete("/api/tasks/{task_id}")
+def delete_task(task_id: int, db: Session = Depends(get_db)):
+    """删除调研任务"""
+    task = db.query(SurveyTask).filter(SurveyTask.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="任务不存在")
+    
+    db.delete(task)
+    db.commit()
+    return {"success": True, "message": "删除成功"}
 
 
 @app.get("/api/tasks/today/{surveyor_id}", response_model=SurveyTaskResponse)
@@ -314,6 +412,25 @@ def get_daily_statistics(date: Optional[str] = None, db: Session = Depends(get_d
         completed_records=completed_records,
         completion_rate=completion_rate
     )
+
+
+# ========== 调研记录删除 ==========
+@app.delete("/api/records/{record_id}")
+def delete_record(record_id: int, db: Session = Depends(get_db)):
+    """删除调研记录"""
+    record = db.query(SurveyRecord).filter(SurveyRecord.id == record_id).first()
+    if not record:
+        raise HTTPException(status_code=404, detail="记录不存在")
+    
+    # 删除照片文件
+    if record.photo_path:
+        photo_file = record.photo_path.replace("/static/", "static/")
+        if os.path.exists(photo_file):
+            os.remove(photo_file)
+    
+    db.delete(record)
+    db.commit()
+    return {"success": True, "message": "删除成功"}
 
 
 # ========== 初始化数据 ==========

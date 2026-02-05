@@ -1,0 +1,174 @@
+<!-- 创建调研记录页面 - Tab页面 -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="page-title">📊 创建调研记录</view>
+  </view>
+
+  <!-- 选择任务提示 -->
+  <view class="task-banner" wx:if="{{!taskId}}">
+    <text class="banner-icon">💡</text>
+    <text class="banner-text">请先选择今日调研任务，或从"任务"页面开始</text>
+  </view>
+
+  <!-- 当前任务卡片 -->
+  <view class="current-task" wx:if="{{taskId}}">
+    <view class="task-label">当前任务</view>
+    <view class="task-name">{{taskTitle}}</view>
+  </view>
+
+  <!-- 商品信息表单 -->
+  <view class="form-card">
+    <view class="form-title">
+      <text class="form-icon">📦</text>
+      商品信息
+    </view>
+    
+    <view class="form-item">
+      <view class="form-label">商品名称 <text class="required">*</text></view>
+      <input 
+        class="form-input" 
+        placeholder="请输入商品名称"
+        value="{{form.name}}"
+        data-field="name"
+        bindinput="onInput"
+      />
+    </view>
+
+    <view class="form-row">
+      <view class="form-item form-item-half">
+        <view class="form-label">品类 <text class="required">*</text></view>
+        <picker mode="selector" range="{{categories}}" bindchange="onCategoryChange">
+          <view class="form-picker {{form.category ? '' : 'placeholder'}}">
+            {{form.category || '选择品类'}}
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item form-item-half">
+        <view class="form-label">规格</view>
+        <input 
+          class="form-input" 
+          placeholder="如: 500g"
+          value="{{form.specification}}"
+          data-field="specification"
+          bindinput="onInput"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">品牌</view>
+      <input 
+        class="form-input" 
+        placeholder="请输入品牌"
+        value="{{form.brand}}"
+        data-field="brand"
+        bindinput="onInput"
+      />
+    </view>
+  </view>
+
+  <!-- 价格信息 -->
+  <view class="form-card">
+    <view class="form-title">
+      <text class="form-icon">💰</text>
+      价格信息
+    </view>
+
+    <view class="form-row">
+      <view class="form-item form-item-half">
+        <view class="form-label">价格 <text class="required">*</text></view>
+        <input 
+          class="form-input price-input" 
+          placeholder="0.00"
+          type="digit"
+          value="{{form.price}}"
+          data-field="price"
+          bindinput="onInput"
+        />
+        <text class="price-unit">元</text>
+      </view>
+
+      <view class="form-item form-item-half">
+        <view class="form-label">促销价</view>
+        <input 
+          class="form-input price-input" 
+          placeholder="0.00"
+          type="digit"
+          value="{{form.promoPrice}}"
+          data-field="promoPrice"
+          bindinput="onInput"
+        />
+        <text class="price-unit">元</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">促销信息</view>
+      <input 
+        class="form-input" 
+        placeholder="如: 买一送一、满减等"
+        value="{{form.promoInfo}}"
+        data-field="promoInfo"
+        bindinput="onInput"
+      />
+    </view>
+  </view>
+
+  <!-- 店铺信息 -->
+  <view class="form-card">
+    <view class="form-title">
+      <text class="form-icon">🏪</text>
+      店铺信息
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">店铺名称 <text class="required">*</text></view>
+      <input 
+        class="form-input" 
+        placeholder="请输入店铺名称"
+        value="{{form.shop}}"
+        data-field="shop"
+        bindinput="onInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">店铺地址</view>
+      <view class="location-row">
+        <input 
+          class="form-input" 
+          placeholder="点击右侧定位获取地址"
+          value="{{form.shopAddress}}"
+          data-field="shopAddress"
+          bindinput="onInput"
+        />
+        <view class="location-btn" bindtap="getLocation">
+          <text class="location-icon">📍</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 备注 -->
+  <view class="form-card">
+    <view class="form-title">
+      <text class="form-icon">📝</text>
+      备注
+    </view>
+    <textarea 
+      class="form-textarea" 
+      placeholder="其他补充信息..."
+      maxlength="500"
+      value="{{form.remark}}"
+      data-field="remark"
+      bindinput="onInput"
+    />
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-section">
+    <button class="btn-submit" bindtap="saveRecord">保存记录</button>
+  </view>
+</view>

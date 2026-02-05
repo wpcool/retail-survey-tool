@@ -6,34 +6,54 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <TextView
+    <!-- Toolbar -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="零售调研"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:textColor="@android:color/white" />
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
+    <!-- 加载进度条 -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="32dp"
         android:visibility="gone" />
 
+    <!-- 空状态提示 -->
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="暂无调研任务\n\n点击下方按钮创建"
+        android:textSize="16sp"
+        android:textColor="#94a3b8"
+        android:visibility="gone"/>
+
+    <!-- 列表 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:clipToPadding="false" />
 
-    <Button
+    <!-- 底部按钮 -->
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnCreate"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_margin="16dp"
-        android:text="新建调研" />
+        android:text="新建调研"
+        android:textSize="16sp"
+        android:textColor="@android:color/white"
+        android:background="@drawable/bg_button_primary"
+        android:elevation="4dp"/>
 
 </LinearLayout>
