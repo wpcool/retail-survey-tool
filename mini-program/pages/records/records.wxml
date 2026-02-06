@@ -1,0 +1,116 @@
+<!-- 调研记录列表页 -->
+<view class="container">
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="page-title">📝 我的调研记录</view>
+    <view class="record-count" wx:if="{{records.length > 0}}">共 {{records.length}} 条</view>
+  </view>
+
+  <!-- 日期筛选 -->
+  <view class="filter-bar">
+    <view class="filter-item">
+      <text class="filter-label">📅 日期</text>
+      <picker mode="date" value="{{filterDate}}" bindchange="onDateChange">
+        <view class="filter-value {{filterDate ? '' : 'placeholder'}}">
+          {{filterDate || '选择日期'}}
+        </view>
+      </picker>
+      <text class="clear-btn" wx:if="{{filterDate}}" bindtap="clearDate">✕</text>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{loading && records.length === 0}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{!loading && records.length === 0}}">
+    <text class="empty-icon">📭</text>
+    <text class="empty-title">暂无记录</text>
+    <text class="empty-desc">{{filterDate ? '该日期没有调研记录' : '快去创建第一条调研记录吧'}}</text>
+  </view>
+
+  <!-- 记录列表 -->
+  <view class="records-list" wx:if="{{records.length > 0}}">
+    <view 
+      class="record-card" 
+      wx:for="{{records}}" 
+      wx:key="id"
+    >
+      <!-- 卡片头部 -->
+      <view class="record-header">
+        <view class="product-info">
+          <text class="category-tag">{{item.category}}</text>
+          <text class="product-name">{{item.product_name}}</text>
+        </view>
+        <text class="record-price">¥{{item.price}}</text>
+      </view>
+
+      <!-- 卡片内容 -->
+      <view class="record-body">
+        <view class="info-row">
+          <text class="info-icon">🏪</text>
+          <text class="info-text">{{item.store_name}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.store_address}}">
+          <text class="info-icon">📍</text>
+          <text class="info-text">{{item.store_address}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.promotion_info}}">
+          <text class="info-icon">🏷️</text>
+          <text class="info-text promo">{{item.promotion_info}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.remark}}">
+          <text class="info-icon">💬</text>
+          <text class="info-text">{{item.remark}}</text>
+        </view>
+      </view>
+
+      <!-- 卡片底部 -->
+      <view class="record-footer">
+        <view class="record-time">
+          <text class="date-tag {{item.isToday ? 'today' : ''}}">{{item.isToday ? '今天' : item.created_at.slice(0, 10)}}</text>
+          <text class="time-text">{{item.created_at.slice(11, 16)}}</text>
+        </view>
+        <view class="action-btns">
+          <!-- 当天记录可以编辑和删除 -->
+          <block wx:if="{{item.canEdit}}">
+            <button 
+              class="btn-edit" 
+              size="mini" 
+              bindtap="editRecord"
+              data-id="{{item.id}}"
+            >编辑</button>
+            <button 
+              class="btn-delete" 
+              size="mini" 
+              bindtap="deleteRecord"
+              data-id="{{item.id}}"
+            >删除</button>
+          </block>
+          <!-- 非当天记录只能查看 -->
+          <block wx:else>
+            <button 
+              class="btn-view" 
+              size="mini" 
+              bindtap="viewRecord"
+              data-id="{{item.id}}"
+            >查看</button>
+          </block>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{records.length > 0 && hasMore}}" bindtap="loadMore">
+    <text wx:if="{{!loading}}">点击加载更多</text>
+    <text wx:if="{{loading}}">加载中...</text>
+  </view>
+  
+  <view class="no-more" wx:if="{{records.length > 0 && !hasMore}}">
+    <text>没有更多了</text>
+  </view>
+</view>

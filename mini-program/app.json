@@ -3,6 +3,8 @@
     "pages/login/login",
     "pages/index/index",
     "pages/create/create",
+    "pages/records/records",
+    "pages/record-edit/record-edit",
     "pages/profile/profile"
   ],
   "window": {
@@ -26,10 +28,10 @@
         "selectedIconPath": "images/task-active.png"
       },
       {
-        "pagePath": "pages/create/create",
-        "text": "新建",
-        "iconPath": "images/create.png",
-        "selectedIconPath": "images/create-active.png"
+        "pagePath": "pages/records/records",
+        "text": "记录",
+        "iconPath": "images/record.png",
+        "selectedIconPath": "images/record-active.png"
       },
       {
         "pagePath": "pages/profile/profile",

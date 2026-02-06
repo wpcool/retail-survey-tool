@@ -25,7 +25,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
 服务启动后访问：
 - API 文档：http://localhost:8000/docs
-- 管理后台：http://localhost:8000/static/admin.html
+- 管理后台：http://localhost:8000/admin
 
 ### 方式2：Docker 启动 🐳
 

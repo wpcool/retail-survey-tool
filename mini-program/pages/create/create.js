@@ -4,8 +4,16 @@ Page({
   data: {
     taskId: null,
     taskTitle: '',
+    taskItems: [],
+    selectedItem: null,
+    completedCount: 0,
+    totalCount: 0,
+    suggestList: [],
+    showSuggest: false,
+    suggestTimer: null,
     categories: ['生鲜', '粮油', '饮料', '零食', '日用品', '家电', '服装', '其他'],
     form: {
+      itemId: null,
       name: '',
       category: '',
       specification: '',
@@ -22,7 +30,6 @@ Page({
   },
 
   onLoad(options) {
-    // 获取任务信息
     if (options.taskId) {
       this.setData({
         taskId: parseInt(options.taskId),
@@ -32,48 +39,178 @@ Page({
   },
 
   onShow() {
-    // 每次显示检查是否有选中的任务
     const selectedTask = wx.getStorageSync('selectedTask');
-    if (selectedTask && !this.data.taskId) {
+    if (selectedTask) {
       this.setData({
         taskId: selectedTask.id,
-        taskTitle: selectedTask.title
+        taskTitle: selectedTask.title,
+        taskItems: selectedTask.items || []
       });
-      // 清除存储，避免重复
-      wx.removeStorageSync('selectedTask');
+      
+      // 加载完成状态
+      this.loadCompletionStatus(selectedTask.id);
+      
+      if (selectedTask.items && selectedTask.items.length === 1) {
+        this.selectTaskItem(selectedTask.items[0]);
+      }
     }
   },
 
-  // 输入框变化
-  onInput(e) {
-    const { field } = e.currentTarget.dataset;
-    const { value } = e.detail;
+  // 加载完成状态
+  async loadCompletionStatus(taskId) {
+    const userInfo = wx.getStorageSync('userInfo');
+    if (!userInfo || !userInfo.id) return;
     
+    try {
+      const res = await app.request({
+        url: `/api/tasks/${taskId}/completion/${userInfo.id}`,
+        method: 'GET'
+      });
+      
+      if (res.items) {
+        // 更新商品的调研次数
+        const itemCountMap = {};
+        res.items.forEach(i => {
+          itemCountMap[i.item_id] = i.count;
+        });
+        
+        const taskItems = this.data.taskItems.map(item => ({
+          ...item,
+          is_completed: (itemCountMap[item.id] || 0) > 0,
+          record_count: itemCountMap[item.id] || 0
+        }));
+        
+        // 计算调研总次数和已完成商品数
+        const completedCount = taskItems.filter(i => i.record_count > 0).length;
+        const totalRecordCount = res.total_records || 0;
+        
+        this.setData({ 
+          taskItems,
+          completedCount,
+          totalCount: taskItems.length,
+          totalRecordCount
+        });
+      }
+    } catch (error) {
+      console.error('加载完成状态失败:', error);
+    }
+  },
+
+  onSelectItem(e) {
+    const item = e.currentTarget.dataset.item;
+    this.selectTaskItem(item);
+  },
+
+  selectTaskItem(item) {
+    // 如果已经填写过，提示用户
+    if (item.is_completed) {
+      wx.showModal({
+        title: '提示',
+        content: '该商品您已经填写过了，确定要重新填写吗？',
+        success: (res) => {
+          if (res.confirm) {
+            this.setSelectedItem(item);
+          }
+        }
+      });
+    } else {
+      this.setSelectedItem(item);
+    }
+  },
+
+  setSelectedItem(item) {
     this.setData({
-      [`form.${field}`]: value
+      selectedItem: item,
+      'form.itemId': item.id,
+      'form.name': item.product_name,
+      'form.category': item.category,
+      'form.specification': item.product_spec || ''
     });
   },
 
-  // 品类选择
+  onNameInput(e) {
+    const value = e.detail.value;
+    this.setData({ 'form.name': value });
+    
+    if (this.data.suggestTimer) {
+      clearTimeout(this.data.suggestTimer);
+    }
+    
+    if (!value || value.length < 1) {
+      this.setData({ suggestList: [], showSuggest: false });
+      return;
+    }
+    
+    const timer = setTimeout(() => {
+      this.fetchSuggestions(value);
+    }, 300);
+    
+    this.setData({ suggestTimer: timer });
+  },
+
+  async fetchSuggestions(keyword) {
+    try {
+      const res = await app.request({
+        url: '/api/products/suggest?keyword=' + encodeURIComponent(keyword) + '&limit=10',
+        method: 'GET'
+      });
+      
+      if (Array.isArray(res)) {
+        this.setData({
+          suggestList: res,
+          showSuggest: true
+        });
+      }
+    } catch (error) {
+      console.error('get suggest failed:', error);
+    }
+  },
+
+  onSelectSuggest(e) {
+    const item = e.currentTarget.dataset.item;
+    this.setData({
+      'form.name': item.name,
+      'form.category': item.category,
+      'form.specification': item.spec || '',
+      'form.brand': item.brand || '',
+      suggestList: [],
+      showSuggest: false
+    });
+  },
+
+  onNameFocus() {
+    if (this.data.suggestList.length > 0) {
+      this.setData({ showSuggest: true });
+    }
+  },
+
+  onNameBlur() {
+    setTimeout(() => {
+      this.setData({ showSuggest: false });
+    }, 200);
+  },
+
+  onInput(e) {
+    const field = e.currentTarget.dataset.field;
+    const value = e.detail.value;
+    this.setData({ ['form.' + field]: value });
+  },
+
   onCategoryChange(e) {
-    const { value } = e.detail;
-    const category = this.data.categories[value];
-    this.setData({
-      'form.category': category
-    });
+    const idx = e.detail.value;
+    const category = this.data.categories[idx];
+    this.setData({ 'form.category': category });
   },
 
-  // 获取定位
   getLocation() {
     wx.showLoading({ title: '定位中...' });
     
     wx.getLocation({
       type: 'gcj02',
       success: (res) => {
-        const { latitude, longitude } = res;
-        
-        // 使用腾讯地图API反地理编码
-        this.reverseGeocode(latitude, longitude);
+        const lat = res.latitude;
+        const lng = res.longitude;
+        this.reverseGeocode(lat, lng);
       },
       fail: () => {
         wx.hideLoading();
@@ -82,27 +219,23 @@ Page({
     });
   },
 
-  // 反地理编码
   reverseGeocode(lat, lng) {
-    const key = 'YOUR_TENCENT_MAP_KEY';
-    const url = `https://apis.map.qq.com/ws/geocoder/v1/?location=${lat},${lng}&key=${key}`;
+    const url = 'https://apis.map.qq.com/ws/geocoder/v1/?location=' + lat + ',' + lng + '&key=YOUR_TENCENT_MAP_KEY';
     
     wx.request({
-      url,
+      url: url,
       success: (res) => {
         wx.hideLoading();
-        
         if (res.data && res.data.status === 0) {
-          const address = res.data.result.address;
           this.setData({
-            'form.shopAddress': address,
+            'form.shopAddress': res.data.result.address,
             'form.latitude': lat,
             'form.longitude': lng
           });
           wx.showToast({ title: '定位成功', icon: 'success' });
         } else {
           this.setData({
-            'form.shopAddress': `经纬度: ${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+            'form.shopAddress': 'lat:' + lat.toFixed(4) + ', lng:' + lng.toFixed(4),
             'form.latitude': lat,
             'form.longitude': lng
           });
@@ -111,7 +244,7 @@ Page({
       fail: () => {
         wx.hideLoading();
         this.setData({
-          'form.shopAddress': `经纬度: ${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+          'form.shopAddress': 'lat:' + lat.toFixed(4) + ', lng:' + lng.toFixed(4),
           'form.latitude': lat,
           'form.longitude': lng
         });
@@ -119,25 +252,19 @@ Page({
     });
   },
 
-  // 验证表单
   validateForm() {
-    const { form, taskId } = this.data;
+    const form = this.data.form;
+    const taskId = this.data.taskId;
+    const selectedItem = this.data.selectedItem;
     
     if (!taskId) {
-      wx.showToast({ title: '请先从"任务"页选择调研任务', icon: 'none' });
-      setTimeout(() => {
-        wx.switchTab({ url: '/pages/index/index' });
-      }, 1500);
+      wx.showToast({ title: '请先从任务页选择调研任务', icon: 'none' });
+      setTimeout(() => wx.switchTab({ url: '/pages/index/index' }), 1500);
       return false;
     }
     
-    if (!form.name.trim()) {
-      wx.showToast({ title: '请输入商品名称', icon: 'none' });
-      return false;
-    }
-    
-    if (!form.category) {
-      wx.showToast({ title: '请选择品类', icon: 'none' });
+    if (!selectedItem) {
+      wx.showToast({ title: '请选择要调研的商品', icon: 'none' });
       return false;
     }
     
@@ -154,34 +281,29 @@ Page({
     return true;
   },
 
-  // 保存记录
   async saveRecord() {
     if (!this.validateForm()) return;
     
     wx.showLoading({ title: '保存中...', mask: true });
     
     try {
-      const { form, taskId } = this.data;
+      const form = this.data.form;
+      const selectedItem = this.data.selectedItem;
+      const userInfo = wx.getStorageSync('userInfo');
       
-      // 构建提交数据
       const submitData = {
-        task_id: taskId,
-        name: form.name.trim(),
-        category: form.category,
-        specification: form.specification.trim(),
-        brand: form.brand.trim(),
+        item_id: selectedItem.id,
+        surveyor_id: userInfo.id || 1,
+        store_name: form.shop.trim(),
+        store_address: form.shopAddress.trim() || null,
         price: parseFloat(form.price),
-        promo_price: form.promoPrice ? parseFloat(form.promoPrice) : null,
-        promo_info: form.promoInfo.trim() || null,
-        shop: form.shop.trim(),
-        shop_address: form.shopAddress.trim() || null,
+        promotion_info: form.promoInfo.trim() || null,
+        remark: form.remark.trim() || null,
         longitude: form.longitude,
-        latitude: form.latitude,
-        remark: form.remark.trim() || null
+        latitude: form.latitude
       };
       
-      // 调用后端API保存记录
-      const res = await app.request({
+      await app.request({
         url: '/api/records',
         method: 'POST',
         data: submitData
@@ -189,33 +311,49 @@ Page({
       
       wx.hideLoading();
       
-      wx.showToast({
+      wx.showModal({
         title: '保存成功',
-        icon: 'success',
-        duration: 1500
-      });
-      
-      // 清空表单（保留店铺地址）
-      this.setData({
-        form: {
-          name: '',
-          category: '',
-          specification: '',
-          brand: '',
-          price: '',
-          promoPrice: '',
-          promoInfo: '',
-          shop: form.shop,  // 保留店铺名
-          shopAddress: form.shopAddress,  // 保留地址
-          remark: '',
-          longitude: form.longitude,
-          latitude: form.latitude
+        content: '调研记录已保存',
+        confirmText: '继续录入',
+        cancelText: '返回任务',
+        success: (modalRes) => {
+          if (modalRes.confirm) {
+            this.resetFormForNext();
+          } else {
+            wx.switchTab({ url: '/pages/index/index' });
+          }
         }
       });
       
     } catch (error) {
       wx.hideLoading();
-      wx.showToast({ title: error.message || '保存失败', icon: 'none' });
+      wx.showToast({ title: error.message || '保存失败', icon: 'none', duration: 2000 });
     }
+  },
+
+  resetFormForNext() {
+    const form = this.data.form;
+    this.setData({
+      selectedItem: null,
+      suggestList: [],
+      showSuggest: false,
+      form: {
+        itemId: null,
+        name: '',
+        category: '',
+        specification: '',
+        brand: '',
+        price: '',
+        promoPrice: '',
+        promoInfo: '',
+        shop: form.shop,
+        shopAddress: form.shopAddress,
+        remark: '',
+        longitude: form.longitude,
+        latitude: form.latitude
+      }
+    });
+    
+    wx.showToast({ title: '请继续选择商品录入', icon: 'none', duration: 1500 });
   }
 });

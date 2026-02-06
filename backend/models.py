@@ -85,6 +85,49 @@ class SurveyRecord(Base):
     surveyor = relationship("Surveyor", back_populates="surveys")
 
 
+class Product(Base):
+    """商品库（用于自动补全）"""
+    __tablename__ = "products"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    
+    # 分类信息（四级分类）
+    category_level1_code = Column(String(20), nullable=True)  # 一级分类编码
+    category_level1_name = Column(String(100), nullable=True)  # 一级分类名称
+    category_level2_code = Column(String(20), nullable=True)  # 二级分类编码
+    category_level2_name = Column(String(100), nullable=True)  # 二级分类名称
+    category_level3_code = Column(String(20), nullable=True)  # 三级分类编码
+    category_level3_name = Column(String(100), nullable=True)  # 三级分类名称
+    category_level4_code = Column(String(20), nullable=True, index=True)  # 四级分类编码
+    category_level4_name = Column(String(100), nullable=True, index=True)  # 四级分类名称（商品小类）
+    
+    # 商品基本信息
+    product_code = Column(String(50), nullable=True, index=True)  # 商品编码
+    name = Column(String(200), index=True)  # 商品名称
+    barcode = Column(String(50), nullable=True, index=True)  # 基本条码
+    spec = Column(String(100), nullable=True)  # 规格型号
+    unit = Column(String(20), nullable=True)  # 基本计量单位
+    
+    # 品牌和产地
+    brand_code = Column(String(50), nullable=True)  # 品牌编码
+    brand_name = Column(String(100), nullable=True, index=True)  # 品牌名称
+    origin = Column(String(200), nullable=True)  # 商品产地
+    
+    # 价格信息（参考）
+    purchase_price = Column(Float, nullable=True)  # 参考进价
+    sale_price = Column(Float, nullable=True)  # 参考售价
+    
+    # 供应商信息
+    supplier_code = Column(String(50), nullable=True)  # 供应商编码
+    supplier_name = Column(String(200), nullable=True)  # 供应商名称
+    
+    # 状态
+    status = Column(String(50), nullable=True)  # 经营状态名称
+    is_active = Column(Boolean, default=True)  # 是否启用
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
 

@@ -1,0 +1,101 @@
+<!-- 记录详情页面（只读） -->
+<view class="container">
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 详情展示 -->
+  <block wx:if="{{!loading}}">
+    <!-- 提示：历史记录不可修改 -->
+    <view class="notice-bar" wx:if="{{!isToday}}">
+      <text class="notice-icon">ℹ️</text>
+      <text class="notice-text">历史记录仅可查看，如需修改请联系管理员</text>
+    </view>
+
+    <!-- 商品信息 -->
+    <view class="form-card">
+      <view class="form-title">
+        <text class="form-icon">📦</text>
+        商品信息
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label">商品名称</view>
+        <view class="form-value">{{record.product_name}}</view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">品类</view>
+        <view class="form-value">{{record.category}}</view>
+      </view>
+    </view>
+
+    <!-- 价格信息 -->
+    <view class="form-card">
+      <view class="form-title">
+        <text class="form-icon">💰</text>
+        价格信息
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">价格</view>
+        <view class="form-value price">¥{{record.price}}</view>
+      </view>
+
+      <view class="form-item" wx:if="{{record.promotion_info}}">
+        <view class="form-label">促销信息</view>
+        <view class="form-value promo">{{record.promotion_info}}</view>
+      </view>
+    </view>
+
+    <!-- 店铺信息 -->
+    <view class="form-card">
+      <view class="form-title">
+        <text class="form-icon">🏪</text>
+        店铺信息
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">店铺名称</view>
+        <view class="form-value">{{record.store_name}}</view>
+      </view>
+
+      <view class="form-item" wx:if="{{record.store_address}}">
+        <view class="form-label">店铺地址</view>
+        <view class="form-value">{{record.store_address}}</view>
+      </view>
+    </view>
+
+    <!-- 备注 -->
+    <view class="form-card" wx:if="{{record.remark}}">
+      <view class="form-title">
+        <text class="form-icon">📝</text>
+        备注
+      </view>
+      <view class="form-value">{{record.remark}}</view>
+    </view>
+
+    <!-- 提交信息 -->
+    <view class="form-card meta-info">
+      <view class="form-title">
+        <text class="form-icon">📅</text>
+        提交信息
+      </view>
+      <view class="meta-row">
+        <text class="meta-label">提交时间：</text>
+        <text class="meta-value">{{record.created_at}}</text>
+      </view>
+      <view class="meta-row" wx:if="{{record.updated_at && record.updated_at !== record.created_at}}">
+        <text class="meta-label">最后修改：</text>
+        <text class="meta-value">{{record.updated_at}}</text>
+      </view>
+    </view>
+
+    <!-- 返回按钮 -->
+    <view class="action-section">
+      <button class="btn-back" bindtap="goBack">返回列表</button>
+    </view>
+  </block>
+</view>

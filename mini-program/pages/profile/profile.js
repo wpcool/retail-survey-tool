@@ -6,13 +6,16 @@ Page({
     stats: {
       totalRecords: 0,
       todayRecords: 0,
-      completedTasks: 0
-    }
+      distinctDays: 0,
+      distinctProducts: 0
+    },
+    last7Days: [],
+    recentRecords: [],
+    loading: true
   },
 
   onLoad() {
     this.loadUserInfo();
-    this.loadStats();
   },
 
   onShow() {
@@ -29,10 +32,18 @@ Page({
 
   // 加载统计数据
   async loadStats() {
+    this.setData({ loading: true });
+    
     try {
+      const userInfo = this.data.userInfo;
+      if (!userInfo || !userInfo.id) {
+        this.setData({ loading: false });
+        return;
+      }
+      
       // 调用后端API获取统计
       const res = await app.request({
-        url: '/api/stats/overview',
+        url: `/api/surveyors/${userInfo.id}/stats`,
         method: 'GET'
       });
       
@@ -40,8 +51,12 @@ Page({
         stats: {
           totalRecords: res.total_records || 0,
           todayRecords: res.today_records || 0,
-          completedTasks: res.completed_tasks || 0
-        }
+          distinctDays: res.distinct_days || 0,
+          distinctProducts: res.distinct_products || 0
+        },
+        last7Days: res.last_7_days || [],
+        recentRecords: res.recent_records || [],
+        loading: false
       });
     } catch (error) {
       console.error('加载统计失败:', error);
@@ -50,25 +65,36 @@ Page({
         stats: {
           totalRecords: 128,
           todayRecords: 5,
-          completedTasks: 12
-        }
+          distinctDays: 15,
+          distinctProducts: 45
+        },
+        last7Days: [
+          { date: '2026-02-05', count: 5 },
+          { date: '2026-02-04', count: 8 },
+          { date: '2026-02-03', count: 12 },
+          { date: '2026-02-02', count: 6 },
+          { date: '2026-02-01', count: 10 }
+        ],
+        recentRecords: [
+          { id: 1, product_name: '西红柿', category: '蔬菜', store_name: '永辉超市', price: 5.99, date: '2026-02-05', time: '10:30' },
+          { id: 2, product_name: '猪五花肉', category: '肉类', store_name: '永辉超市', price: 28.50, date: '2026-02-05', time: '10:45' }
+        ],
+        loading: false
       });
     }
   },
 
-  // 查看调研记录
-  viewRecords() {
-    wx.showToast({ title: '功能开发中', icon: 'none' });
+  // 查看记录详情
+  viewRecordDetail(e) {
+    const recordId = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/record-detail/record-detail?id=${recordId}`
+    });
   },
 
-  // 查看任务
-  viewTasks() {
-    wx.switchTab({ url: '/pages/index/index' });
-  },
-
-  // 设置
-  openSettings() {
-    wx.showToast({ title: '功能开发中', icon: 'none' });
+  // 查看所有记录
+  viewAllRecords() {
+    wx.switchTab({ url: '/pages/records/records' });
   },
 
   // 关于
@@ -85,6 +111,7 @@ Page({
     wx.showModal({
       title: '确认退出',
       content: '确定要退出登录吗？',
+      confirmColor: '#ef4444',
       success: (res) => {
         if (res.confirm) {
           // 清除登录数据

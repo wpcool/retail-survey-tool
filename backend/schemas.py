@@ -87,7 +87,10 @@ class SurveyTaskSimple(BaseModel):
     title: str
     date: str
     status: str
+    description: Optional[str] = None
     item_count: int
+    items: List[SurveyItemResponse] = []  # 添加商品列表
+    created_at: datetime
     
     class Config:
         from_attributes = True
@@ -121,6 +124,12 @@ class SurveyRecordResponse(SurveyRecordBase):
     category: Optional[str] = None
     surveyor_name: Optional[str] = None
     
+    # 四级分类信息
+    category_level1_name: Optional[str] = None
+    category_level2_name: Optional[str] = None
+    category_level3_name: Optional[str] = None
+    category_level4_name: Optional[str] = None
+    
     class Config:
         from_attributes = True
 
@@ -146,3 +155,64 @@ class DailyStatistics(BaseModel):
     total_items: int
     completed_records: int
     completion_rate: float
+
+
+# ========== 商品库相关 ==========
+class ProductBase(BaseModel):
+    # 四级分类体系
+    category_level1_code: Optional[int] = None
+    category_level1_name: Optional[str] = None
+    category_level2_code: Optional[int] = None
+    category_level2_name: Optional[str] = None
+    category_level3_code: Optional[int] = None
+    category_level3_name: Optional[str] = None
+    category_level4_code: Optional[int] = None
+    category_level4_name: Optional[str] = None
+    # 商品基本信息
+    product_code: Optional[str] = None
+    name: str
+    barcode: Optional[str] = None
+    spec: Optional[str] = None
+    unit: Optional[str] = None
+    # 品牌产地
+    brand_code: Optional[str] = None
+    brand_name: Optional[str] = None
+    origin: Optional[str] = None
+    # 价格信息
+    purchase_price: Optional[float] = None
+    sale_price: Optional[float] = None
+    # 供应商
+    supplier_code: Optional[str] = None
+    supplier_name: Optional[str] = None
+    # 状态
+    status: Optional[str] = "正常"
+    is_active: bool = True
+
+
+class ProductCreate(ProductBase):
+    pass
+
+
+class ProductResponse(ProductBase):
+    id: int
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+
+class ProductUpdate(BaseModel):
+    category_level4_name: Optional[str] = None
+    name: Optional[str] = None
+    spec: Optional[str] = None
+    barcode: Optional[str] = None
+    brand_name: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class ProductImportResult(BaseModel):
+    success: bool
+    message: str
+    total: int
+    imported: int
+    errors: List[str] = []

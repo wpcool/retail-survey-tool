@@ -298,6 +298,28 @@
         .btn-default { background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); border: 1.5px solid var(--gray-200); color: var(--gray-600); }
         .btn-default:hover { border-color: var(--primary); color: var(--primary); }
         .btn-sm { padding: 8px 16px; font-size: 13px; }
+        .btn-sm:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
+        /* 分组内的操作按钮 */
+        .group-table .action-btns {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        .group-table .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+        .group-table .btn-default {
+            background: #f1f5f9 !important;
+            color: #64748b !important;
+            border: 1px solid #e2e8f0;
+        }
+        .group-table .btn-default:hover {
+            background: #e2e8f0 !important;
+            color: #475569 !important;
+        }
         
         /* 表格 */
         .table-container { overflow-x: auto; }
@@ -353,9 +375,182 @@
         .item-row input { padding: 12px 16px; border: 2px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; font-family: inherit; transition: all 0.3s; }
         .item-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(99,102,241,0.1); transform: translateY(-2px); }
         
+        /* 商品选择器 */
+        .product-selector-item { padding: 12px 16px; border-bottom: 1px solid var(--gray-100); cursor: pointer; transition: all 0.2s; }
+        .product-selector-item:hover { background: var(--gray-50); }
+        .product-selector-item.selected { background: rgba(99,102,241,0.1); }
+        .product-selector-item .checkbox { width: 22px; height: 22px; border: 2px solid var(--gray-300); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; color: white; transition: all 0.2s; }
+        .product-selector-item .checkbox.checked { background: var(--primary); border-color: var(--primary); }
+        .product-selector-item.selected .checkbox { border-color: var(--primary); }
+        
         /* 照片预览 */
         .photo-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius); cursor: pointer; border: 2px solid var(--gray-100); transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
         .photo-thumb:hover { transform: scale(1.15) rotate(3deg); border-color: var(--primary); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        
+        /* 调研记录分组展示 - 优化版 */
+        .record-group { 
+            background: white; 
+            border-radius: 16px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06); 
+            border: 1px solid var(--gray-100); 
+            overflow: hidden; 
+            animation: slideInUp 0.5s both;
+            transition: all 0.3s ease;
+        }
+        .record-group:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .group-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 24px 28px; 
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            border-left: 4px solid var(--primary);
+        }
+        .group-header:hover { 
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); 
+            border-left-color: var(--primary-dark);
+        }
+        
+        .group-info { 
+            display: flex; 
+            align-items: center; 
+            gap: 16px; 
+            flex: 1; 
+        }
+        .group-title { 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: var(--dark);
+            letter-spacing: -0.3px;
+        }
+        .group-count { 
+            font-size: 13px; 
+            color: white; 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+        }
+        
+        .group-price { 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+        }
+        .price-avg { 
+            font-size: 24px; 
+            font-weight: 800; 
+            color: var(--success);
+            text-shadow: 0 2px 4px rgba(16,185,129,0.1);
+        }
+        .price-label {
+            font-size: 12px;
+            color: var(--gray-400);
+            font-weight: 500;
+            margin-right: -12px;
+        }
+        .price-range { 
+            font-size: 13px; 
+            color: var(--gray-500); 
+            background: white;
+            padding: 8px 16px; 
+            border-radius: 12px; 
+            border: 1px solid var(--gray-200);
+            font-weight: 500;
+        }
+        .toggle-icon { 
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px; 
+            color: var(--gray-500); 
+            background: var(--gray-100);
+            border-radius: 50%;
+            transition: all 0.3s ease; 
+            margin-left: 16px;
+        }
+        .group-header:hover .toggle-icon {
+            background: var(--primary-light);
+            color: white;
+            transform: rotate(180deg);
+        }
+        
+        .group-body { 
+            display: none; 
+            padding: 0; 
+            background: white;
+            animation: fadeIn 0.3s ease;
+        }
+        .group-body.expanded { 
+            display: block; 
+        }
+        
+        .group-table { 
+            width: 100%; 
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .group-table thead {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .group-table th { 
+            padding: 18px 24px; 
+            text-align: left; 
+            font-weight: 600; 
+            color: var(--gray-600); 
+            font-size: 13px; 
+            border-bottom: 1px solid var(--gray-200);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .group-table td { 
+            padding: 20px 24px; 
+            border-bottom: 1px solid var(--gray-100); 
+            font-size: 14px; 
+            color: var(--gray-700);
+            transition: all 0.2s ease;
+        }
+        .group-table tbody tr { 
+            animation: slideInRight 0.4s both;
+            transition: all 0.2s ease;
+        }
+        .group-table tbody tr:hover { 
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .group-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* 价格高亮 */
+        .group-table td:nth-child(4) {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--danger);
+        }
+        
+        /* 空状态优化 */
+        .empty-state {
+            padding: 80px 40px;
+            text-align: center;
+            color: var(--gray-400);
+        }
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
         
         /* Toast */
         .toast { position: fixed; top: 28px; right: 28px; padding: 18px 28px; border-radius: var(--radius); color: white; z-index: 2000; font-weight: 600; font-size: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.2); transform: translateX(400px); animation: toast-slide-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -412,6 +607,7 @@
                 <div class="nav-item" data-page="tasks"><span class="nav-icon">📋</span><span>任务管理</span></div>
                 <div class="nav-item" data-page="records"><span class="nav-icon">📝</span><span>调研记录</span></div>
                 <div class="nav-item" data-page="surveyors"><span class="nav-icon">👥</span><span>人员管理</span></div>
+                <div class="nav-item" data-page="products"><span class="nav-icon">🛍️</span><span>商品管理</span></div>
                 <div class="nav-item" data-page="reports"><span class="nav-icon">📊</span><span>统计报表</span></div>
             </nav>
         </aside>
@@ -533,13 +729,14 @@
                 case 'tasks': content.innerHTML = renderTasksPage(); setTimeout(loadTasks, 100); break;
                 case 'records': content.innerHTML = renderRecordsPage(); setTimeout(loadRecords, 100); break;
                 case 'surveyors': content.innerHTML = renderSurveyorsPage(); setTimeout(loadSurveyors, 100); break;
+                case 'products': content.innerHTML = renderProductsPage(); setTimeout(loadProducts, 100); break;
                 case 'reports': content.innerHTML = renderReportsPage(); setTimeout(loadReportData, 100); break;
             }
             updateBreadcrumb(page);
         }
         
         function updateBreadcrumb(page) {
-            const map = { dashboard: '首页 / 数据概览', tasks: '任务管理 / 调研任务', records: '数据管理 / 调研记录', surveyors: '人员管理 / 调研人员', reports: '统计报表 / 数据分析' };
+            const map = { dashboard: '首页 / 数据概览', tasks: '任务管理 / 调研任务', records: '数据管理 / 调研记录', surveyors: '人员管理 / 调研人员', products: '商品管理 / 商品库', reports: '统计报表 / 数据分析' };
             document.getElementById('breadcrumb').textContent = map[page] || '首页';
         }
         
@@ -626,13 +823,36 @@
         
         async function loadTasks() {
             try {
-                const res = await fetch(`${API_BASE}/api/tasks`);
-                const tasks = await res.json();
+                // 获取筛选条件
+                const dateFilter = document.getElementById('taskDateFilter')?.value || '';
+                const searchFilter = document.getElementById('taskSearch')?.value.toLowerCase() || '';
+                
+                // 构建URL
+                let url = `${API_BASE}/api/tasks`;
+                if (dateFilter) {
+                    url += `?date=${dateFilter}`;
+                }
+                
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('加载失败');
+                
+                let tasks = await res.json();
                 currentData.tasks = tasks;
+                
+                // 前端搜索过滤
+                if (searchFilter) {
+                    tasks = tasks.filter(t => t.title.toLowerCase().includes(searchFilter));
+                }
+                
                 const html = tasks.length === 0 ? '<tr><td colspan="7" class="empty-state"><span class="icon">📭</span><p>暂无任务数据</p></td></tr>' : tasks.map((t, i) => `<tr style="animation-delay: ${i * 0.05}s"><td><strong style="color: var(--primary);">#${t.id}</strong></td><td style="font-weight: 600;">${t.title}</td><td>${t.date}</td><td><span class="tag tag-default">${t.item_count} 个品类</span></td><td><span class="tag ${t.status === 'active' ? 'tag-success' : 'tag-default'}">${t.status === 'active' ? '进行中' : '已完成'}</span></td><td>${new Date(t.created_at).toLocaleString()}</td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="viewTask(${t.id})">查看</button><button class="btn btn-sm btn-warning" onclick="editTask(${t.id})">编辑</button><button class="btn btn-sm btn-danger" onclick="deleteTask(${t.id})">删除</button></div></td></tr>`).join('');
                 document.getElementById('taskTable').innerHTML = html;
-            } catch (e) { document.getElementById('taskTable').innerHTML = '<tr><td colspan="7" class="empty-state">加载失败</td></tr>'; }
+            } catch (e) { 
+                console.error('loadTasks error:', e);
+                document.getElementById('taskTable').innerHTML = '<tr><td colspan="7" class="empty-state"><span class="icon">⚠️</span><p>加载失败: ' + e.message + '</p></td></tr>'; 
+            }
         }
+        
+        let currentProductSelection = []; // 当前选中的商品
         
         function openTaskModal(isEdit = false) {
             const title = isEdit ? '编辑调研任务' : '新建调研任务';
@@ -640,18 +860,319 @@
                 <div class="form-group"><label class="form-label"><span class="required">*</span>任务标题</label><input type="text" class="form-control" id="taskTitle" placeholder="如：2024-01-30 生鲜品类调研"></div>
                 <div class="form-group"><label class="form-label"><span class="required">*</span>调研日期</label><input type="date" class="form-control" id="taskDate" value="${new Date().toISOString().split('T')[0]}"></div>
                 <div class="form-group"><label class="form-label">任务说明</label><textarea class="form-control" id="taskDesc" rows="2" placeholder="任务的详细说明..."></textarea></div>
-                <div class="form-group"><label class="form-label"><span class="required">*</span>调研品类</label><div id="itemsList" style="margin-bottom: 10px;"></div><button type="button" class="btn btn-default" onclick="addItemRow()">+ 添加品类</button></div>
+                <div class="form-group">
+                    <label class="form-label"><span class="required">*</span>调研品类</label>
+                    
+                    <!-- 商品选择器容器（默认隐藏） -->
+                    <div id="productSelectorContainer" style="display: none; margin-bottom: 16px;"></div>
+                    
+                    <!-- 添加按钮 -->
+                    <div style="margin-bottom: 12px;">
+                        <button type="button" id="openSelectorBtn" class="btn btn-primary" onclick="openProductSelector()">📚 从商品库选择</button>
+                        <button type="button" class="btn btn-default" onclick="addItemRow()">+ 手动添加</button>
+                    </div>
+                    
+                    <!-- 已添加的商品列表 -->
+                    <div id="itemsList" style="margin-bottom: 10px; max-height: 300px; overflow-y: auto;"></div>
+                </div>
             `;
             openModal(title, body, () => saveTask(isEdit));
-            addItemRow();
+            currentProductSelection = [];
+        }
+        
+        // 在任务弹窗内显示商品选择器
+        async function openProductSelector() {
+            // 将商品选择器嵌入到任务表单位置
+            const container = document.getElementById('productSelectorContainer');
+            if (!container) {
+                showToast('请先打开新建任务窗口', 'error');
+                return;
+            }
+            
+            // 显示选择器区域，隐藏按钮
+            container.style.display = 'block';
+            document.getElementById('openSelectorBtn').style.display = 'none';
+            
+            // 渲染选择器内容
+            container.innerHTML = `
+                <div style="border: 2px solid var(--primary-light); border-radius: 12px; padding: 16px; background: rgba(99,102,241,0.03);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <strong style="color: var(--dark); font-size: 16px;">📚 从商品库选择</strong>
+                        <button type="button" class="btn btn-sm btn-default" onclick="closeProductSelector()">✕ 关闭选择器</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 16px; height: 400px;">
+                        <!-- 左侧：商品库 -->
+                        <div style="flex: 1.5; display: flex; flex-direction: column;">
+                            <div style="margin-bottom: 10px;">
+                                <input type="text" id="productSearchInput" class="search-input" placeholder="🔍 搜索商品名称、品类..." style="width: 100%; margin-bottom: 6px; padding: 10px;" oninput="filterProductSelector()">
+                                <select id="productCategoryFilter" class="filter-select" onchange="filterProductSelector()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--gray-200);">
+                                    <option value="">所有品类</option>
+                                </select>
+                            </div>
+                            <div id="productSelectorList" style="flex: 1; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: 8px; background: white;">
+                                <div class="empty-state"><span class="icon">⏳</span><p>加载中...</p></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧：已选商品 -->
+                        <div style="flex: 1; display: flex; flex-direction: column; min-width: 260px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <strong style="color: var(--dark);">✓ 已选商品</strong>
+                                <span style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                                    <span id="selectedCount">0</span> 个
+                                </span>
+                            </div>
+                            <div id="selectedProductsList" style="flex: 1; overflow-y: auto; border: 2px solid var(--primary-light); border-radius: 8px; background: rgba(99,102,241,0.05); padding: 8px;">
+                                <div class="empty-state" style="padding: 30px 15px;">
+                                    <span class="icon" style="font-size: 40px; opacity: 0.3;">🛒</span>
+                                    <p style="color: var(--gray-400); font-size: 13px;">点击左侧商品添加</p>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="applySelectedProducts()" style="margin-top: 10px; width: 100%;">
+                                添加已选商品到任务
+                            </button>
+                            <button type="button" class="btn btn-default" onclick="clearSelectedProducts()" style="margin-top: 6px; width: 100%;">
+                                清空已选
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 加载品类选项
+            try {
+                const res = await fetch(`${API_BASE}/api/products/categories`);
+                const categories = await res.json();
+                const select = document.getElementById('productCategoryFilter');
+                select.innerHTML = '<option value="">所有品类</option>' + 
+                    categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            } catch (e) {}
+            
+            // 加载商品列表
+            loadProductSelectorList();
+            renderSelectedProductsList();
+        }
+        
+        function closeProductSelector() {
+            const container = document.getElementById('productSelectorContainer');
+            if (container) {
+                container.style.display = 'none';
+                container.innerHTML = '';
+            }
+            document.getElementById('openSelectorBtn').style.display = 'inline-flex';
+        }
+        
+        function applySelectedProducts() {
+            if (currentProductSelection.length === 0) {
+                showToast('请至少选择一个商品', 'error');
+                return;
+            }
+            
+            // 将已选商品添加到任务列表
+            currentProductSelection.forEach(p => {
+                addItemRow({
+                    category: p.category,
+                    product_name: p.name,
+                    product_spec: p.spec,
+                    description: ''
+                });
+            });
+            
+            showToast(`已添加 ${currentProductSelection.length} 个商品到任务`, 'success');
+            
+            // 清空已选并关闭选择器
+            currentProductSelection = [];
+            closeProductSelector();
+        }
+        
+        let allProducts = []; // 缓存商品列表
+        
+        async function loadProductSelectorList() {
+            try {
+                const res = await fetch(`${API_BASE}/api/products?limit=1000`);
+                allProducts = await res.json();
+                renderProductSelectorList(allProducts);
+            } catch (e) {
+                document.getElementById('productSelectorList').innerHTML = '<div class="empty-state"><span class="icon">⚠️</span><p>加载失败</p></div>';
+            }
+        }
+        
+        function filterProductSelector() {
+            const keyword = document.getElementById('productSearchInput')?.value.toLowerCase() || '';
+            const category = document.getElementById('productCategoryFilter')?.value || '';
+            
+            const filtered = allProducts.filter(p => {
+                const matchKeyword = p.name.toLowerCase().includes(keyword) || 
+                                    p.category.toLowerCase().includes(keyword);
+                const matchCategory = !category || p.category === category;
+                return matchKeyword && matchCategory;
+            });
+            
+            renderProductSelectorList(filtered);
+        }
+        
+        function renderProductSelectorList(products) {
+            const container = document.getElementById('productSelectorList');
+            if (products.length === 0) {
+                container.innerHTML = '<div class="empty-state"><span class="icon">📭</span><p>没有找到商品</p></div>';
+                return;
+            }
+            
+            container.innerHTML = products.map(p => {
+                const isSelected = currentProductSelection.some(s => s.id === p.id);
+                return `
+                    <div class="product-selector-item ${isSelected ? 'selected' : ''}" onclick="toggleProductSelection(${p.id}, '${p.category.replace(/'/g, "\\'")}', '${p.name.replace(/'/g, "\\'")}', '${(p.spec || '').replace(/'/g, "\\'")}')" data-id="${p.id}">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="checkbox ${isSelected ? 'checked' : ''}">${isSelected ? '✓' : ''}</div>
+                            <div style="flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                    <span class="tag tag-primary">${p.category}</span>
+                                    <strong style="color: var(--dark);">${p.name}</strong>
+                                </div>
+                                <div style="font-size: 13px; color: var(--gray-500);">
+                                    ${p.spec ? `规格: ${p.spec}` : ''}
+                                    ${p.barcode ? ` | 条码: ${p.barcode}` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function toggleProductSelection(id, category, name, spec) {
+            const idx = currentProductSelection.findIndex(s => s.id === id);
+            if (idx > -1) {
+                currentProductSelection.splice(idx, 1);
+            } else {
+                currentProductSelection.push({ id, category, name, spec });
+            }
+            
+            // 更新商品库UI
+            const item = document.querySelector(`.product-selector-item[data-id="${id}"]`);
+            if (item) {
+                const isSelected = idx === -1; // 刚刚添加
+                item.classList.toggle('selected', isSelected);
+                item.querySelector('.checkbox').classList.toggle('checked', isSelected);
+                item.querySelector('.checkbox').textContent = isSelected ? '✓' : '';
+            }
+            
+            // 更新已选列表
+            renderSelectedProductsList();
+        }
+        
+        function renderSelectedProductsList() {
+            const container = document.getElementById('selectedProductsList');
+            const countEl = document.getElementById('selectedCount');
+            
+            if (countEl) countEl.textContent = currentProductSelection.length;
+            
+            if (currentProductSelection.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding: 40px 20px;">
+                        <span class="icon" style="font-size: 48px; opacity: 0.3;">🛒</span>
+                        <p style="color: var(--gray-400);">暂未选择商品</p>
+                        <p style="font-size: 12px; color: var(--gray-400);">从左侧点击添加</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = currentProductSelection.map((p, idx) => `
+                <div class="selected-product-item" style="display: flex; align-items: center; gap: 8px; padding: 10px; background: white; border-radius: 6px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <span style="background: var(--primary); color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">${idx + 1}</span>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 600; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                        <div style="font-size: 12px; color: var(--gray-500);">
+                            <span class="tag tag-primary" style="font-size: 11px; padding: 2px 6px;">${p.category}</span>
+                            ${p.spec ? ` | ${p.spec}` : ''}
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="removeSelectedProduct(${p.id})" title="移除">✕</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeSelectedProduct(id) {
+            const idx = currentProductSelection.findIndex(s => s.id === id);
+            if (idx > -1) {
+                currentProductSelection.splice(idx, 1);
+                
+                // 更新商品库中的选中状态
+                const item = document.querySelector(`.product-selector-item[data-id="${id}"]`);
+                if (item) {
+                    item.classList.remove('selected');
+                    item.querySelector('.checkbox').classList.remove('checked');
+                    item.querySelector('.checkbox').textContent = '';
+                }
+                
+                // 更新已选列表
+                renderSelectedProductsList();
+            }
+        }
+        
+        function clearSelectedProducts() {
+            if (currentProductSelection.length === 0) return;
+            
+            // 清除所有选中状态
+            currentProductSelection.forEach(p => {
+                const item = document.querySelector(`.product-selector-item[data-id="${p.id}"]`);
+                if (item) {
+                    item.classList.remove('selected');
+                    item.querySelector('.checkbox').classList.remove('checked');
+                    item.querySelector('.checkbox').textContent = '';
+                }
+            });
+            
+            currentProductSelection = [];
+            renderSelectedProductsList();
+        }
+        
+        function confirmProductSelection() {
+            if (currentProductSelection.length === 0) {
+                showToast('请至少选择一个商品', 'error');
+                return false; // 阻止关闭弹窗
+            }
+            
+            // 先关闭商品选择器
+            closeModal();
+            
+            // 延迟添加到任务列表（等待DOM更新）
+            setTimeout(() => {
+                currentProductSelection.forEach(p => {
+                    addItemRow({
+                        category: p.category,
+                        product_name: p.name,
+                        product_spec: p.spec,
+                        description: ''
+                    });
+                });
+                
+                showToast(`已添加 ${currentProductSelection.length} 个商品`, 'success');
+                
+                // 清空已选
+                currentProductSelection = [];
+            }, 100);
+            
+            return true; // 允许关闭弹窗
         }
         
         function addItemRow(data = null) {
             const container = document.getElementById('itemsList');
             const row = document.createElement('div');
             row.className = 'item-row';
-            row.innerHTML = `<input placeholder="类别" class="item-category" value="${data?.category || ''}"><input placeholder="商品名称" class="item-name" value="${data?.product_name || ''}"><input placeholder="规格" class="item-spec" value="${data?.product_spec || ''}"><input placeholder="说明（选填）" class="item-desc" value="${data?.description || ''}"><button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()">删除</button>`;
+            row.style.cssText = 'display: flex; gap: 8px; align-items: center; margin-bottom: 8px; padding: 12px; background: var(--gray-50); border-radius: 8px;';
+            row.innerHTML = `
+                <input placeholder="类别" class="item-category" value="${data?.category || ''}" style="flex: 1; padding: 8px; border: 1px solid var(--gray-200); border-radius: 6px;">
+                <input placeholder="商品名称" class="item-name" value="${data?.product_name || ''}" style="flex: 2; padding: 8px; border: 1px solid var(--gray-200); border-radius: 6px;">
+                <input placeholder="规格" class="item-spec" value="${data?.product_spec || ''}" style="flex: 1; padding: 8px; border: 1px solid var(--gray-200); border-radius: 6px;">
+                <input placeholder="说明（选填）" class="item-desc" value="${data?.description || ''}" style="flex: 1; padding: 8px; border: 1px solid var(--gray-200); border-radius: 6px;">
+                <button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()">删除</button>
+            `;
             container.appendChild(row);
+            // 滚动到底部
+            container.scrollTop = container.scrollHeight;
         }
         
         async function saveTask(isEdit = false) {
@@ -672,9 +1193,22 @@
             
             try {
                 const res = await fetch(`${API_BASE}/api/tasks`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, date, description: desc, items }) });
-                if (res.ok) { showToast('任务保存成功', 'success'); closeModal(); loadTasks(); }
-                else showToast('保存失败', 'error');
-            } catch (e) { showToast('网络错误', 'error'); }
+                if (res.ok) { 
+                    showToast('任务保存成功', 'success'); 
+                    closeModal(); 
+                    // 清空筛选条件后刷新
+                    document.getElementById('taskDateFilter').value = '';
+                    document.getElementById('taskSearch').value = '';
+                    setTimeout(() => loadTasks(), 100);
+                }
+                else {
+                    const err = await res.json();
+                    showToast(err.detail || '保存失败', 'error');
+                }
+            } catch (e) { 
+                console.error('saveTask error:', e);
+                showToast('网络错误', 'error'); 
+            }
         }
         
         async function viewTask(id) {
@@ -709,10 +1243,10 @@
         function renderRecordsPage() {
             return `
                 <div class="card">
-                    <div class="card-header"><span class="card-title">📝 调研记录列表</span><button class="btn btn-success" onclick="exportRecords()">📥 导出Excel</button></div>
+                    <div class="card-header"><span class="card-title">📝 调研记录（按商品分组）</span><button class="btn btn-success" onclick="exportRecords()">📥 导出Excel</button></div>
                     <div class="card-body">
-                        <div class="search-bar"><input type="date" class="search-input" id="recordDateFilter" value="${new Date().toISOString().split('T')[0]}"><select class="search-input" id="recordSurveyorFilter"><option value="">所有人员</option></select><input type="text" class="search-input" id="recordStoreFilter" placeholder="🔍 超市名称..."><button class="btn btn-default" onclick="loadRecords()">筛选</button><button class="btn btn-default" onclick="resetRecordFilter()">重置</button></div>
-                        <div class="table-container"><table><thead><tr><th>ID</th><th>时间</th><th>调研人员</th><th>超市</th><th>品类</th><th>商品</th><th>价格</th><th>照片</th><th>操作</th></tr></thead><tbody id="recordTable"><tr><td colspan="9" class="empty-state">加载中...</td></tr></tbody></table></div>
+                        <div class="search-bar"><input type="date" class="search-input" id="recordDateFilter" value="${new Date().toISOString().split('T')[0]}"><select class="search-input" id="recordSurveyorFilter"><option value="">所有人员</option></select><input type="text" class="search-input" id="recordProductFilter" placeholder="🔍 商品名称..."><button class="btn btn-default" onclick="loadRecords()">筛选</button><button class="btn btn-default" onclick="resetRecordFilter()">重置</button></div>
+                        <div id="recordGroupsContainer"><div class="empty-state"><span class="icon">⏳</span><p>加载中...</p></div></div>
                     </div>
                 </div>
             `;
@@ -721,17 +1255,142 @@
         async function loadRecords() {
             try {
                 const date = document.getElementById('recordDateFilter')?.value;
+                const surveyorId = document.getElementById('recordSurveyorFilter')?.value;
+                const productKeyword = document.getElementById('recordProductFilter')?.value?.toLowerCase();
+                
                 let url = `${API_BASE}/api/records`;
                 if (date) url += `?date=${date}`;
+                
                 const res = await fetch(url);
-                const records = await res.json();
+                let records = await res.json();
+                
+                // 按人员筛选
+                if (surveyorId) {
+                    records = records.filter(r => String(r.surveyor_id) === surveyorId);
+                }
+                
+                // 按商品名称筛选
+                if (productKeyword) {
+                    records = records.filter(r => r.product_name.toLowerCase().includes(productKeyword));
+                }
+                
                 currentData.records = records;
-                const html = records.length === 0 ? '<tr><td colspan="9" class="empty-state"><span class="icon">📭</span><p>暂无记录数据</p></td></tr>' : records.map((r, i) => `<tr style="animation-delay: ${i * 0.03}s"><td><strong style="color: var(--primary);">#${r.id}</strong></td><td>${new Date(r.created_at).toLocaleString()}</td><td>${r.surveyor_name}</td><td>${r.store_name}</td><td><span class="tag tag-default">${r.category}</span></td><td>${r.product_name}</td><td><strong style="color: #059669; font-size: 16px;">¥${r.price?.toFixed(2) || '0.00'}</strong></td><td>${r.photo_path ? `<img src="${API_BASE}${r.photo_path}" class="photo-thumb" onclick="viewPhoto('${API_BASE}${r.photo_path}')">` : '-'}</td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="viewRecord(${r.id})">查看</button><button class="btn btn-sm btn-danger" onclick="deleteRecord(${r.id})">删除</button></div></td></tr>`).join('');
-                document.getElementById('recordTable').innerHTML = html;
-            } catch (e) { document.getElementById('recordTable').innerHTML = '<tr><td colspan="9" class="empty-state">加载失败</td></tr>'; }
+                renderRecordGroups(records);
+            } catch (e) { 
+                document.getElementById('recordGroupsContainer').innerHTML = '<div class="empty-state"><span class="icon">⚠️</span><p>加载失败</p></div>'; 
+            }
         }
         
-        function resetRecordFilter() { document.getElementById('recordDateFilter').value = ''; document.getElementById('recordSurveyorFilter').value = ''; document.getElementById('recordStoreFilter').value = ''; loadRecords(); }
+        function renderRecordGroups(records) {
+            const container = document.getElementById('recordGroupsContainer');
+            if (records.length === 0) {
+                container.innerHTML = '<div class="empty-state"><span class="icon">📭</span><p>暂无记录</p></div>';
+                return;
+            }
+            
+            // 按商品名称分组
+            const groups = {};
+            records.forEach(r => {
+                const key = `${r.category}-${r.product_name}`;
+                if (!groups[key]) {
+                    groups[key] = {
+                        category: r.category,
+                        product_name: r.product_name,
+                        records: []
+                    };
+                }
+                groups[key].records.push(r);
+            });
+            
+            // 按记录数量排序
+            const sortedGroups = Object.values(groups).sort((a, b) => b.records.length - a.records.length);
+            
+            // 渲染分组
+            const html = sortedGroups.map((group, idx) => {
+                const avgPrice = (group.records.reduce((sum, r) => sum + r.price, 0) / group.records.length).toFixed(2);
+                const priceRange = {
+                    min: Math.min(...group.records.map(r => r.price)).toFixed(2),
+                    max: Math.max(...group.records.map(r => r.price)).toFixed(2)
+                };
+                
+                // 按价格排序（低到高）
+                const sortedRecords = [...group.records].sort((a, b) => a.price - b.price);
+                
+                return `
+                    <div class="record-group" style="animation-delay: ${idx * 0.08}s">
+                        <div class="group-header" onclick="toggleGroup('${group.category}-${group.product_name}')">
+                            <div class="group-info">
+                                <span class="tag tag-primary">${group.category}</span>
+                                <strong class="group-title">${group.product_name}</strong>
+                                <span class="group-count">${group.records.length} 条记录</span>
+                            </div>
+                            <div class="group-price">
+                                <span class="price-label">均价</span>
+                                <span class="price-avg">¥${avgPrice}</span>
+                                <span class="price-range">¥${priceRange.min} ~ ¥${priceRange.max}</span>
+                                <span class="toggle-icon">▼</span>
+                            </div>
+                        </div>
+                        <div class="group-body" id="group-${group.category}-${group.product_name}" style="display: none;">
+                            <table class="group-table">
+                                <thead>
+                                    <tr>
+                                        <th width="180">时间</th>
+                                        <th width="100">调研人员</th>
+                                        <th width="150">超市</th>
+                                        <th width="100">价格</th>
+                                        <th>促销信息</th>
+                                        <th width="80">照片</th>
+                                        <th width="120">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${sortedRecords.map((r, i) => `
+                                        <tr style="animation-delay: ${i * 0.04}s">
+                                            <td>${new Date(r.created_at).toLocaleString('zh-CN', {month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})}</td>
+                                            <td><span style="color: var(--primary); font-weight: 600;">${r.surveyor_name}</span></td>
+                                            <td>${r.store_name}</td>
+                                            <td>¥${r.price.toFixed(2)}</td>
+                                            <td>${r.promotion_info ? `<span style="color: var(--warning); font-weight: 500;">${r.promotion_info}</span>` : '<span style="color: var(--gray-400);">-</span>'}</td>
+                                            <td>${r.photo_path ? `<button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); viewPhoto('${API_BASE}${r.photo_path}')">📷 查看</button>` : '<span style="color: var(--gray-300);">-</span>'}</td>
+                                            <td>
+                                                <div class="action-btns">
+                                                    <button class="btn btn-sm btn-default" onclick="event.stopPropagation(); viewRecord(${r.id})" title="详情">👁️</button>
+                                                    <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteRecord(${r.id})" title="删除">🗑️</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.innerHTML = html;
+        }
+        
+        function toggleGroup(groupId) {
+            const body = document.getElementById(`group-${groupId}`);
+            const icon = body.previousElementSibling.querySelector('.toggle-icon');
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                icon.textContent = '▲';
+                body.classList.add('expanded');
+            } else {
+                body.style.display = 'none';
+                icon.textContent = '▼';
+                body.classList.remove('expanded');
+            }
+        }
+        
+        function resetRecordFilter() { 
+            document.getElementById('recordDateFilter').value = ''; 
+            document.getElementById('recordSurveyorFilter').value = ''; 
+            document.getElementById('recordProductFilter').value = ''; 
+            loadRecords(); 
+        }
         
         async function viewRecord(id) {
             const record = currentData.records?.find(r => r.id === id);
@@ -1208,10 +1867,13 @@
         function exportReport() { showToast('报表导出功能开发中...', 'error'); }
         
         // ==================== 通用函数 ====================
-        function openModal(title, body, onConfirm, showConfirm = true) {
+        function openModal(title, body, onConfirm, showConfirm = true, confirmText = null) {
             document.getElementById('modalTitle').textContent = title;
             document.getElementById('modalBody').innerHTML = body;
-            document.getElementById('modalConfirmBtn').style.display = showConfirm ? 'inline-flex' : 'none';
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            confirmBtn.style.display = showConfirm ? 'inline-flex' : 'none';
+            if (confirmText) confirmBtn.innerHTML = `<span>${confirmText}</span>`;
+            else confirmBtn.innerHTML = `<span>✓</span><span>确认</span>`;
             document.getElementById('commonModal').classList.add('active');
             window.currentModalConfirm = onConfirm;
         }
@@ -1220,6 +1882,267 @@
         function confirmModal() { if (window.currentModalConfirm) window.currentModalConfirm(); }
         function viewPhoto(url) { document.getElementById('photoPreview').src = url; document.getElementById('photoModal').classList.add('active'); }
         function closePhotoModal() { document.getElementById('photoModal').classList.remove('active'); }
+        
+        // ==================== 商品管理页 ====================
+        let currentProducts = [];
+        let filteredProducts = [];
+        
+        function renderProductsPage() {
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">🛍️ 商品库管理</h2>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="openImportModal()">📥 Excel导入</button>
+                            <button class="btn btn-success" onclick="openAddProductModal()">➕ 添加商品</button>
+                        </div>
+                    </div>
+                    <div class="toolbar">
+                        <input type="text" id="productSearch" class="search-input" placeholder="🔍 搜索商品名称、品类..." oninput="filterProducts()">
+                        <select id="productCategoryFilter" class="filter-select" onchange="filterProducts()">
+                            <option value="">所有品类</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>品类</th>
+                                    <th>商品名称</th>
+                                    <th>规格</th>
+                                    <th>条码</th>
+                                    <th>品牌</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="productTable">
+                                <tr><td colspan="7" class="empty-state"><span class="icon">⏳</span><p>加载中...</p></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination" id="productPagination"></div>
+                </div>
+            `;
+        }
+        
+        async function loadProducts() {
+            try {
+                showLoading('productTable');
+                const res = await fetch(`${API_BASE}/api/products?limit=1000`);
+                currentProducts = await res.json();
+                filteredProducts = [...currentProducts];
+                
+                // 更新品类筛选下拉框
+                const categories = [...new Set(currentProducts.map(p => p.category))].sort();
+                const categorySelect = document.getElementById('productCategoryFilter');
+                if (categorySelect) {
+                    categorySelect.innerHTML = '<option value="">所有品类</option>' + 
+                        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                }
+                
+                filterProducts();
+            } catch (e) {
+                console.error('加载商品失败:', e);
+                document.getElementById('productTable').innerHTML = '<tr><td colspan="7" class="empty-state"><span class="icon">⚠️</span><p>加载失败</p></td></tr>';
+            }
+        }
+        
+        function filterProducts() {
+            const searchTerm = document.getElementById('productSearch')?.value.toLowerCase() || '';
+            const categoryFilter = document.getElementById('productCategoryFilter')?.value || '';
+            
+            filteredProducts = currentProducts.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(searchTerm) || 
+                                   p.category.toLowerCase().includes(searchTerm) ||
+                                   (p.barcode && p.barcode.includes(searchTerm));
+                const matchCategory = !categoryFilter || p.category === categoryFilter;
+                return matchSearch && matchCategory;
+            });
+            
+            renderProductTable();
+        }
+        
+        function renderProductTable() {
+            const tbody = document.getElementById('productTable');
+            if (filteredProducts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state"><span class="icon">📭</span><p>暂无商品数据</p></td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = filteredProducts.map((p, i) => `
+                <tr style="animation-delay: ${i * 0.03}s">
+                    <td><strong style="color: var(--primary);">#${p.id}</strong></td>
+                    <td><span class="tag tag-primary">${p.category}</span></td>
+                    <td style="font-weight: 600;">${p.name}</td>
+                    <td>${p.spec || '-'}</td>
+                    <td>${p.barcode || '-'}</td>
+                    <td>${p.brand || '-'}</td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="btn btn-sm btn-warning" onclick="editProduct(${p.id})">编辑</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${p.id})">删除</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function openAddProductModal() {
+            const body = `
+                <div class="form-group">
+                    <label>品类 <span class="required">*</span></label>
+                    <input type="text" id="productCategory" placeholder="如：蔬菜、水果、肉类">
+                </div>
+                <div class="form-group">
+                    <label>商品名称 <span class="required">*</span></label>
+                    <input type="text" id="productName" placeholder="如：西红柿">
+                </div>
+                <div class="form-group">
+                    <label>规格</label>
+                    <input type="text" id="productSpec" placeholder="如：500g/盒">
+                </div>
+                <div class="form-group">
+                    <label>条码</label>
+                    <input type="text" id="productBarcode" placeholder="商品条形码">
+                </div>
+                <div class="form-group">
+                    <label>品牌</label>
+                    <input type="text" id="productBrand" placeholder="如：农夫山泉">
+                </div>
+            `;
+            openModal('➕ 添加商品', body, async () => {
+                const category = document.getElementById('productCategory').value.trim();
+                const name = document.getElementById('productName').value.trim();
+                const spec = document.getElementById('productSpec').value.trim();
+                const barcode = document.getElementById('productBarcode').value.trim();
+                const brand = document.getElementById('productBrand').value.trim();
+                
+                if (!category || !name) { showToast('请填写品类和商品名称', 'error'); return; }
+                
+                try {
+                    const res = await fetch(`${API_BASE}/api/products`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category, name, spec: spec || null, barcode: barcode || null, brand: brand || null })
+                    });
+                    if (res.ok) { showToast('添加成功', 'success'); closeModal(); loadProducts(); }
+                    else showToast('添加失败', 'error');
+                } catch (e) { showToast('网络错误', 'error'); }
+            });
+        }
+        
+        function editProduct(id) {
+            const product = currentProducts.find(p => p.id === id);
+            if (!product) return;
+            
+            const body = `
+                <div class="form-group">
+                    <label>品类 <span class="required">*</span></label>
+                    <input type="text" id="productCategory" value="${product.category}">
+                </div>
+                <div class="form-group">
+                    <label>商品名称 <span class="required">*</span></label>
+                    <input type="text" id="productName" value="${product.name}">
+                </div>
+                <div class="form-group">
+                    <label>规格</label>
+                    <input type="text" id="productSpec" value="${product.spec || ''}">
+                </div>
+                <div class="form-group">
+                    <label>条码</label>
+                    <input type="text" id="productBarcode" value="${product.barcode || ''}">
+                </div>
+                <div class="form-group">
+                    <label>品牌</label>
+                    <input type="text" id="productBrand" value="${product.brand || ''}">
+                </div>
+            `;
+            openModal('✏️ 编辑商品', body, async () => {
+                const category = document.getElementById('productCategory').value.trim();
+                const name = document.getElementById('productName').value.trim();
+                const spec = document.getElementById('productSpec').value.trim();
+                const barcode = document.getElementById('productBarcode').value.trim();
+                const brand = document.getElementById('productBrand').value.trim();
+                
+                if (!category || !name) { showToast('请填写品类和商品名称', 'error'); return; }
+                
+                try {
+                    const res = await fetch(`${API_BASE}/api/products/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category, name, spec: spec || null, barcode: barcode || null, brand: brand || null })
+                    });
+                    if (res.ok) { showToast('更新成功', 'success'); closeModal(); loadProducts(); }
+                    else showToast('更新失败', 'error');
+                } catch (e) { showToast('网络错误', 'error'); }
+            });
+        }
+        
+        function deleteProduct(id) {
+            const product = currentProducts.find(p => p.id === id);
+            openModal('⚠️ 确认删除', `<p>确定要删除商品 <strong>${product?.name}</strong> 吗？</p>`, async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
+                    if (res.ok) { showToast('删除成功', 'success'); closeModal(); loadProducts(); }
+                    else showToast('删除失败', 'error');
+                } catch (e) { showToast('网络错误', 'error'); }
+            });
+        }
+        
+        function openImportModal() {
+            const body = `
+                <div class="form-group">
+                    <label>选择Excel文件 <span class="required">*</span></label>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" style="padding: 12px; border: 2px dashed var(--gray-200); border-radius: 8px; width: 100%;">
+                    <p style="color: var(--gray-500); font-size: 13px; margin-top: 8px;">支持 .xlsx 或 .xls 格式，需包含"品类"和"商品名称"列</p>
+                </div>
+                <div style="background: var(--gray-50); padding: 16px; border-radius: 8px; margin-top: 16px;">
+                    <p style="font-weight: 600; margin-bottom: 8px;">📋 Excel格式示例：</p>
+                    <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+                        <tr style="background: var(--primary); color: white;">
+                            <th style="padding: 8px; border: 1px solid var(--gray-200);">品类</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200);">商品名称</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200);">规格</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200);">条码</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid var(--gray-200);">蔬菜</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-200);">西红柿</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-200);">500g</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-200);">6901234567890</td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+            openModal('📥 Excel导入商品', body, async () => {
+                const fileInput = document.getElementById('excelFile');
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    showToast('请选择Excel文件', 'error');
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                
+                try {
+                    showToast('正在导入...', 'success');
+                    const res = await fetch(`${API_BASE}/api/products/import`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await res.json();
+                    
+                    if (result.success) {
+                        showToast(`导入成功！共导入 ${result.imported} 条商品`, 'success');
+                        closeModal();
+                        loadProducts();
+                    } else {
+                        showToast(result.message || '导入失败', 'error');
+                    }
+                } catch (e) { showToast('网络错误', 'error'); }
+            });
+        }
         
         function showToast(message, type = 'success') {
             const icons = { success: '✓', error: '✕' };

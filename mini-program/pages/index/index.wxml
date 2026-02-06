@@ -81,6 +81,26 @@
           {{item.description}}
         </view>
 
+        <!-- 商品列表 -->
+        <view class="items-section" wx:if="{{item.items && item.items.length > 0}}">
+          <view class="items-title">
+            📋 调研商品 (已调研 {{item.total_records || 0}} 次)
+            <view class="progress-bar" wx:if="{{item.completion_percent > 0}}">
+              <view class="progress-fill" style="width: {{item.completion_percent}}%;"></view>
+            </view>
+          </view>
+          <view class="items-list">
+            <view class="item-row {{product.record_count > 0 ? 'completed' : ''}}" wx:for="{{item.items}}" wx:for-item="product" wx:key="id">
+              <view class="item-count-badge {{product.record_count > 0 ? 'has-records' : ''}}">
+                {{product.record_count || 0}}
+              </view>
+              <view class="item-category">{{product.category}}</view>
+              <view class="item-name">{{product.product_name}}</view>
+              <view class="item-spec" wx:if="{{product.product_spec}}">{{product.product_spec}}</view>
+            </view>
+          </view>
+        </view>
+
         <view class="task-footer">
           <text class="task-time">{{item.created_at}}</text>
           <button 

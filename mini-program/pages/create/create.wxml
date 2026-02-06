@@ -17,7 +17,36 @@
     <view class="task-name">{{taskTitle}}</view>
   </view>
 
-  <!-- 商品信息表单 -->
+  <!-- 商品选择（从任务列表中选择） -->
+  <view class="form-card" wx:if="{{taskItems.length > 0}}">
+    <view class="form-title">
+      <text class="form-icon">🛒</text>
+      选择商品 <text class="required">*</text>
+      <text class="progress-text" wx:if="{{totalRecordCount > 0}}">(已调研 {{totalRecordCount}} 次)</text>
+    </view>
+    
+    <view class="items-selector">
+      <view 
+        class="item-option {{selectedItem && selectedItem.id === item.id ? 'selected' : ''}}" 
+        wx:for="{{taskItems}}" 
+        wx:key="id"
+        bindtap="onSelectItem"
+        data-item="{{item}}"
+      >
+        <view class="item-count {{item.record_count > 0 ? 'has-records' : ''}}">
+          {{item.record_count || 0}}
+        </view>
+        <view class="item-info">
+          <text class="item-cat">{{item.category}}</text>
+          <text class="item-product">{{item.product_name}}</text>
+          <text class="item-spec" wx:if="{{item.product_spec}}">{{item.product_spec}}</text>
+        </view>
+        <view class="item-check" wx:if="{{selectedItem && selectedItem.id === item.id}}">✓</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品信息表单（可编辑） -->
   <view class="form-card">
     <view class="form-title">
       <text class="form-icon">📦</text>
@@ -31,18 +60,36 @@
         placeholder="请输入商品名称"
         value="{{form.name}}"
         data-field="name"
-        bindinput="onInput"
+        bindinput="onNameInput"
+        bindfocus="onNameFocus"
+        bindblur="onNameBlur"
       />
+      <!-- 自动补全下拉列表 -->
+      <view class="suggest-list" wx:if="{{suggestList.length > 0 && showSuggest}}">
+        <view 
+          class="suggest-item" 
+          wx:for="{{suggestList}}" 
+          wx:key="id"
+          bindtap="onSelectSuggest"
+          data-item="{{item}}"
+        >
+          <text class="suggest-cat">{{item.category}}</text>
+          <text class="suggest-name">{{item.name}}</text>
+          <text class="suggest-spec" wx:if="{{item.spec}}">{{item.spec}}</text>
+        </view>
+      </view>
     </view>
 
     <view class="form-row">
       <view class="form-item form-item-half">
         <view class="form-label">品类 <text class="required">*</text></view>
-        <picker mode="selector" range="{{categories}}" bindchange="onCategoryChange">
-          <view class="form-picker {{form.category ? '' : 'placeholder'}}">
-            {{form.category || '选择品类'}}
-          </view>
-        </picker>
+        <input 
+          class="form-input" 
+          placeholder="如: 蔬菜"
+          value="{{form.category}}"
+          data-field="category"
+          bindinput="onInput"
+        />
       </view>
 
       <view class="form-item form-item-half">

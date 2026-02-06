@@ -298,6 +298,28 @@
         .btn-default { background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%); border: 1.5px solid var(--gray-200); color: var(--gray-600); }
         .btn-default:hover { border-color: var(--primary); color: var(--primary); }
         .btn-sm { padding: 8px 16px; font-size: 13px; }
+        .btn-sm:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+        
+        /* 分组内的操作按钮 */
+        .group-table .action-btns {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+        .group-table .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 8px;
+        }
+        .group-table .btn-default {
+            background: #f1f5f9 !important;
+            color: #64748b !important;
+            border: 1px solid #e2e8f0;
+        }
+        .group-table .btn-default:hover {
+            background: #e2e8f0 !important;
+            color: #475569 !important;
+        }
         
         /* 表格 */
         .table-container { overflow-x: auto; }
@@ -353,9 +375,192 @@
         .item-row input { padding: 12px 16px; border: 2px solid var(--gray-200); border-radius: var(--radius); font-size: 14px; font-family: inherit; transition: all 0.3s; }
         .item-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(99,102,241,0.1); transform: translateY(-2px); }
         
+        /* 商品选择器 */
+        .product-category-group { margin-bottom: 12px !important; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .product-category-group .category-header { position: sticky; top: 0; z-index: 10; }
+        .product-selector-item { padding: 5px 10px !important; border-bottom: 1px solid var(--gray-100); cursor: pointer; transition: all 0.2s; font-size: 12px !important; }
+        .product-selector-item:last-child { border-bottom: none; }
+        .product-selector-item:hover { background: var(--gray-50); }
+        .product-selector-item.selected { background: rgba(99,102,241,0.1); }
+        .product-selector-item .checkbox { width: 16px !important; height: 16px !important; border: 2px solid var(--gray-300); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px !important; color: white; transition: all 0.2s; flex-shrink: 0; }
+        .product-selector-item .checkbox.checked { background: var(--primary); border-color: var(--primary); }
+        .product-selector-item.selected .checkbox { border-color: var(--primary); }
+        .product-selector-item .tag { font-size: 10px !important; padding: 1px 5px !important; }
+        .product-selector-item strong, .product-selector-item span { font-size: 12px !important; }
+        
+        /* 商品管理卡片样式 */
+        .product-card { transition: all 0.2s ease; }
+        .product-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: var(--primary-light); }
+        .btn-disabled { opacity: 0.5; cursor: not-allowed; background: var(--gray-200); border-color: var(--gray-300); color: var(--gray-500); }
+        
         /* 照片预览 */
         .photo-thumb { width: 60px; height: 60px; object-fit: cover; border-radius: var(--radius); cursor: pointer; border: 2px solid var(--gray-100); transition: all 0.3s; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
         .photo-thumb:hover { transform: scale(1.15) rotate(3deg); border-color: var(--primary); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+        
+        /* 调研记录分组展示 - 优化版 */
+        .record-group { 
+            background: white; 
+            border-radius: 16px; 
+            margin-bottom: 20px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06); 
+            border: 1px solid var(--gray-100); 
+            overflow: hidden; 
+            animation: slideInUp 0.5s both;
+            transition: all 0.3s ease;
+        }
+        .record-group:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .group-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 24px 28px; 
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            border-left: 4px solid var(--primary);
+        }
+        .group-header:hover { 
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%); 
+            border-left-color: var(--primary-dark);
+        }
+        
+        .group-info { 
+            display: flex; 
+            align-items: center; 
+            gap: 16px; 
+            flex: 1; 
+        }
+        .group-title { 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: var(--dark);
+            letter-spacing: -0.3px;
+        }
+        .group-count { 
+            font-size: 13px; 
+            color: white; 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+        }
+        
+        .group-price { 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+        }
+        .price-avg { 
+            font-size: 24px; 
+            font-weight: 800; 
+            color: var(--success);
+            text-shadow: 0 2px 4px rgba(16,185,129,0.1);
+        }
+        .price-label {
+            font-size: 12px;
+            color: var(--gray-400);
+            font-weight: 500;
+            margin-right: -12px;
+        }
+        .price-range { 
+            font-size: 13px; 
+            color: var(--gray-500); 
+            background: white;
+            padding: 8px 16px; 
+            border-radius: 12px; 
+            border: 1px solid var(--gray-200);
+            font-weight: 500;
+        }
+        .toggle-icon { 
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px; 
+            color: var(--gray-500); 
+            background: var(--gray-100);
+            border-radius: 50%;
+            transition: all 0.3s ease; 
+            margin-left: 16px;
+        }
+        .group-header:hover .toggle-icon {
+            background: var(--primary-light);
+            color: white;
+            transform: rotate(180deg);
+        }
+        
+        .group-body { 
+            display: none; 
+            padding: 0; 
+            background: white;
+            animation: fadeIn 0.3s ease;
+        }
+        .group-body.expanded { 
+            display: block; 
+        }
+        
+        .group-table { 
+            width: 100%; 
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .group-table thead {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        .group-table th { 
+            padding: 18px 24px; 
+            text-align: left; 
+            font-weight: 600; 
+            color: var(--gray-600); 
+            font-size: 13px; 
+            border-bottom: 1px solid var(--gray-200);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .group-table td { 
+            padding: 20px 24px; 
+            border-bottom: 1px solid var(--gray-100); 
+            font-size: 14px; 
+            color: var(--gray-700);
+            transition: all 0.2s ease;
+        }
+        .group-table tbody tr { 
+            animation: slideInRight 0.4s both;
+            transition: all 0.2s ease;
+        }
+        .group-table tbody tr:hover { 
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .group-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* 价格高亮 */
+        .group-table td:nth-child(4) {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--danger);
+        }
+        
+        /* 空状态优化 */
+        .empty-state {
+            padding: 80px 40px;
+            text-align: center;
+            color: var(--gray-400);
+        }
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
         
         /* Toast */
         .toast { position: fixed; top: 28px; right: 28px; padding: 18px 28px; border-radius: var(--radius); color: white; z-index: 2000; font-weight: 600; font-size: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.2); transform: translateX(400px); animation: toast-slide-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
@@ -412,6 +617,7 @@
                 <div class="nav-item" data-page="tasks"><span class="nav-icon">📋</span><span>任务管理</span></div>
                 <div class="nav-item" data-page="records"><span class="nav-icon">📝</span><span>调研记录</span></div>
                 <div class="nav-item" data-page="surveyors"><span class="nav-icon">👥</span><span>人员管理</span></div>
+                <div class="nav-item" data-page="products"><span class="nav-icon">🛍️</span><span>商品管理</span></div>
                 <div class="nav-item" data-page="reports"><span class="nav-icon">📊</span><span>统计报表</span></div>
             </nav>
         </aside>
@@ -533,13 +739,14 @@
                 case 'tasks': content.innerHTML = renderTasksPage(); setTimeout(loadTasks, 100); break;
                 case 'records': content.innerHTML = renderRecordsPage(); setTimeout(loadRecords, 100); break;
                 case 'surveyors': content.innerHTML = renderSurveyorsPage(); setTimeout(loadSurveyors, 100); break;
+                case 'products': content.innerHTML = ''; setTimeout(() => { content.innerHTML = renderProductsPage(); setTimeout(loadProducts, 50); }, 10); break;
                 case 'reports': content.innerHTML = renderReportsPage(); setTimeout(loadReportData, 100); break;
             }
             updateBreadcrumb(page);
         }
         
         function updateBreadcrumb(page) {
-            const map = { dashboard: '首页 / 数据概览', tasks: '任务管理 / 调研任务', records: '数据管理 / 调研记录', surveyors: '人员管理 / 调研人员', reports: '统计报表 / 数据分析' };
+            const map = { dashboard: '首页 / 数据概览', tasks: '任务管理 / 调研任务', records: '数据管理 / 调研记录', surveyors: '人员管理 / 调研人员', products: '商品管理 / 商品库', reports: '统计报表 / 数据分析' };
             document.getElementById('breadcrumb').textContent = map[page] || '首页';
         }
         
@@ -566,9 +773,12 @@
                 </div>
                 <div class="chart-row">
                     <div class="card"><div class="card-header"><span class="card-title">📈 近7天调研趋势</span></div><div class="card-body"><div class="chart-container"><canvas id="trendChart"></canvas></div></div></div>
-                    <div class="card"><div class="card-header"><span class="card-title">🥧 品类分布</span></div><div class="card-body"><div class="chart-container"><canvas id="categoryChart"></canvas></div></div></div>
+                    <div class="card"><div class="card-header"><span class="card-title">🥫 食品杂货分布（二级分类）</span></div><div class="card-body"><div class="chart-container"><canvas id="groceryChart"></canvas></div></div></div>
                 </div>
-                <div class="card"><div class="card-header"><span class="card-title">🏆 今日调研人员排行</span></div><div class="card-body"><div class="table-container"><table><thead><tr><th>排名</th><th>姓名</th><th>完成数量</th><th>完成率</th></tr></thead><tbody id="rankingTable"><tr><td colspan="4" class="empty-state">加载中...</td></tr></tbody></table></div></div></div>
+                <div class="chart-row" style="margin-top: 28px;">
+                    <div class="card"><div class="card-header"><span class="card-title">🥬 生鲜分布（二级分类）</span></div><div class="card-body"><div class="chart-container"><canvas id="freshChart"></canvas></div></div></div>
+                    <div class="card"><div class="card-header"><span class="card-title">🏆 今日调研人员排行</span></div><div class="card-body"><div class="table-container"><table><thead><tr><th>排名</th><th>姓名</th><th>完成数量</th><th>超市数量</th><th>完成率</th></tr></thead><tbody id="rankingTable"><tr><td colspan="5" class="empty-state">加载中...</td></tr></tbody></table></div></div></div>
+                </div>
             `;
         }
         
@@ -585,30 +795,374 @@
             } catch (e) { showToast('加载数据失败', 'error'); }
         }
         
-        function loadTrendChart() {
+        async function loadTrendChart() {
             const ctx = document.getElementById('trendChart');
             if (!ctx) return;
-            const dates = [], data = [];
-            for (let i = 6; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); dates.push(d.toLocaleDateString('zh-CN', {month: 'short', day: 'numeric'})); data.push(Math.floor(Math.random() * 50) + 20); }
-            new Chart(ctx, {
-                type: 'line', data: { labels: dates, datasets: [{ label: '调研记录数', data: data, borderColor: '#6366f1', backgroundColor: (context) => { const ctx = context.chart.ctx; const gradient = ctx.createLinearGradient(0, 0, 0, 300); gradient.addColorStop(0, 'rgba(99,102,241,0.3)'); gradient.addColorStop(1, 'rgba(99,102,241,0.0)'); return gradient; }, fill: true, tension: 0.4, borderWidth: 3, pointBackgroundColor: '#6366f1', pointBorderColor: '#fff', pointBorderWidth: 3, pointRadius: 6, pointHoverRadius: 8 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.03)' } }, x: { grid: { display: false } } }, animation: { duration: 2000, easing: 'easeOutQuart' } }
-            });
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/statistics/trend?days=7`);
+                const trendData = await res.json();
+                
+                const dates = trendData.map(d => new Date(d.date).toLocaleDateString('zh-CN', {month: 'short', day: 'numeric'}));
+                const recordCounts = trendData.map(d => d.record_count);
+                const completionRates = trendData.map(d => d.completion_rate);
+                
+                new Chart(ctx, {
+                    type: 'line', 
+                    data: { 
+                        labels: dates, 
+                        datasets: [
+                            {
+                                label: '调研记录数',
+                                data: recordCounts,
+                                borderColor: '#6366f1',
+                                backgroundColor: (context) => { 
+                                    const ctx = context.chart.ctx; 
+                                    const gradient = ctx.createLinearGradient(0, 0, 0, 300); 
+                                    gradient.addColorStop(0, 'rgba(99,102,241,0.3)'); 
+                                    gradient.addColorStop(1, 'rgba(99,102,241,0.0)'); 
+                                    return gradient; 
+                                },
+                                fill: true,
+                                tension: 0.4,
+                                borderWidth: 3,
+                                pointBackgroundColor: '#6366f1',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 3,
+                                pointRadius: 6,
+                                pointHoverRadius: 8,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: '完成率(%)',
+                                data: completionRates,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16,185,129,0.1)',
+                                borderWidth: 3,
+                                pointBackgroundColor: '#10b981',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 3,
+                                pointRadius: 6,
+                                pointHoverRadius: 8,
+                                tension: 0.4,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { 
+                            legend: { 
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    usePointStyle: true,
+                                    padding: 20,
+                                    font: { size: 12, weight: '600' }
+                                }
+                            } 
+                        }, 
+                        scales: { 
+                            y: { 
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: '调研记录数' },
+                                beginAtZero: true, 
+                                grid: { color: 'rgba(0,0,0,0.03)' } 
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: { display: true, text: '完成率(%)' },
+                                min: 0,
+                                max: 100,
+                                grid: { display: false }
+                            },
+                            x: { 
+                                grid: { display: false } 
+                            } 
+                        }, 
+                        animation: { duration: 1500, easing: 'easeOutQuart' } 
+                    }
+                });
+            } catch (e) {
+                console.error('加载趋势图失败:', e);
+                // 降级显示空图表
+                new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: [], datasets: [] },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
         }
         
-        function loadCategoryChart() {
-            const ctx = document.getElementById('categoryChart');
-            if (!ctx) return;
-            new Chart(ctx, {
-                type: 'doughnut', data: { labels: ['蔬菜', '水果', '肉类', '粮油', '日用', '其他'], datasets: [{ data: [30, 25, 20, 15, 7, 3], backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#9ca3af'], borderWidth: 0, hoverOffset: 10 }] },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right', labels: { usePointStyle: true, padding: 20, font: { size: 13, weight: '600' } } } }, animation: { animateRotate: true, duration: 2000 } }
-            });
+        async function loadCategoryChart() {
+            try {
+                const res = await fetch(`${API_BASE}/api/statistics/category-distribution?days=7`);
+                const data = await res.json();
+                
+                // 食品杂货分布图
+                const groceryCtx = document.getElementById('groceryChart');
+                if (groceryCtx) {
+                    const groceryLabels = data.grocery.length > 0 ? data.grocery.map(d => d.name) : ['暂无数据'];
+                    const groceryData = data.grocery.length > 0 ? data.grocery.map(d => d.count) : [0];
+                    new Chart(groceryCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: groceryLabels,
+                            datasets: [{
+                                data: groceryData,
+                                backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'],
+                                borderWidth: 2,
+                                borderColor: '#fff',
+                                hoverOffset: 10
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '60%',
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        usePointStyle: true,
+                                        padding: 15,
+                                        font: { size: 12, weight: '600' },
+                                        boxWidth: 12
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = context.raw || 0;
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                            return `${label}: ${value}条 (${percentage}%)`;
+                                        }
+                                    }
+                                }
+                            },
+                            animation: { animateRotate: true, duration: 1500 }
+                        }
+                    });
+                }
+                
+                // 生鲜分布图
+                const freshCtx = document.getElementById('freshChart');
+                if (freshCtx) {
+                    const freshLabels = data.fresh.length > 0 ? data.fresh.map(d => d.name) : ['暂无数据'];
+                    const freshData = data.fresh.length > 0 ? data.fresh.map(d => d.count) : [0];
+                    new Chart(freshCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: freshLabels,
+                            datasets: [{
+                                data: freshData,
+                                backgroundColor: ['#10b981', '#6366f1', '#f59e0b', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'],
+                                borderWidth: 2,
+                                borderColor: '#fff',
+                                hoverOffset: 10
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            cutout: '60%',
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                    labels: {
+                                        usePointStyle: true,
+                                        padding: 15,
+                                        font: { size: 12, weight: '600' },
+                                        boxWidth: 12
+                                    }
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const label = context.label || '';
+                                            const value = context.raw || 0;
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                            return `${label}: ${value}条 (${percentage}%)`;
+                                        }
+                                    }
+                                }
+                            },
+                            animation: { animateRotate: true, duration: 1500 }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('加载品类分布图失败:', e);
+            }
         }
         
-        function loadRanking() {
-            const ranking = [{ name: '张三', count: 45, rate: '95%' }, { name: '李四', count: 38, rate: '88%' }, { name: '王五', count: 32, rate: '82%' }, { name: '赵六', count: 28, rate: '75%' }, { name: '钱七', count: 25, rate: '70%' }];
-            const medals = ['🥇', '🥈', '🥉'];
-            document.getElementById('rankingTable').innerHTML = ranking.map((r, i) => `<tr style="animation-delay: ${i * 0.1}s"><td>${i < 3 ? `<span style="font-size: 24px;">${medals[i]}</span>` : `<span style="color: #94a3b8; font-weight: 700; font-size: 16px;">${i + 1}</span>`}</td><td><strong style="font-size: 15px;">${r.name}</strong></td><td><span class="tag tag-default">${r.count} 条</span></td><td><span class="tag ${i < 3 ? 'tag-success' : 'tag-default'}">${r.rate}</span></td></tr>`).join('');
+        async function loadRanking() {
+            try {
+                const today = new Date().toISOString().split('T')[0];
+                const res = await fetch(`${API_BASE}/api/statistics/surveyor-ranking?date=${today}`);
+                const ranking = await res.json();
+                
+                const medals = ['🥇', '🥈', '🥉'];
+                const html = ranking.length === 0 
+                    ? '<tr><td colspan="5" class="empty-state"><span class="icon">📭</span><p>今日暂无调研数据</p></td></tr>'
+                    : ranking.map((r, i) => `
+                        <tr style="animation-delay: ${i * 0.1}s">
+                            <td>${i < 3 ? `<span style="font-size: 24px;">${medals[i]}</span>` : `<span style="color: #94a3b8; font-weight: 700; font-size: 16px;">${i + 1}</span>`}</td>
+                            <td>
+                                <strong style="font-size: 15px; cursor: pointer; color: var(--primary); text-decoration: underline dotted;"
+                                    onmouseenter="showSurveyorTooltip(event, ${r.id}, '${today}')"
+                                    onmouseleave="hideSurveyorTooltip()"
+                                    onclick="hideSurveyorTooltipImmediately()">
+                                    ${r.name}
+                                </strong>
+                            </td>
+                            <td><span class="tag tag-default">${r.count} 条</span></td>
+                            <td><span class="tag tag-warning">${r.store_count} 个</span></td>
+                            <td><span class="tag ${i < 3 ? 'tag-success' : 'tag-default'}">${r.completion_rate}%</span></td>
+                        </tr>
+                    `).join('');
+                
+                document.getElementById('rankingTable').innerHTML = html;
+            } catch (e) {
+                console.error('加载排行数据失败:', e);
+                document.getElementById('rankingTable').innerHTML = '<tr><td colspan="5" class="empty-state">加载失败</td></tr>';
+            }
+        }
+        
+        // 悬浮提示相关
+        let tooltipTimeout = null;
+        let hideTooltipTimeout = null;
+        let currentTooltip = null;
+        let isMouseOverTooltip = false;
+        
+        async function showSurveyorTooltip(event, surveyorId, date) {
+            // 清除隐藏定时器
+            if (hideTooltipTimeout) {
+                clearTimeout(hideTooltipTimeout);
+                hideTooltipTimeout = null;
+            }
+            
+            // 如果已经显示了就返回
+            if (currentTooltip && currentTooltip.dataset.surveyorId === String(surveyorId)) {
+                return;
+            }
+            
+            tooltipTimeout = setTimeout(async () => {
+                try {
+                    // 移除之前的tooltip
+                    if (currentTooltip) {
+                        currentTooltip.remove();
+                    }
+                    
+                    const res = await fetch(`${API_BASE}/api/surveyors/${surveyorId}/today-details?date=${date}`);
+                    const details = await res.json();
+                    
+                    let content = '';
+                    if (details.length === 0) {
+                        content = '<div style="padding: 10px; color: #666;">暂无详细数据</div>';
+                    } else {
+                        // 按超市分组
+                        const storeMap = {};
+                        details.forEach(d => {
+                            if (!storeMap[d.store_name]) {
+                                storeMap[d.store_name] = [];
+                            }
+                            storeMap[d.store_name].push(d);
+                        });
+                        
+                        content = Object.entries(storeMap).map(([store, items]) => `
+                            <div style="margin-bottom: 12px;">
+                                <div style="font-weight: 600; color: var(--primary); margin-bottom: 6px; font-size: 13px;">🏪 ${store}</div>
+                                ${items.map(item => `
+                                    <div style="padding: 4px 0; border-bottom: 1px dashed #eee; font-size: 12px; display: flex; justify-content: space-between; align-items: center;">
+                                        <span style="color: #333;">${item.product_name}</span>
+                                        <span style="color: #888; font-size: 11px;">${item.time}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `).join('');
+                    }
+                    
+                    const tooltip = document.createElement('div');
+                    tooltip.id = 'surveyor-tooltip';
+                    tooltip.dataset.surveyorId = surveyorId;
+                    tooltip.innerHTML = `
+                        <div style="background: white; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); padding: 16px; min-width: 280px; max-width: 350px; max-height: 400px; overflow-y: auto; border: 1px solid rgba(0,0,0,0.08);"
+                            onmouseenter="onTooltipEnter()" onmouseleave="onTooltipLeave()">
+                            <div style="font-weight: 700; font-size: 14px; margin-bottom: 12px; color: var(--dark); border-bottom: 2px solid var(--primary-light); padding-bottom: 8px;">
+                                📋 今日调研详情
+                            </div>
+                            ${content}
+                        </div>
+                    `;
+                    tooltip.style.cssText = 'position: fixed; z-index: 10000; left: ' + (event.clientX + 15) + 'px; top: ' + (event.clientY - 10) + 'px;';
+                    
+                    document.body.appendChild(tooltip);
+                    currentTooltip = tooltip;
+                    
+                    // 调整位置防止超出屏幕
+                    const rect = tooltip.getBoundingClientRect();
+                    if (rect.right > window.innerWidth) {
+                        tooltip.style.left = (event.clientX - rect.width - 15) + 'px';
+                    }
+                    if (rect.bottom > window.innerHeight) {
+                        tooltip.style.top = (event.clientY - rect.height + 10) + 'px';
+                    }
+                    
+                } catch (e) {
+                    console.error('加载详情失败:', e);
+                }
+            }, 200); // 延迟200ms显示
+        }
+        
+        function onTooltipEnter() {
+            isMouseOverTooltip = true;
+            if (hideTooltipTimeout) {
+                clearTimeout(hideTooltipTimeout);
+                hideTooltipTimeout = null;
+            }
+        }
+        
+        function onTooltipLeave() {
+            isMouseOverTooltip = false;
+            hideSurveyorTooltip();
+        }
+        
+        function hideSurveyorTooltip() {
+            if (tooltipTimeout) {
+                clearTimeout(tooltipTimeout);
+                tooltipTimeout = null;
+            }
+            
+            // 延迟隐藏，给鼠标移动到tooltip留时间
+            hideTooltipTimeout = setTimeout(() => {
+                if (!isMouseOverTooltip && currentTooltip) {
+                    currentTooltip.remove();
+                    currentTooltip = null;
+                }
+            }, 300);
+        }
+        
+        function hideSurveyorTooltipImmediately() {
+            if (hideTooltipTimeout) {
+                clearTimeout(hideTooltipTimeout);
+            }
+            if (tooltipTimeout) {
+                clearTimeout(tooltipTimeout);
+            }
+            isMouseOverTooltip = false;
+            if (currentTooltip) {
+                currentTooltip.remove();
+                currentTooltip = null;
+            }
         }
         
         // ==================== 任务管理页 ====================
@@ -626,13 +1180,63 @@
         
         async function loadTasks() {
             try {
-                const res = await fetch(`${API_BASE}/api/tasks`);
-                const tasks = await res.json();
+                // 获取筛选条件
+                const dateFilter = document.getElementById('taskDateFilter')?.value || '';
+                const searchFilter = document.getElementById('taskSearch')?.value.toLowerCase() || '';
+                
+                // 构建URL
+                let url = `${API_BASE}/api/tasks`;
+                if (dateFilter) {
+                    url += `?date=${dateFilter}`;
+                }
+                
+                const res = await fetch(url);
+                if (!res.ok) throw new Error('加载失败');
+                
+                let tasks = await res.json();
                 currentData.tasks = tasks;
-                const html = tasks.length === 0 ? '<tr><td colspan="7" class="empty-state"><span class="icon">📭</span><p>暂无任务数据</p></td></tr>' : tasks.map((t, i) => `<tr style="animation-delay: ${i * 0.05}s"><td><strong style="color: var(--primary);">#${t.id}</strong></td><td style="font-weight: 600;">${t.title}</td><td>${t.date}</td><td><span class="tag tag-default">${t.item_count} 个品类</span></td><td><span class="tag ${t.status === 'active' ? 'tag-success' : 'tag-default'}">${t.status === 'active' ? '进行中' : '已完成'}</span></td><td>${new Date(t.created_at).toLocaleString()}</td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="viewTask(${t.id})">查看</button><button class="btn btn-sm btn-warning" onclick="editTask(${t.id})">编辑</button><button class="btn btn-sm btn-danger" onclick="deleteTask(${t.id})">删除</button></div></td></tr>`).join('');
+                
+                // 前端搜索过滤
+                if (searchFilter) {
+                    tasks = tasks.filter(t => t.title.toLowerCase().includes(searchFilter));
+                }
+                
+                // 计算任务状态（基于日期）
+                function getTaskStatus(dateStr) {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const taskDate = new Date(dateStr);
+                    taskDate.setHours(0, 0, 0, 0);
+                    
+                    if (taskDate.getTime() === today.getTime()) {
+                        return { text: '进行中', class: 'tag-success' };
+                    } else if (taskDate < today) {
+                        return { text: '已结束', class: 'tag-default' };
+                    } else {
+                        return { text: '未开始', class: 'tag-warning' };
+                    }
+                }
+                
+                const html = tasks.length === 0 ? '<tr><td colspan="7" class="empty-state"><span class="icon">📭</span><p>暂无任务数据</p></td></tr>' : tasks.map((t, i) => {
+                    const status = getTaskStatus(t.date);
+                    const createdAt = t.created_at ? new Date(t.created_at).toLocaleString('zh-CN') : '-';
+                    const isCancelled = t.status === 'cancelled';
+                    const rowStyle = isCancelled ? 'opacity: 0.6; background: var(--gray-100);' : '';
+                    const cancelBadge = isCancelled ? '<span style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 8px;">已作废</span>' : '';
+                    const actionButtons = isCancelled 
+                        ? '<span style="color: var(--gray-400); font-size: 12px;">已作废</span>'
+                        : `<div class="action-btns"><button class="btn btn-sm btn-primary" onclick="viewTask(${t.id})">查看</button><button class="btn btn-sm btn-warning" onclick="cancelTask(${t.id})">作废</button></div>`;
+                    
+                    return `<tr style="animation-delay: ${i * 0.05}s; ${rowStyle}"><td><strong style="color: var(--primary);">#${t.id}</strong></td><td style="font-weight: 600;">${t.title}${cancelBadge}</td><td>${t.date}</td><td><span class="tag tag-default">${t.item_count} 个品类</span></td><td><span class="tag ${status.class}">${status.text}</span></td><td>${createdAt}</td><td>${actionButtons}</td></tr>`;
+                }).join('');
                 document.getElementById('taskTable').innerHTML = html;
-            } catch (e) { document.getElementById('taskTable').innerHTML = '<tr><td colspan="7" class="empty-state">加载失败</td></tr>'; }
+            } catch (e) { 
+                console.error('loadTasks error:', e);
+                document.getElementById('taskTable').innerHTML = '<tr><td colspan="7" class="empty-state"><span class="icon">⚠️</span><p>加载失败: ' + e.message + '</p></td></tr>'; 
+            }
         }
+        
+        let currentProductSelection = []; // 当前选中的商品
         
         function openTaskModal(isEdit = false) {
             const title = isEdit ? '编辑调研任务' : '新建调研任务';
@@ -640,18 +1244,547 @@
                 <div class="form-group"><label class="form-label"><span class="required">*</span>任务标题</label><input type="text" class="form-control" id="taskTitle" placeholder="如：2024-01-30 生鲜品类调研"></div>
                 <div class="form-group"><label class="form-label"><span class="required">*</span>调研日期</label><input type="date" class="form-control" id="taskDate" value="${new Date().toISOString().split('T')[0]}"></div>
                 <div class="form-group"><label class="form-label">任务说明</label><textarea class="form-control" id="taskDesc" rows="2" placeholder="任务的详细说明..."></textarea></div>
-                <div class="form-group"><label class="form-label"><span class="required">*</span>调研品类</label><div id="itemsList" style="margin-bottom: 10px;"></div><button type="button" class="btn btn-default" onclick="addItemRow()">+ 添加品类</button></div>
+                <div class="form-group">
+                    <label class="form-label"><span class="required">*</span>调研品类</label>
+                    
+                    <!-- 商品选择器容器（默认隐藏） -->
+                    <div id="productSelectorContainer" style="display: none; margin-bottom: 16px;"></div>
+                    
+                    <!-- 添加按钮 -->
+                    <div style="margin-bottom: 12px;">
+                        <button type="button" id="openSelectorBtn" class="btn btn-primary" onclick="openProductSelector()">📚 从商品库选择</button>
+                        <button type="button" class="btn btn-default" onclick="addItemRow()">+ 手动添加</button>
+                    </div>
+                    
+                    <!-- 已添加的商品列表 -->
+                    <div id="itemsList" style="margin-bottom: 10px; max-height: 300px; overflow-y: auto; width: 100%;"></div>
+                </div>
             `;
             openModal(title, body, () => saveTask(isEdit));
-            addItemRow();
+            currentProductSelection = [];
+        }
+        
+        // 在任务弹窗内显示商品选择器
+        async function openProductSelector() {
+            // 将商品选择器嵌入到任务表单位置
+            const container = document.getElementById('productSelectorContainer');
+            if (!container) {
+                showToast('请先打开新建任务窗口', 'error');
+                return;
+            }
+            
+            // 显示选择器区域，隐藏按钮
+            container.style.display = 'block';
+            document.getElementById('openSelectorBtn').style.display = 'none';
+            
+            // 渲染选择器内容
+            container.innerHTML = `
+                <div style="border: 2px solid var(--primary-light); border-radius: 12px; padding: 16px; background: rgba(99,102,241,0.03);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <strong style="color: var(--dark); font-size: 16px;">📚 从商品库选择</strong>
+                        <button type="button" class="btn btn-sm btn-default" onclick="closeProductSelector()">✕ 关闭选择器</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 16px; height: 420px;">
+                        <!-- 左侧：商品库 -->
+                        <div style="flex: 1.5; display: flex; flex-direction: column;">
+                            <!-- 四级分类级联选择 -->
+                            <div style="margin-bottom: 8px; padding: 10px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200);">
+                                <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 6px; font-weight: 600;">📂 四级分类筛选</div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                                    <select id="catLevel1" class="filter-select" onchange="onLevel1Change()" style="padding: 6px; border-radius: 6px; border: 1px solid var(--gray-300); font-size: 12px;">
+                                        <option value="">一级分类</option>
+                                    </select>
+                                    <select id="catLevel2" class="filter-select" onchange="onLevel2Change()" style="padding: 6px; border-radius: 6px; border: 1px solid var(--gray-300); font-size: 12px;">
+                                        <option value="">二级分类</option>
+                                    </select>
+                                    <select id="catLevel3" class="filter-select" onchange="onLevel3Change()" style="padding: 6px; border-radius: 6px; border: 1px solid var(--gray-300); font-size: 12px;">
+                                        <option value="">三级分类</option>
+                                    </select>
+                                    <select id="catLevel4" class="filter-select" onchange="onLevel4Change()" style="padding: 6px; border-radius: 6px; border: 1px solid var(--gray-300); font-size: 12px;">
+                                        <option value="">四级分类</option>
+                                    </select>
+                                </div>
+                                <div style="margin-top: 6px; display: flex; gap: 6px;">
+                                    <input type="text" id="productSearchInput" class="search-input" placeholder="🔍 搜索商品名称..." style="flex: 1; padding: 6px 10px; font-size: 12px; height: 32px;" oninput="filterProductSelector()">
+                                    <button type="button" class="btn btn-sm btn-default" onclick="clearCategoryFilter()" style="white-space: nowrap; font-size: 12px;">清空筛选</button>
+                                </div>
+                            </div>
+                            
+                            <!-- 筛选结果操作栏 -->
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding: 8px 12px; background: var(--primary-light); border-radius: 8px;">
+                                <span style="font-size: 13px; color: var(--primary); font-weight: 600;">
+                                    📋 当前筛选: <span id="filterResultCount">0</span> 个商品
+                                </span>
+                                <button type="button" class="btn btn-sm btn-success" onclick="addAllFilteredProducts()" style="font-size: 12px;">
+                                    ➕ 添加全部到任务
+                                </button>
+                            </div>
+                            
+                            <div id="productSelectorList" style="flex: 1; overflow-y: auto; border: 1px solid var(--gray-200); border-radius: 8px; background: white;">
+                                <div class="empty-state"><span class="icon">⏳</span><p>加载中...</p></div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧：已选商品 -->
+                        <div style="flex: 1; display: flex; flex-direction: column; min-width: 260px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                <strong style="color: var(--dark);">✓ 已选商品</strong>
+                                <span style="background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                                    <span id="selectedCount">0</span> 个
+                                </span>
+                            </div>
+                            <div id="selectedProductsList" style="flex: 1; overflow-y: auto; border: 2px solid var(--primary-light); border-radius: 8px; background: rgba(99,102,241,0.05); padding: 8px;">
+                                <div class="empty-state" style="padding: 30px 15px;">
+                                    <span class="icon" style="font-size: 40px; opacity: 0.3;">🛒</span>
+                                    <p style="color: var(--gray-400); font-size: 13px;">点击左侧商品添加</p>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="applySelectedProducts()" style="margin-top: 10px; width: 100%;">
+                                添加已选商品到任务
+                            </button>
+                            <button type="button" class="btn btn-default" onclick="clearSelectedProducts()" style="margin-top: 6px; width: 100%;">
+                                清空已选
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 加载一级分类
+            loadCategoryLevel1();
+            
+            // 加载商品列表（初始加载前200条）
+            console.log('打开商品选择器，开始加载商品...');
+            loadProductSelectorList('', '', '', '', '');
+            renderSelectedProductsList();
+            console.log('商品选择器初始化完成');
+        }
+        
+        function closeProductSelector() {
+            const container = document.getElementById('productSelectorContainer');
+            if (container) {
+                container.style.display = 'none';
+                container.innerHTML = '';
+            }
+            document.getElementById('openSelectorBtn').style.display = 'inline-flex';
+        }
+        
+        function applySelectedProducts() {
+            if (currentProductSelection.length === 0) {
+                showToast('请至少选择一个商品', 'error');
+                return;
+            }
+            
+            // 将已选商品添加到任务列表
+            currentProductSelection.forEach(p => {
+                addItemRow({
+                    category: p.category,
+                    category_path: p.catPath,
+                    product_name: p.name,
+                    product_spec: p.spec,
+                    description: ''
+                });
+            });
+            
+            showToast(`已添加 ${currentProductSelection.length} 个商品到任务`, 'success');
+            
+            // 清空已选并关闭选择器
+            currentProductSelection = [];
+            closeProductSelector();
+        }
+        
+        let allProducts = []; // 缓存商品列表
+        
+        // ========== 四级分类级联选择 ==========
+        async function loadCategoryLevel1() {
+            try {
+                const res = await fetch(`${API_BASE}/api/products/categories?level=1`);
+                const categories = await res.json();
+                const select = document.getElementById('catLevel1');
+                select.innerHTML = '<option value="">一级分类</option>' + 
+                    categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            } catch (e) { console.error('加载一级分类失败:', e); }
+        }
+        
+        async function onLevel1Change() {
+            const level1 = document.getElementById('catLevel1').value;
+            const level2Select = document.getElementById('catLevel2');
+            const level3Select = document.getElementById('catLevel3');
+            const level4Select = document.getElementById('catLevel4');
+            
+            // 重置下级
+            level2Select.innerHTML = '<option value="">二级分类</option>';
+            level3Select.innerHTML = '<option value="">三级分类</option>';
+            level4Select.innerHTML = '<option value="">四级分类</option>';
+            
+            if (level1) {
+                try {
+                    const res = await fetch(`${API_BASE}/api/products/categories?level=2&parent=${encodeURIComponent(level1)}`);
+                    const categories = await res.json();
+                    level2Select.innerHTML = '<option value="">二级分类</option>' + 
+                        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                } catch (e) { console.error('加载二级分类失败:', e); }
+            }
+            filterProductSelectorImmediate();
+        }
+        
+        async function onLevel2Change() {
+            const level2 = document.getElementById('catLevel2').value;
+            const level3Select = document.getElementById('catLevel3');
+            const level4Select = document.getElementById('catLevel4');
+            
+            // 重置下级
+            level3Select.innerHTML = '<option value="">三级分类</option>';
+            level4Select.innerHTML = '<option value="">四级分类</option>';
+            
+            if (level2) {
+                try {
+                    const res = await fetch(`${API_BASE}/api/products/categories?level=3&parent=${encodeURIComponent(level2)}`);
+                    const categories = await res.json();
+                    level3Select.innerHTML = '<option value="">三级分类</option>' + 
+                        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                } catch (e) { console.error('加载三级分类失败:', e); }
+            }
+            filterProductSelectorImmediate();
+        }
+        
+        async function onLevel3Change() {
+            const level3 = document.getElementById('catLevel3').value;
+            const level4Select = document.getElementById('catLevel4');
+            
+            // 重置下级
+            level4Select.innerHTML = '<option value="">四级分类</option>';
+            
+            if (level3) {
+                try {
+                    const res = await fetch(`${API_BASE}/api/products/categories?level=4&parent=${encodeURIComponent(level3)}`);
+                    const categories = await res.json();
+                    level4Select.innerHTML = '<option value="">四级分类</option>' + 
+                        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                } catch (e) { console.error('加载四级分类失败:', e); }
+            }
+            filterProductSelectorImmediate();
+        }
+        
+        function onLevel4Change() {
+            filterProductSelectorImmediate();
+        }
+        
+        function clearCategoryFilter() {
+            document.getElementById('catLevel1').value = '';
+            document.getElementById('catLevel2').innerHTML = '<option value="">二级分类</option>';
+            document.getElementById('catLevel3').innerHTML = '<option value="">三级分类</option>';
+            document.getElementById('catLevel4').innerHTML = '<option value="">四级分类</option>';
+            document.getElementById('productSearchInput').value = '';
+            filterProductSelectorImmediate();
+        }
+        
+        async function loadProductSelectorList(level1='', level2='', level3='', level4='', keyword='') {
+            try {
+                console.log('开始加载商品列表...');
+                // 构建查询参数
+                let params = new URLSearchParams();
+                params.append('limit', '200');
+                if (level1) params.append('level1', level1);
+                if (level2) params.append('level2', level2);
+                if (level3) params.append('level3', level3);
+                if (level4) params.append('level4', level4);
+                if (keyword) params.append('keyword', keyword);
+                
+                const url = `${API_BASE}/api/products?${params.toString()}`;
+                console.log('请求URL:', url);
+                
+                const res = await fetch(url);
+                allProducts = await res.json();
+                console.log('加载商品数量:', allProducts.length);
+                console.log('商品示例:', allProducts.slice(0, 2));
+                renderProductSelectorList(allProducts);
+            } catch (e) {
+                console.error('加载商品失败:', e);
+                document.getElementById('productSelectorList').innerHTML = '<div class="empty-state"><span class="icon">⚠️</span><p>加载失败</p></div>';
+            }
+        }
+        
+        // 防抖函数
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        // 实际筛选函数
+        async function doFilterProductSelector() {
+            const keyword = document.getElementById('productSearchInput')?.value || '';
+            const level1 = document.getElementById('catLevel1')?.value || '';
+            const level2 = document.getElementById('catLevel2')?.value || '';
+            const level3 = document.getElementById('catLevel3')?.value || '';
+            const level4 = document.getElementById('catLevel4')?.value || '';
+            
+            console.log('筛选参数:', { level1, level2, level3, level4, keyword });
+            
+            // 显示加载中
+            const listContainer = document.getElementById('productSelectorList');
+            if (listContainer) {
+                listContainer.innerHTML = '<div class="empty-state"><span class="icon">⏳</span><p>加载中...</p></div>';
+            }
+            
+            // 调用后端API筛选
+            await loadProductSelectorList(level1, level2, level3, level4, keyword);
+        }
+        
+        // 带防抖的筛选函数（用于输入框）
+        const filterProductSelector = debounce(doFilterProductSelector, 300);
+        
+        // 立即筛选函数（用于下拉框变化）
+        async function filterProductSelectorImmediate() {
+            await doFilterProductSelector();
+        }
+        
+        function renderProductSelectorList(products) {
+            const container = document.getElementById('productSelectorList');
+            if (!container) return;
+            
+            const countEl = document.getElementById('filterResultCount');
+            if (countEl) countEl.textContent = products.length;
+            
+            if (!products || products.length === 0) {
+                container.innerHTML = '<div class="empty-state"><span class="icon">📭</span><p>没有找到商品</p></div>';
+                return;
+            }
+            
+            // 按四级分类分组
+            const grouped = {};
+            products.forEach(p => {
+                const cat4 = p.category_level4_name || '未分类';
+                if (!grouped[cat4]) grouped[cat4] = [];
+                grouped[cat4].push(p);
+            });
+            
+            container.innerHTML = '';
+            Object.keys(grouped).sort().forEach(cat4 => {
+                const items = grouped[cat4];
+                const groupDiv = document.createElement('div');
+                groupDiv.style.cssText = 'margin-bottom: 8px; border: 1px solid #e2e8f0; border-radius: 6px; overflow: hidden;';
+                
+                const header = document.createElement('div');
+                header.style.cssText = 'background: #6366f1; padding: 5px 10px; font-size: 12px; font-weight: 600; color: white;';
+                header.textContent = '📁 ' + cat4 + ' (' + items.length + '个)';
+                groupDiv.appendChild(header);
+                
+                const listDiv = document.createElement('div');
+                items.forEach(p => {
+                    const isSel = currentProductSelection.some(s => s.id === p.id);
+                    const row = document.createElement('div');
+                    row.className = 'product-selector-item' + (isSel ? ' selected' : '');
+                    row.style.cssText = 'padding: 4px 8px; border-bottom: 1px solid #f1f5f9; cursor: pointer; font-size: 12px;';
+                    row.onclick = () => toggleProductSelection(p.id, p.category_level4_name || '', p.name, p.spec || '', '');
+                    row.textContent = (isSel ? '✓ ' : '☐ ') + p.name;
+                    listDiv.appendChild(row);
+                });
+                
+                groupDiv.appendChild(listDiv);
+                container.appendChild(groupDiv);
+            });
+        }
+        
+        function toggleProductSelection(id, category, name, spec, catPath) {
+            const idx = currentProductSelection.findIndex(s => s.id === id);
+            if (idx > -1) {
+                currentProductSelection.splice(idx, 1);
+            } else {
+                currentProductSelection.push({ id, category, name, spec, catPath });
+            }
+            
+            // 更新商品库UI
+            const item = document.querySelector(`.product-selector-item[data-id="${id}"]`);
+            if (item) {
+                const isSelected = idx === -1; // 刚刚添加
+                item.classList.toggle('selected', isSelected);
+                item.querySelector('.checkbox').classList.toggle('checked', isSelected);
+                item.querySelector('.checkbox').textContent = isSelected ? '✓' : '';
+            }
+            
+            // 更新已选列表
+            renderSelectedProductsList();
+        }
+        
+        // 添加全部筛选结果到已选
+        function addAllFilteredProducts() {
+            if (allProducts.length === 0) {
+                showToast('当前没有筛选结果', 'warning');
+                return;
+            }
+            
+            let addedCount = 0;
+            let skipCount = 0;
+            
+            allProducts.forEach(p => {
+                // 检查是否已存在
+                const exists = currentProductSelection.some(s => s.id === p.id);
+                if (exists) {
+                    skipCount++;
+                } else {
+                    const catPath = [p.category_level1_name, p.category_level2_name, p.category_level3_name, p.category_level4_name]
+                        .filter(Boolean).join(' >> ');
+                    currentProductSelection.push({
+                        id: p.id,
+                        category: p.category_level4_name,
+                        name: p.name,
+                        spec: p.spec,
+                        catPath: catPath
+                    });
+                    addedCount++;
+                }
+            });
+            
+            // 更新UI
+            renderProductSelectorList(allProducts);
+            renderSelectedProductsList();
+            
+            // 提示
+            if (addedCount > 0) {
+                showToast(`已添加 ${addedCount} 个商品${skipCount > 0 ? `，跳过 ${skipCount} 个重复` : ''}`, 'success');
+            } else {
+                showToast(`所有 ${skipCount} 个商品已在列表中`, 'warning');
+            }
+        }
+        
+        function renderSelectedProductsList() {
+            const container = document.getElementById('selectedProductsList');
+            const countEl = document.getElementById('selectedCount');
+            
+            if (countEl) countEl.textContent = currentProductSelection.length;
+            
+            if (currentProductSelection.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding: 40px 20px;">
+                        <span class="icon" style="font-size: 48px; opacity: 0.3;">🛒</span>
+                        <p style="color: var(--gray-400);">暂未选择商品</p>
+                        <p style="font-size: 12px; color: var(--gray-400);">从左侧点击添加</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = currentProductSelection.map((p, idx) => `
+                <div class="selected-product-item" style="display: flex; align-items: center; gap: 6px; padding: 6px 8px; background: white; border-radius: 6px; margin-bottom: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.08);">
+                    <span style="background: var(--primary); color: white; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0;">${idx + 1}</span>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-size: 12px; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3;">${p.name}</div>
+                        <div style="font-size: 10px; color: var(--gray-500); margin-top: 1px;">${p.catPath || p.category}</div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger" style="padding: 2px 6px; font-size: 11px;" onclick="removeSelectedProduct(${p.id})" title="移除">✕</button>
+                </div>
+            `).join('');
+        }
+        
+        function removeSelectedProduct(id) {
+            const idx = currentProductSelection.findIndex(s => s.id === id);
+            if (idx > -1) {
+                currentProductSelection.splice(idx, 1);
+                
+                // 更新商品库中的选中状态
+                const item = document.querySelector(`.product-selector-item[data-id="${id}"]`);
+                if (item) {
+                    item.classList.remove('selected');
+                    item.querySelector('.checkbox').classList.remove('checked');
+                    item.querySelector('.checkbox').textContent = '';
+                }
+                
+                // 更新已选列表
+                renderSelectedProductsList();
+            }
+        }
+        
+        function clearSelectedProducts() {
+            if (currentProductSelection.length === 0) return;
+            
+            // 清除所有选中状态
+            currentProductSelection.forEach(p => {
+                const item = document.querySelector(`.product-selector-item[data-id="${p.id}"]`);
+                if (item) {
+                    item.classList.remove('selected');
+                    item.querySelector('.checkbox').classList.remove('checked');
+                    item.querySelector('.checkbox').textContent = '';
+                }
+            });
+            
+            currentProductSelection = [];
+            renderSelectedProductsList();
+        }
+        
+        function confirmProductSelection() {
+            if (currentProductSelection.length === 0) {
+                showToast('请至少选择一个商品', 'error');
+                return false; // 阻止关闭弹窗
+            }
+            
+            // 先关闭商品选择器
+            closeModal();
+            
+            // 延迟添加到任务列表（等待DOM更新）
+            setTimeout(() => {
+                currentProductSelection.forEach(p => {
+                    addItemRow({
+                        category: p.category,
+                        category_path: p.catPath,
+                        product_name: p.name,
+                        product_spec: p.spec,
+                        description: ''
+                    });
+                });
+                
+                showToast(`已添加 ${currentProductSelection.length} 个商品`, 'success');
+                
+                // 清空已选
+                currentProductSelection = [];
+            }, 100);
+            
+            return true; // 允许关闭弹窗
         }
         
         function addItemRow(data = null) {
             const container = document.getElementById('itemsList');
             const row = document.createElement('div');
             row.className = 'item-row';
-            row.innerHTML = `<input placeholder="类别" class="item-category" value="${data?.category || ''}"><input placeholder="商品名称" class="item-name" value="${data?.product_name || ''}"><input placeholder="规格" class="item-spec" value="${data?.product_spec || ''}"><input placeholder="说明（选填）" class="item-desc" value="${data?.description || ''}"><button type="button" class="btn btn-sm btn-danger" onclick="this.parentElement.remove()">删除</button>`;
+            row.style.cssText = 'margin-bottom: 8px; padding: 12px; background: var(--gray-50); border-radius: 8px; border: 1px solid var(--gray-200); box-sizing: border-box; display: block;';
+            
+            // 如果有分类路径，显示 A >> B >> C >> D 格式
+            const categoryDisplay = data?.category_path || data?.category || '';
+            
+            row.innerHTML = `
+                <!-- 第一行：分类路径和删除按钮 -->
+                <div style="margin-bottom: 6px; padding-right: 40px; position: relative;">
+                    <div style="font-size: 11px; color: var(--primary); font-weight: 600; line-height: 1.4;">
+                        📂 ${categoryDisplay}
+                    </div>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="this.closest('.item-row').remove()" 
+                        style="position: absolute; right: 0; top: 0; padding: 4px 10px; font-size: 12px;">✕</button>
+                </div>
+                <input type="hidden" class="item-category" value="${data?.category || ''}">
+                
+                <!-- 第二行：商品名称（块级，自然占满） -->
+                <div style="margin-bottom: 8px; padding: 12px 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 6px; font-size: 16px; font-weight: 600;">
+                    🛒 ${data?.product_name || '<span style="opacity: 0.7;">未填写商品名称</span>'}
+                </div>
+                <input type="hidden" class="item-name" value="${data?.product_name || ''}">
+                
+                <!-- 第三行：备注输入框 -->
+                <div>
+                    <input placeholder="💡 备注说明（选填）" class="item-desc" value="${data?.description || ''}" 
+                        style="width: 100%; padding: 10px 12px; border: 1px dashed var(--gray-300); border-radius: 6px; font-size: 13px; box-sizing: border-box; background: white;">
+                </div>
+            `;
             container.appendChild(row);
+            // 滚动到底部
+            container.scrollTop = container.scrollHeight;
         }
         
         async function saveTask(isEdit = false) {
@@ -662,28 +1795,58 @@
             
             const items = [];
             document.querySelectorAll('.item-row').forEach((row, idx) => {
-                const category = row.querySelector('.item-category').value;
-                const name = row.querySelector('.item-name').value;
-                const spec = row.querySelector('.item-spec').value;
-                const itemDesc = row.querySelector('.item-desc').value;
-                if (category && name) items.push({ category, product_name: name, product_spec: spec, description: itemDesc, sort_order: idx });
+                const category = row.querySelector('.item-category')?.value || '';
+                const name = row.querySelector('.item-name')?.value || '';
+                const itemDesc = row.querySelector('.item-desc')?.value || '';
+                if (category && name) items.push({ category, product_name: name, product_spec: '', description: itemDesc, sort_order: idx });
             });
             if (items.length === 0) { showToast('请至少添加一个品类', 'error'); return; }
             
             try {
                 const res = await fetch(`${API_BASE}/api/tasks`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title, date, description: desc, items }) });
-                if (res.ok) { showToast('任务保存成功', 'success'); closeModal(); loadTasks(); }
-                else showToast('保存失败', 'error');
-            } catch (e) { showToast('网络错误', 'error'); }
+                if (res.ok) { 
+                    showToast('任务保存成功', 'success'); 
+                    closeModal(); 
+                    // 清空筛选条件后刷新
+                    document.getElementById('taskDateFilter').value = '';
+                    document.getElementById('taskSearch').value = '';
+                    setTimeout(() => loadTasks(), 100);
+                }
+                else {
+                    const err = await res.json();
+                    showToast(err.detail || '保存失败', 'error');
+                }
+            } catch (e) { 
+                console.error('saveTask error:', e);
+                showToast('网络错误', 'error'); 
+            }
         }
         
         async function viewTask(id) {
             try {
                 const res = await fetch(`${API_BASE}/api/tasks/${id}`);
                 const task = await res.json();
+                
+                // 计算任务状态（基于日期）
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const taskDate = new Date(task.date);
+                taskDate.setHours(0, 0, 0, 0);
+                let statusText, statusClass;
+                if (taskDate.getTime() === today.getTime()) {
+                    statusText = '进行中';
+                    statusClass = 'tag-success';
+                } else if (taskDate < today) {
+                    statusText = '已结束';
+                    statusClass = 'tag-default';
+                } else {
+                    statusText = '未开始';
+                    statusClass = 'tag-warning';
+                }
+                
                 const itemsHtml = task.items.map((item, idx) => `<tr style="animation-delay: ${idx * 0.05}s"><td><strong>${idx + 1}</strong></td><td>${item.category}</td><td>${item.product_name}</td><td>${item.product_spec || '-'}</td><td>${item.description || '-'}</td></tr>`).join('');
                 const body = `
-                    <div class="detail-section"><div class="detail-grid"><div class="detail-item"><span class="label">任务标题</span><span class="value">${task.title}</span></div><div class="detail-item"><span class="label">调研日期</span><span class="value">${task.date}</span></div><div class="detail-item"><span class="label">状态</span><span class="value"><span class="tag ${task.status === 'active' ? 'tag-success' : 'tag-default'}">${task.status === 'active' ? '进行中' : '已完成'}</span></span></div><div class="detail-item"><span class="label">品类数量</span><span class="value">${task.items.length} 个</span></div></div></div>
+                    <div class="detail-section"><div class="detail-grid"><div class="detail-item"><span class="label">任务标题</span><span class="value">${task.title}</span></div><div class="detail-item"><span class="label">调研日期</span><span class="value">${task.date}</span></div><div class="detail-item"><span class="label">状态</span><span class="value"><span class="tag ${statusClass}">${statusText}</span></span></div><div class="detail-item"><span class="label">品类数量</span><span class="value">${task.items.length} 个</span></div></div></div>
                     <div class="detail-section"><h4>任务说明</h4><p style="color: #64748b; line-height: 1.8;">${task.description || '无'}</p></div>
                     <div class="detail-section"><h4>调研品类列表</h4><div class="table-container"><table><thead><tr><th>序号</th><th>类别</th><th>商品名称</th><th>规格</th><th>说明</th></tr></thead><tbody>${itemsHtml}</tbody></table></div></div>
                 `;
@@ -692,6 +1855,16 @@
         }
         
         function editTask(id) { showToast('编辑功能开发中...', 'error'); }
+        
+        async function cancelTask(id) {
+            openModal('⚠️ 确认作废', '确定要作废这个任务吗？作废后小程序端将显示作废标志！', async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/api/tasks/${id}/cancel`, { method: 'POST' });
+                    if (res.ok) { showToast('作废成功', 'success'); closeModal(); loadTasks(); }
+                    else showToast('作废失败', 'error');
+                } catch (e) { showToast('网络错误', 'error'); }
+            });
+        }
         
         async function deleteTask(id) {
             openModal('⚠️ 确认删除', '确定要删除这个任务吗？删除后不可恢复！', async () => {
@@ -709,10 +1882,10 @@
         function renderRecordsPage() {
             return `
                 <div class="card">
-                    <div class="card-header"><span class="card-title">📝 调研记录列表</span><button class="btn btn-success" onclick="exportRecords()">📥 导出Excel</button></div>
+                    <div class="card-header"><span class="card-title">📝 调研记录（按四级分类归类）</span><button class="btn btn-success" onclick="exportRecords()">📥 导出Excel</button></div>
                     <div class="card-body">
-                        <div class="search-bar"><input type="date" class="search-input" id="recordDateFilter" value="${new Date().toISOString().split('T')[0]}"><select class="search-input" id="recordSurveyorFilter"><option value="">所有人员</option></select><input type="text" class="search-input" id="recordStoreFilter" placeholder="🔍 超市名称..."><button class="btn btn-default" onclick="loadRecords()">筛选</button><button class="btn btn-default" onclick="resetRecordFilter()">重置</button></div>
-                        <div class="table-container"><table><thead><tr><th>ID</th><th>时间</th><th>调研人员</th><th>超市</th><th>品类</th><th>商品</th><th>价格</th><th>照片</th><th>操作</th></tr></thead><tbody id="recordTable"><tr><td colspan="9" class="empty-state">加载中...</td></tr></tbody></table></div>
+                        <div class="search-bar"><input type="date" class="search-input" id="recordDateFilter" value="${new Date().toISOString().split('T')[0]}"><input type="text" class="search-input" id="recordProductFilter" placeholder="🔍 商品名称..."><button class="btn btn-default" onclick="loadRecords()">筛选</button><button class="btn btn-default" onclick="resetRecordFilter()">重置</button></div>
+                        <div id="recordGroupsContainer"><div class="empty-state"><span class="icon">⏳</span><p>加载中...</p></div></div>
                     </div>
                 </div>
             `;
@@ -721,17 +1894,177 @@
         async function loadRecords() {
             try {
                 const date = document.getElementById('recordDateFilter')?.value;
+                const productKeyword = document.getElementById('recordProductFilter')?.value?.toLowerCase();
+                
                 let url = `${API_BASE}/api/records`;
                 if (date) url += `?date=${date}`;
+                
                 const res = await fetch(url);
-                const records = await res.json();
+                let records = await res.json();
+                
+                // 按商品名称筛选
+                if (productKeyword) {
+                    records = records.filter(r => r.product_name.toLowerCase().includes(productKeyword));
+                }
+                
                 currentData.records = records;
-                const html = records.length === 0 ? '<tr><td colspan="9" class="empty-state"><span class="icon">📭</span><p>暂无记录数据</p></td></tr>' : records.map((r, i) => `<tr style="animation-delay: ${i * 0.03}s"><td><strong style="color: var(--primary);">#${r.id}</strong></td><td>${new Date(r.created_at).toLocaleString()}</td><td>${r.surveyor_name}</td><td>${r.store_name}</td><td><span class="tag tag-default">${r.category}</span></td><td>${r.product_name}</td><td><strong style="color: #059669; font-size: 16px;">¥${r.price?.toFixed(2) || '0.00'}</strong></td><td>${r.photo_path ? `<img src="${API_BASE}${r.photo_path}" class="photo-thumb" onclick="viewPhoto('${API_BASE}${r.photo_path}')">` : '-'}</td><td><div class="action-btns"><button class="btn btn-sm btn-primary" onclick="viewRecord(${r.id})">查看</button><button class="btn btn-sm btn-danger" onclick="deleteRecord(${r.id})">删除</button></div></td></tr>`).join('');
-                document.getElementById('recordTable').innerHTML = html;
-            } catch (e) { document.getElementById('recordTable').innerHTML = '<tr><td colspan="9" class="empty-state">加载失败</td></tr>'; }
+                renderRecordGroups(records);
+            } catch (e) { 
+                document.getElementById('recordGroupsContainer').innerHTML = '<div class="empty-state"><span class="icon">⚠️</span><p>加载失败</p></div>'; 
+            }
         }
         
-        function resetRecordFilter() { document.getElementById('recordDateFilter').value = ''; document.getElementById('recordSurveyorFilter').value = ''; document.getElementById('recordStoreFilter').value = ''; loadRecords(); }
+        function renderRecordGroups(records) {
+            const container = document.getElementById('recordGroupsContainer');
+            if (records.length === 0) {
+                container.innerHTML = '<div class="empty-state"><span class="icon">📭</span><p>暂无记录</p></div>';
+                return;
+            }
+            
+            // 按四级分类分组
+            const cat4Groups = {};
+            records.forEach(r => {
+                const cat4 = r.category_level4_name || r.category || '未分类';
+                if (!cat4Groups[cat4]) {
+                    cat4Groups[cat4] = {
+                        cat4: cat4,
+                        cat3: r.category_level3_name || '',
+                        cat2: r.category_level2_name || '',
+                        cat1: r.category_level1_name || '',
+                        products: {}
+                    };
+                }
+                // 在四级分类下再按商品分组
+                const productKey = r.product_name;
+                if (!cat4Groups[cat4].products[productKey]) {
+                    cat4Groups[cat4].products[productKey] = [];
+                }
+                cat4Groups[cat4].products[productKey].push(r);
+            });
+            
+            // 按分类名排序
+            const sortedCat4 = Object.keys(cat4Groups).sort();
+            
+            // 渲染
+            container.innerHTML = sortedCat4.map((cat4, cat4Idx) => {
+                const cat4Data = cat4Groups[cat4];
+                const catPath = [cat4Data.cat1, cat4Data.cat2, cat4Data.cat3].filter(Boolean).join(' > ');
+                const products = cat4Data.products;
+                const productNames = Object.keys(products).sort();
+                const totalRecords = Object.values(products).reduce((sum, arr) => sum + arr.length, 0);
+                
+                return `
+                    <div class="record-cat4-group" style="margin-bottom: 16px; border: 1px solid var(--primary-light); border-radius: 12px; overflow: hidden; animation-delay: ${cat4Idx * 0.1}s">
+                        <!-- 四级分类标题 -->
+                        <div style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); padding: 10px 16px; color: white;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 20px;">📁</span>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 15px; font-weight: 700;">${cat4}</div>
+                                    ${catPath ? `<div style="font-size: 11px; opacity: 0.9; margin-top: 2px;">${catPath}</div>` : ''}
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 16px; font-weight: 700;">${productNames.length}</div>
+                                    <div style="font-size: 10px; opacity: 0.8;">种商品</div>
+                                </div>
+                                <div style="text-align: right; margin-left: 12px;">
+                                    <div style="font-size: 16px; font-weight: 700;">${totalRecords}</div>
+                                    <div style="font-size: 10px; opacity: 0.8;">条记录</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 商品列表 -->
+                        <div style="background: var(--gray-50);">
+                            ${productNames.map((productName, pIdx) => {
+                                const productRecords = products[productName];
+                                const avgPrice = (productRecords.reduce((sum, r) => sum + r.price, 0) / productRecords.length).toFixed(2);
+                                const minPrice = Math.min(...productRecords.map(r => r.price)).toFixed(2);
+                                const maxPrice = Math.max(...productRecords.map(r => r.price)).toFixed(2);
+                                const groupId = `${cat4}-${productName}`.replace(/[^a-zA-Z0-9]/g, '_');
+                                
+                                return `
+                                    <div style="border-bottom: 1px solid var(--gray-200);">
+                                        <!-- 商品标题 -->
+                                        <div onclick="toggleGroup('${groupId}')" style="padding: 10px 16px; background: white; cursor: pointer; display: flex; align-items: center; gap: 12px;">
+                                            <span style="background: var(--primary-light); color: var(--primary); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">${pIdx + 1}</span>
+                                            <div style="flex: 1;">
+                                                <div style="font-weight: 600; color: var(--dark); font-size: 14px;">${productName}</div>
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 16px;">
+                                                <div style="text-align: center;">
+                                                    <div style="font-size: 11px; color: var(--gray-500);">均价</div>
+                                                    <div style="font-weight: 700; color: var(--primary); font-size: 15px;">¥${avgPrice}</div>
+                                                </div>
+                                                <div style="text-align: center;">
+                                                    <div style="font-size: 11px; color: var(--gray-500);">记录</div>
+                                                    <div style="font-weight: 600; color: var(--dark);">${productRecords.length}条</div>
+                                                </div>
+                                                <span class="toggle-icon" style="color: var(--gray-400); font-size: 12px;">▼</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- 详细记录 -->
+                                        <div id="group-${groupId}" style="display: none; background: white;">
+                                            <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                                                <thead>
+                                                    <tr style="background: var(--gray-100);">
+                                                        <th style="padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-600);">时间</th>
+                                                        <th style="padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-600);">人员</th>
+                                                        <th style="padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-600);">超市</th>
+                                                        <th style="padding: 8px 12px; text-align: right; font-weight: 600; color: var(--gray-600);">价格</th>
+                                                        <th style="padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-600);">促销</th>
+                                                        <th style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--gray-600);">操作</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    ${productRecords.sort((a, b) => a.price - b.price).map((r, i) => `
+                                                        <tr style="border-bottom: 1px solid var(--gray-100);">
+                                                            <td style="padding: 8px 12px; color: var(--gray-600);">${new Date(r.created_at).toLocaleString('zh-CN', {month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})}</td>
+                                                            <td style="padding: 8px 12px;"><span style="color: var(--primary); font-weight: 500;">${r.surveyor_name}</span></td>
+                                                            <td style="padding: 8px 12px;">${r.store_name}</td>
+                                                            <td style="padding: 8px 12px; text-align: right; font-weight: 600;">¥${r.price.toFixed(2)}</td>
+                                                            <td style="padding: 8px 12px;">${r.promotion_info ? `<span style="color: var(--warning);">${r.promotion_info}</span>` : '-'}</td>
+                                                            <td style="padding: 8px 12px; text-align: center;">
+                                                                <div class="action-btns" style="justify-content: center;">
+                                                                    ${r.photo_path ? `<button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); viewPhoto('${API_BASE}${r.photo_path}')" style="padding: 2px 8px; font-size: 11px;">📷</button>` : ''}
+                                                                    <button class="btn btn-sm btn-default" onclick="event.stopPropagation(); viewRecord(${r.id})" style="padding: 2px 8px; font-size: 11px;">👁️</button>
+                                                                    <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteRecord(${r.id})" style="padding: 2px 8px; font-size: 11px;">🗑️</button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    `).join('')}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function toggleGroup(groupId) {
+            const body = document.getElementById(`group-${groupId}`);
+            const icon = body.previousElementSibling.querySelector('.toggle-icon');
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                icon.textContent = '▲';
+                body.classList.add('expanded');
+            } else {
+                body.style.display = 'none';
+                icon.textContent = '▼';
+                body.classList.remove('expanded');
+            }
+        }
+        
+        function resetRecordFilter() { 
+            document.getElementById('recordDateFilter').value = ''; 
+            document.getElementById('recordProductFilter').value = ''; 
+            loadRecords(); 
+        }
         
         async function viewRecord(id) {
             const record = currentData.records?.find(r => r.id === id);
@@ -1182,36 +2515,117 @@
         }
         
         async function loadReportData() {
-            const days = [], data = [];
-            for (let i = 1; i <= 30; i++) { days.push(`${i}日`); data.push(Math.floor(Math.random() * 100) + 20); }
+            // 获取选择的年月
+            const monthInput = document.getElementById('reportMonth');
+            const [year, month] = monthInput.value.split('-').map(Number);
             
-            const ctx1 = document.getElementById('monthlyChart');
-            if (ctx1) {
-                new Chart(ctx1, {
-                    type: 'bar', data: { labels: days, datasets: [{ label: '调研记录数', data: data, backgroundColor: (context) => { const ctx = context.chart.ctx; const gradient = ctx.createLinearGradient(0, 0, 0, 300); gradient.addColorStop(0, '#6366f1'); gradient.addColorStop(1, '#8b5cf6'); return gradient; }, borderRadius: 8 }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: 'rgba(0,0,0,0.03)' } }, x: { grid: { display: false } } }, animation: { duration: 1500, easing: 'easeOutQuart' } }
-                });
+            try {
+                // 并行获取月度趋势和人员统计数据
+                const [trendRes, surveyorRes] = await Promise.all([
+                    fetch(`/api/statistics/monthly-trend?year=${year}&month=${month}`),
+                    fetch(`/api/statistics/surveyor-stats?year=${year}&month=${month}`)
+                ]);
+                
+                const trendData = await trendRes.json();
+                const surveyorData = await surveyorRes.json();
+                
+                // 渲染月度调研趋势图
+                const ctx1 = document.getElementById('monthlyChart');
+                if (ctx1) {
+                    const days = trendData.map(d => `${d.day}日`);
+                    const counts = trendData.map(d => d.record_count);
+                    
+                    new Chart(ctx1, {
+                        type: 'bar', 
+                        data: { 
+                            labels: days, 
+                            datasets: [{ 
+                                label: '调研记录数', 
+                                data: counts, 
+                                backgroundColor: (context) => { 
+                                    const ctx = context.chart.ctx; 
+                                    const gradient = ctx.createLinearGradient(0, 0, 0, 300); 
+                                    gradient.addColorStop(0, '#6366f1'); 
+                                    gradient.addColorStop(1, '#8b5cf6'); 
+                                    return gradient; 
+                                }, 
+                                borderRadius: 8 
+                            }] 
+                        },
+                        options: { 
+                            responsive: true, 
+                            maintainAspectRatio: false, 
+                            plugins: { legend: { display: false } }, 
+                            scales: { 
+                                y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.03)' }, ticks: { stepSize: 1 } }, 
+                                x: { grid: { display: false } } 
+                            }, 
+                            animation: { duration: 1500, easing: 'easeOutQuart' } 
+                        }
+                    });
+                }
+                
+                // 渲染人员调研统计饼图
+                const ctx2 = document.getElementById('surveyorChart');
+                if (ctx2) {
+                    const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#9ca3af', '#8b5cf6'];
+                    new Chart(ctx2, {
+                        type: 'pie', 
+                        data: { 
+                            labels: surveyorData.map(s => s.name), 
+                            datasets: [{ 
+                                data: surveyorData.map(s => s.record_count), 
+                                backgroundColor: colors.slice(0, surveyorData.length), 
+                                borderWidth: 0 
+                            }] 
+                        },
+                        options: { 
+                            responsive: true, 
+                            maintainAspectRatio: false, 
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                            const value = context.raw;
+                                            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                            return `${context.label}: ${value}条 (${percentage}%)`;
+                                        }
+                                    }
+                                }
+                            },
+                            animation: { animateRotate: true, duration: 2000 } 
+                        }
+                    });
+                }
+                
+                // 渲染详细数据表格（取最近7天有数据的）
+                const recentData = trendData.filter(d => d.record_count > 0).slice(-7).reverse();
+                const tableHtml = recentData.map((r, i) => `
+                    <tr style="animation-delay: ${i * 0.1}s">
+                        <td><strong>${r.date.slice(5)}</strong></td>
+                        <td>${r.record_count}</td>
+                        <td><span class="tag tag-success">${r.record_count > 0 ? '有数据' : '无数据'}</span></td>
+                    </tr>
+                `).join('');
+                document.getElementById('reportTable').innerHTML = tableHtml || '<tr><td colspan="3" style="text-align:center;color:#999;">本月暂无数据</td></tr>';
+                
+            } catch (e) {
+                console.error('加载报表数据失败:', e);
+                showToast('加载报表数据失败', 'error');
             }
-            
-            const ctx2 = document.getElementById('surveyorChart');
-            if (ctx2) {
-                new Chart(ctx2, {
-                    type: 'pie', data: { labels: ['张三', '李四', '王五', '赵六', '其他'], datasets: [{ data: [25, 20, 18, 15, 22], backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#9ca3af'], borderWidth: 0 }] },
-                    options: { responsive: true, maintainAspectRatio: false, animation: { animateRotate: true, duration: 2000 } }
-                });
-            }
-            
-            const reportData = days.slice(-7).map((d, i) => ({ date: d, tasks: Math.floor(Math.random() * 3) + 1, items: Math.floor(Math.random() * 20) + 10, records: data[days.length - 7 + i], rate: Math.floor(Math.random() * 30 + 70) + '%' }));
-            document.getElementById('reportTable').innerHTML = reportData.map((r, i) => `<tr style="animation-delay: ${i * 0.1}s"><td><strong>${r.date}</strong></td><td>${r.tasks}</td><td>${r.items}</td><td>${r.records}</td><td><span class="tag tag-success">${r.rate}</span></td></tr>`).join('');
         }
         
         function exportReport() { showToast('报表导出功能开发中...', 'error'); }
         
         // ==================== 通用函数 ====================
-        function openModal(title, body, onConfirm, showConfirm = true) {
+        function openModal(title, body, onConfirm, showConfirm = true, confirmText = null) {
             document.getElementById('modalTitle').textContent = title;
             document.getElementById('modalBody').innerHTML = body;
-            document.getElementById('modalConfirmBtn').style.display = showConfirm ? 'inline-flex' : 'none';
+            const confirmBtn = document.getElementById('modalConfirmBtn');
+            confirmBtn.style.display = showConfirm ? 'inline-flex' : 'none';
+            if (confirmText) confirmBtn.innerHTML = `<span>${confirmText}</span>`;
+            else confirmBtn.innerHTML = `<span>✓</span><span>确认</span>`;
             document.getElementById('commonModal').classList.add('active');
             window.currentModalConfirm = onConfirm;
         }
@@ -1220,6 +2634,462 @@
         function confirmModal() { if (window.currentModalConfirm) window.currentModalConfirm(); }
         function viewPhoto(url) { document.getElementById('photoPreview').src = url; document.getElementById('photoModal').classList.add('active'); }
         function closePhotoModal() { document.getElementById('photoModal').classList.remove('active'); }
+        
+        // ==================== 商品管理页 ====================
+        // 商品管理分页状态
+        let productPageState = {
+            page: 1,
+            pageSize: 20,
+            total: 0,
+            keyword: '',
+            level1: '',
+            level2: '',
+            level3: '',
+            level4: ''
+        };
+        
+
+        let currentProducts = [];
+        let filteredProducts = [];
+        
+        // 商品管理页面四级分类筛选
+        async function loadProdCategoryLevel1() {
+            try {
+                const res = await fetch(`${API_BASE}/api/products/categories?level=1`);
+                const categories = await res.json();
+                const select = document.getElementById('prodCatLevel1');
+                if (select) {
+                    select.innerHTML = '<option value="">📁 一级分类</option>' + 
+                        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                }
+            } catch (e) { console.error('加载一级分类失败:', e); }
+        }
+        
+        async function onProdLevel1Change() {
+            const level1 = document.getElementById('prodCatLevel1').value;
+            document.getElementById('prodCatLevel2').innerHTML = '<option value="">📂 二级分类</option>';
+            document.getElementById('prodCatLevel3').innerHTML = '<option value="">📂 三级分类</option>';
+            document.getElementById('prodCatLevel4').innerHTML = '<option value="">📄 四级分类</option>';
+            
+            productPageState.level1 = level1;
+            productPageState.level2 = '';
+            productPageState.level3 = '';
+            productPageState.level4 = '';
+            productPageState.page = 1;
+            
+            if (level1) {
+                try {
+                    const res = await fetch(`${API_BASE}/api/products/categories?level=2&parent=${encodeURIComponent(level1)}`);
+                    const categories = await res.json();
+                    document.getElementById('prodCatLevel2').innerHTML = '<option value="">📂 二级分类</option>' + 
+                        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                } catch (e) { console.error('加载二级分类失败:', e); }
+            }
+            loadProductsByFilter();
+        }
+        
+        async function onProdLevel2Change() {
+            const level2 = document.getElementById('prodCatLevel2').value;
+            document.getElementById('prodCatLevel3').innerHTML = '<option value="">📂 三级分类</option>';
+            document.getElementById('prodCatLevel4').innerHTML = '<option value="">📄 四级分类</option>';
+            
+            productPageState.level2 = level2;
+            productPageState.level3 = '';
+            productPageState.level4 = '';
+            productPageState.page = 1;
+            
+            if (level2) {
+                try {
+                    const res = await fetch(`${API_BASE}/api/products/categories?level=3&parent=${encodeURIComponent(level2)}`);
+                    const categories = await res.json();
+                    document.getElementById('prodCatLevel3').innerHTML = '<option value="">📂 三级分类</option>' + 
+                        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                } catch (e) { console.error('加载三级分类失败:', e); }
+            }
+            loadProductsByFilter();
+        }
+        
+        async function onProdLevel3Change() {
+            const level3 = document.getElementById('prodCatLevel3').value;
+            document.getElementById('prodCatLevel4').innerHTML = '<option value="">📄 四级分类</option>';
+            
+            productPageState.level3 = level3;
+            productPageState.level4 = '';
+            productPageState.page = 1;
+            
+            if (level3) {
+                try {
+                    const res = await fetch(`${API_BASE}/api/products/categories?level=4&parent=${encodeURIComponent(level3)}`);
+                    const categories = await res.json();
+                    document.getElementById('prodCatLevel4').innerHTML = '<option value="">📄 四级分类</option>' + 
+                        categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                } catch (e) { console.error('加载四级分类失败:', e); }
+            }
+            loadProductsByFilter();
+        }
+        
+        // 搜索防抖
+        let productSearchTimeout = null;
+        function onProductSearch() {
+            clearTimeout(productSearchTimeout);
+            productSearchTimeout = setTimeout(() => {
+                productPageState.page = 1;
+                productPageState.keyword = document.getElementById('productSearch')?.value || '';
+                loadProductsByFilter();
+            }, 300);
+        }
+        
+        function onProdLevel4Change() {
+            productPageState.page = 1;
+            productPageState.level4 = document.getElementById('prodCatLevel4')?.value || '';
+            loadProductsByFilter();
+        }
+        
+        function changeProductPageSize() {
+            productPageState.pageSize = parseInt(document.getElementById('productPageSize')?.value || 20);
+            productPageState.page = 1;
+            loadProductsByFilter();
+        }
+        
+        async function loadProductsByFilter() {
+            const listContainer = document.getElementById('productList');
+            const statsContainer = document.getElementById('productStats');
+            
+            if (listContainer) {
+                listContainer.innerHTML = '<div class="empty-state"><span class="icon">⏳</span><p>加载中...</p></div>';
+            }
+            
+            try {
+                // 构建查询参数
+                let params = new URLSearchParams();
+                params.append('limit', productPageState.pageSize);
+                params.append('skip', (productPageState.page - 1) * productPageState.pageSize);
+                
+                if (productPageState.keyword) {
+                    params.append('keyword', productPageState.keyword);
+                }
+                if (productPageState.level1) {
+                    params.append('level1', productPageState.level1);
+                }
+                if (productPageState.level2) {
+                    params.append('level2', productPageState.level2);
+                }
+                if (productPageState.level3) {
+                    params.append('level3', productPageState.level3);
+                }
+                if (productPageState.level4) {
+                    params.append('level4', productPageState.level4);
+                }
+                
+                const res = await fetch(`${API_BASE}/api/products?${params.toString()}`);
+                const products = await res.json();
+                
+                // 获取总数（简化为当前返回数量，实际应该后端返回总数）
+                // 这里用另一种方式估算总数
+                let countParams = new URLSearchParams();
+                if (productPageState.keyword) countParams.append('keyword', productPageState.keyword);
+                if (productPageState.level1) countParams.append('level1', productPageState.level1);
+                if (productPageState.level2) countParams.append('level2', productPageState.level2);
+                if (productPageState.level3) countParams.append('level3', productPageState.level3);
+                if (productPageState.level4) countParams.append('level4', productPageState.level4);
+                countParams.append('limit', '1000');
+                
+                const countRes = await fetch(`${API_BASE}/api/products?${countParams.toString()}`);
+                const allFiltered = await countRes.json();
+                productPageState.total = allFiltered.length;
+                
+                renderProductCards(products);
+                renderProductPageStats(products.length);
+                renderProductPagination();
+                
+            } catch (e) {
+                console.error('加载商品失败:', e);
+                if (listContainer) {
+                    listContainer.innerHTML = '<div class="empty-state"><span class="icon">⚠️</span><p>加载失败</p></div>';
+                }
+            }
+        }
+        
+        function renderProductCards(products) {
+            const container = document.getElementById('productList');
+            if (!container) return;
+            
+            if (products.length === 0) {
+                container.innerHTML = '<div class="empty-state"><span class="icon">📭</span><p>暂无商品</p></div>';
+                return;
+            }
+            
+            container.innerHTML = products.map((p, i) => {
+                const catPath = [p.category_level1_name, p.category_level2_name, p.category_level3_name, p.category_level4_name]
+                    .filter(Boolean).join(' > ');
+                return `
+                    <div class="product-card" style="background: white; border-radius: 10px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); border: 1px solid var(--gray-100); animation-delay: ${i * 0.05}s;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;">
+                            <div style="flex: 1; min-width: 0;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <span style="background: var(--primary-light); color: var(--primary); padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">${p.category_level4_name || '未分类'}</span>
+                                    <span style="color: var(--gray-400); font-size: 12px;">#${p.id}</span>
+                                </div>
+                                <div style="font-weight: 600; color: var(--dark); font-size: 15px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${p.name}</div>
+                                <div style="font-size: 12px; color: var(--gray-500); margin-bottom: 4px;">
+                                    ${p.spec || '-'} ${p.unit || ''}
+                                </div>
+                                <div style="font-size: 11px; color: var(--gray-400);">
+                                    ${catPath}
+                                    ${p.brand_name ? `<span style="margin-left: 8px; color: var(--primary);">🏷️ ${p.brand_name}</span>` : ''}
+                                </div>
+                            </div>
+                            <div style="text-align: right; flex-shrink: 0;">
+                                <div style="font-weight: 700; color: var(--primary); font-size: 16px;">¥${p.sale_price || '-'}</div>
+                                <div style="font-size: 11px; color: var(--gray-400); margin-top: 2px;">条码: ${p.barcode || '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function renderProductPageStats(count) {
+            const statsContainer = document.getElementById('productStats');
+            if (statsContainer) {
+                const start = (productPageState.page - 1) * productPageState.pageSize + 1;
+                const end = Math.min(start + count - 1, productPageState.total);
+                statsContainer.textContent = `显示 ${start}-${end} 条，共 ${productPageState.total} 条`;
+            }
+        }
+        
+        function renderProductPagination() {
+            const container = document.getElementById('productPagination');
+            if (!container) return;
+            
+            const totalPages = Math.ceil(productPageState.total / productPageState.pageSize);
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // 上一页
+            html += `<button class="btn btn-sm ${productPageState.page === 1 ? 'btn-disabled' : 'btn-default'}" onclick="changeProductPage(${productPageState.page - 1})" ${productPageState.page === 1 ? 'disabled' : ''}>上一页</button>`;
+            
+            // 页码
+            const maxVisible = 5;
+            let startPage = Math.max(1, productPageState.page - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+            
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+            
+            if (startPage > 1) {
+                html += `<button class="btn btn-sm btn-default" onclick="changeProductPage(1)">1</button>`;
+                if (startPage > 2) html += `<span style="padding: 4px 8px;">...</span>`;
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="btn btn-sm ${i === productPageState.page ? 'btn-primary' : 'btn-default'}" onclick="changeProductPage(${i})">${i}</button>`;
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += `<span style="padding: 4px 8px;">...</span>`;
+                html += `<button class="btn btn-sm btn-default" onclick="changeProductPage(${totalPages})">${totalPages}</button>`;
+            }
+            
+            // 下一页
+            html += `<button class="btn btn-sm ${productPageState.page === totalPages ? 'btn-disabled' : 'btn-default'}" onclick="changeProductPage(${productPageState.page + 1})" ${productPageState.page === totalPages ? 'disabled' : ''}>下一页</button>`;
+            
+            container.innerHTML = html;
+        }
+        
+        function changeProductPage(page) {
+            productPageState.page = page;
+            loadProductsByFilter();
+        }
+        
+        function resetProductFilter() {
+            productPageState = {
+                page: 1,
+                pageSize: 20,
+                total: 0,
+                keyword: '',
+                level1: '',
+                level2: '',
+                level3: '',
+                level4: ''
+            };
+            document.getElementById('productSearch').value = '';
+            document.getElementById('prodCatLevel1').value = '';
+            document.getElementById('prodCatLevel2').innerHTML = '<option value="">📂 二级分类</option>';
+            document.getElementById('prodCatLevel3').innerHTML = '<option value="">📂 三级分类</option>';
+            document.getElementById('prodCatLevel4').innerHTML = '<option value="">📄 四级分类</option>';
+            loadProductsByFilter();
+        }
+        
+        // 兼容旧函数
+        async function loadProducts() {
+            productPageState.page = 1;
+            await loadProductsByFilter();
+            loadProdCategoryLevel1();
+        }
+        
+        // 商品卡片渲染已移至 renderProductCards 函数
+        
+        function openAddProductModal() {
+            const body = `
+                <div class="form-group">
+                    <label>品类 <span class="required">*</span></label>
+                    <input type="text" id="productCategory" placeholder="如：蔬菜、水果、肉类">
+                </div>
+                <div class="form-group">
+                    <label>商品名称 <span class="required">*</span></label>
+                    <input type="text" id="productName" placeholder="如：西红柿">
+                </div>
+                <div class="form-group">
+                    <label>规格</label>
+                    <input type="text" id="productSpec" placeholder="如：500g/盒">
+                </div>
+                <div class="form-group">
+                    <label>条码</label>
+                    <input type="text" id="productBarcode" placeholder="商品条形码">
+                </div>
+                <div class="form-group">
+                    <label>品牌</label>
+                    <input type="text" id="productBrand" placeholder="如：农夫山泉">
+                </div>
+            `;
+            openModal('➕ 添加商品', body, async () => {
+                const category = document.getElementById('productCategory').value.trim();
+                const name = document.getElementById('productName').value.trim();
+                const spec = document.getElementById('productSpec').value.trim();
+                const barcode = document.getElementById('productBarcode').value.trim();
+                const brand = document.getElementById('productBrand').value.trim();
+                
+                if (!category || !name) { showToast('请填写品类和商品名称', 'error'); return; }
+                
+                try {
+                    const res = await fetch(`${API_BASE}/api/products`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category, name, spec: spec || null, barcode: barcode || null, brand: brand || null })
+                    });
+                    if (res.ok) { showToast('添加成功', 'success'); closeModal(); loadProducts(); }
+                    else showToast('添加失败', 'error');
+                } catch (e) { showToast('网络错误', 'error'); }
+            });
+        }
+        
+        function editProduct(id) {
+            const product = currentProducts.find(p => p.id === id);
+            if (!product) return;
+            
+            const body = `
+                <div class="form-group">
+                    <label>品类 <span class="required">*</span></label>
+                    <input type="text" id="productCategory" value="${product.category}">
+                </div>
+                <div class="form-group">
+                    <label>商品名称 <span class="required">*</span></label>
+                    <input type="text" id="productName" value="${product.name}">
+                </div>
+                <div class="form-group">
+                    <label>规格</label>
+                    <input type="text" id="productSpec" value="${product.spec || ''}">
+                </div>
+                <div class="form-group">
+                    <label>条码</label>
+                    <input type="text" id="productBarcode" value="${product.barcode || ''}">
+                </div>
+                <div class="form-group">
+                    <label>品牌</label>
+                    <input type="text" id="productBrand" value="${product.brand || ''}">
+                </div>
+            `;
+            openModal('✏️ 编辑商品', body, async () => {
+                const category = document.getElementById('productCategory').value.trim();
+                const name = document.getElementById('productName').value.trim();
+                const spec = document.getElementById('productSpec').value.trim();
+                const barcode = document.getElementById('productBarcode').value.trim();
+                const brand = document.getElementById('productBrand').value.trim();
+                
+                if (!category || !name) { showToast('请填写品类和商品名称', 'error'); return; }
+                
+                try {
+                    const res = await fetch(`${API_BASE}/api/products/${id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ category, name, spec: spec || null, barcode: barcode || null, brand: brand || null })
+                    });
+                    if (res.ok) { showToast('更新成功', 'success'); closeModal(); loadProducts(); }
+                    else showToast('更新失败', 'error');
+                } catch (e) { showToast('网络错误', 'error'); }
+            });
+        }
+        
+        function deleteProduct(id) {
+            const product = currentProducts.find(p => p.id === id);
+            openModal('⚠️ 确认删除', `<p>确定要删除商品 <strong>${product?.name}</strong> 吗？</p>`, async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/api/products/${id}`, { method: 'DELETE' });
+                    if (res.ok) { showToast('删除成功', 'success'); closeModal(); loadProducts(); }
+                    else showToast('删除失败', 'error');
+                } catch (e) { showToast('网络错误', 'error'); }
+            });
+        }
+        
+        function openImportModal() {
+            const body = `
+                <div class="form-group">
+                    <label>选择Excel文件 <span class="required">*</span></label>
+                    <input type="file" id="excelFile" accept=".xlsx,.xls" style="padding: 12px; border: 2px dashed var(--gray-200); border-radius: 8px; width: 100%;">
+                    <p style="color: var(--gray-500); font-size: 13px; margin-top: 8px;">支持 .xlsx 或 .xls 格式，需包含"品类"和"商品名称"列</p>
+                </div>
+                <div style="background: var(--gray-50); padding: 16px; border-radius: 8px; margin-top: 16px;">
+                    <p style="font-weight: 600; margin-bottom: 8px;">📋 Excel格式示例：</p>
+                    <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+                        <tr style="background: var(--primary); color: white;">
+                            <th style="padding: 8px; border: 1px solid var(--gray-200);">品类</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200);">商品名称</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200);">规格</th>
+                            <th style="padding: 8px; border: 1px solid var(--gray-200);">条码</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 8px; border: 1px solid var(--gray-200);">蔬菜</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-200);">西红柿</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-200);">500g</td>
+                            <td style="padding: 8px; border: 1px solid var(--gray-200);">6901234567890</td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+            openModal('📥 Excel导入商品', body, async () => {
+                const fileInput = document.getElementById('excelFile');
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    showToast('请选择Excel文件', 'error');
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                
+                try {
+                    showToast('正在导入...', 'success');
+                    const res = await fetch(`${API_BASE}/api/products/import`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await res.json();
+                    
+                    if (result.success) {
+                        showToast(`导入成功！共导入 ${result.imported} 条商品`, 'success');
+                        closeModal();
+                        loadProducts();
+                    } else {
+                        showToast(result.message || '导入失败', 'error');
+                    }
+                } catch (e) { showToast('网络错误', 'error'); }
+            });
+        }
         
         function showToast(message, type = 'success') {
             const icons = { success: '✓', error: '✕' };
@@ -1231,6 +3101,62 @@
         }
         
         document.getElementById('commonModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
+            function renderProductsPage() {
+            return `
+                <div class="card" style="max-width: 1200px;">
+                    <div class="card-header">
+                        <h2 class="card-title">🛍️ 商品库管理</h2>
+                        <div class="card-actions">
+                            <button class="btn btn-primary" onclick="openImportModal()">📥 Excel导入/更新</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- 筛选区域 -->
+                        <div style="background: var(--gray-50); padding: 16px; border-radius: 12px; margin-bottom: 20px;">
+                            <div style="display: flex; gap: 12px; margin-bottom: 12px;">
+                                <input type="text" id="productSearch" class="search-input" placeholder="🔍 搜索商品名称、条码..." oninput="onProductSearch()" style="flex: 1; max-width: 300px;">
+                                <button class="btn btn-default" onclick="resetProductFilter()">重置</button>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+                                <select id="prodCatLevel1" class="filter-select" onchange="onProdLevel1Change()" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--gray-300); font-size: 13px;">
+                                    <option value="">📁 一级分类</option>
+                                </select>
+                                <select id="prodCatLevel2" class="filter-select" onchange="onProdLevel2Change()" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--gray-300); font-size: 13px;">
+                                    <option value="">📂 二级分类</option>
+                                </select>
+                                <select id="prodCatLevel3" class="filter-select" onchange="onProdLevel3Change()" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--gray-300); font-size: 13px;">
+                                    <option value="">📂 三级分类</option>
+                                </select>
+                                <select id="prodCatLevel4" class="filter-select" onchange="onProdLevel4Change()" style="padding: 8px 12px; border-radius: 8px; border: 1px solid var(--gray-300); font-size: 13px;">
+                                    <option value="">📄 四级分类</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- 统计信息 -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px;">
+                            <span id="productStats" style="color: var(--gray-600); font-size: 14px;">加载中...</span>
+                            <div style="display: flex; gap: 8px; align-items: center;">
+                                <label style="font-size: 13px; color: var(--gray-600);">每页</label>
+                                <select id="productPageSize" onchange="changeProductPageSize()" style="padding: 4px 8px; border-radius: 6px; border: 1px solid var(--gray-300); font-size: 13px;">
+                                    <option value="20">20条</option>
+                                    <option value="50">50条</option>
+                                    <option value="100">100条</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- 商品列表 -->
+                        <div id="productList" style="display: grid; gap: 12px;">
+                            <div class="empty-state"><span class="icon">⏳</span><p>加载中...</p></div>
+                        </div>
+                        
+                        <!-- 分页 -->
+                        <div id="productPagination" style="margin-top: 20px; display: flex; justify-content: center;"></div>
+                    </div>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>

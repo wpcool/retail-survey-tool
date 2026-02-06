@@ -1,0 +1,114 @@
+<!-- 记录编辑页面 -->
+<view class="container">
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 编辑表单 -->
+  <block wx:if="{{!loading}}">
+    <!-- 商品信息（只读） -->
+    <view class="form-card readonly">
+      <view class="form-title">
+        <text class="form-icon">📦</text>
+        商品信息
+        <text class="readonly-tag">不可修改</text>
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label">商品名称</view>
+        <view class="form-value">{{form.productName}}</view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">品类</view>
+        <view class="form-value">{{form.category}}</view>
+      </view>
+    </view>
+
+    <!-- 价格信息 -->
+    <view class="form-card">
+      <view class="form-title">
+        <text class="form-icon">💰</text>
+        价格信息
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">价格 <text class="required">*</text></view>
+        <input 
+          class="form-input price-input" 
+          placeholder="0.00"
+          type="digit"
+          value="{{form.price}}"
+          data-field="price"
+          bindinput="onInput"
+        />
+        <text class="price-unit">元</text>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">促销信息</view>
+        <input 
+          class="form-input" 
+          placeholder="如: 买一送一、满减等"
+          value="{{form.promotionInfo}}"
+          data-field="promotionInfo"
+          bindinput="onInput"
+        />
+      </view>
+    </view>
+
+    <!-- 店铺信息 -->
+    <view class="form-card">
+      <view class="form-title">
+        <text class="form-icon">🏪</text>
+        店铺信息
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">店铺名称 <text class="required">*</text></view>
+        <input 
+          class="form-input" 
+          placeholder="请输入店铺名称"
+          value="{{form.storeName}}"
+          data-field="storeName"
+          bindinput="onInput"
+        />
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">店铺地址</view>
+        <input 
+          class="form-input" 
+          placeholder="请输入店铺地址"
+          value="{{form.storeAddress}}"
+          data-field="storeAddress"
+          bindinput="onInput"
+        />
+      </view>
+    </view>
+
+    <!-- 备注 -->
+    <view class="form-card">
+      <view class="form-title">
+        <text class="form-icon">📝</text>
+        备注
+      </view>
+      <textarea 
+        class="form-textarea" 
+        placeholder="其他补充信息..."
+        maxlength="500"
+        value="{{form.remark}}"
+        data-field="remark"
+        bindinput="onInput"
+      />
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="action-section">
+      <button class="btn-cancel" bindtap="cancelEdit">取消</button>
+      <button class="btn-save" bindtap="saveRecord" loading="{{saving}}">保存修改</button>
+    </view>
+  </block>
+</view>
