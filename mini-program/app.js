@@ -1,7 +1,7 @@
 App({
   globalData: {
     userInfo: null,
-    baseUrl: 'http://localhost:8000', // 后端API地址
+    baseUrl: 'http://39.97.236.234:8000', // 云端后端API地址
     token: null
   },
 
