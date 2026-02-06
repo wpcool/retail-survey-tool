@@ -323,6 +323,7 @@ class RecordCreateRequest(BaseModel):
     remark: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
+    photos: Optional[List[str]] = None  # 照片URL列表
 
 
 @app.post("/api/records")
@@ -331,6 +332,13 @@ def create_record(
     db: Session = Depends(get_db)
 ):
     """创建调研记录（JSON格式，供小程序使用）"""
+    import json
+    
+    # 处理照片数据
+    photos_json = None
+    if request.photos and len(request.photos) > 0:
+        photos_json = json.dumps(request.photos, ensure_ascii=False)
+    
     # 创建记录
     record = SurveyRecord(
         item_id=request.item_id,
@@ -342,7 +350,8 @@ def create_record(
         remark=request.remark,
         latitude=request.latitude,
         longitude=request.longitude,
-        photo_path=None  # JSON格式暂不支持上传照片
+        photo_path=request.photos[0] if request.photos and len(request.photos) > 0 else None,
+        photos=photos_json
     )
     db.add(record)
     db.commit()
@@ -394,6 +403,46 @@ def create_record_with_photo(
     db.refresh(record)
     
     return {"success": True, "message": "记录保存成功", "record_id": record.id}
+
+
+@app.post("/api/upload")
+def upload_file(
+    file: UploadFile = File(...),
+    type: str = Form("image")
+):
+    """通用文件上传接口"""
+    # 验证文件类型
+    if type == "image":
+        allowed_types = ["image/jpeg", "image/jpg", "image/png", "image/webp"]
+    else:
+        raise HTTPException(status_code=400, detail="不支持的文件类型")
+    
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail=f"不支持的文件格式: {file.content_type}")
+    
+    # 生成文件名
+    timestamp = int(datetime.now().timestamp())
+    file_ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
+    filename = f"{type}_{timestamp}_{hashlib.md5(str(timestamp).encode()).hexdigest()[:8]}.{file_ext}"
+    
+    # 确保目录存在
+    upload_dir = f"static/photos"
+    os.makedirs(upload_dir, exist_ok=True)
+    
+    # 保存文件
+    file_path = f"{upload_dir}/{filename}"
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # 返回文件访问URL
+    file_url = f"/static/photos/{filename}"
+    
+    return {
+        "success": True,
+        "url": file_url,
+        "filename": filename,
+        "type": type
+    }
 
 
 @app.get("/api/records", response_model=List[SurveyRecordResponse])

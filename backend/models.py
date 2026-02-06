@@ -74,7 +74,8 @@ class SurveyRecord(Base):
     store_address = Column(String(500), nullable=True)  # 地址
     price = Column(Float)  # 单价
     promotion_info = Column(String(500), nullable=True)  # 促销信息
-    photo_path = Column(String(500), nullable=True)  # 照片路径
+    photo_path = Column(String(500), nullable=True)  # 照片路径（单张，兼容旧数据）
+    photos = Column(Text, nullable=True)  # 多张照片路径，JSON格式存储
     remark = Column(Text, nullable=True)  # 备注
     latitude = Column(Float, nullable=True)  # 纬度
     longitude = Column(Float, nullable=True)  # 经度

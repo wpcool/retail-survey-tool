@@ -12,6 +12,8 @@ Page({
     showSuggest: false,
     suggestTimer: null,
     categories: ['生鲜', '粮油', '饮料', '零食', '日用品', '家电', '服装', '其他'],
+    // 照片列表
+    photos: [],
     form: {
       itemId: null,
       name: '',
@@ -254,6 +256,7 @@ Page({
     const form = this.data.form;
     const taskId = this.data.taskId;
     const selectedItem = this.data.selectedItem;
+    const photos = this.data.photos;
     
     if (!taskId) {
       wx.showToast({ title: '请先从任务页选择调研任务', icon: 'none' });
@@ -276,6 +279,11 @@ Page({
       return false;
     }
     
+    if (photos.length === 0) {
+      wx.showToast({ title: '请至少拍摄一张商品照片', icon: 'none' });
+      return false;
+    }
+    
     return true;
   },
 
@@ -288,6 +296,20 @@ Page({
       const form = this.data.form;
       const selectedItem = this.data.selectedItem;
       const userInfo = wx.getStorageSync('userInfo');
+      const photos = this.data.photos;
+      
+      // 先上传照片
+      const uploadedPhotos = [];
+      for (let i = 0; i < photos.length; i++) {
+        try {
+          const uploadRes = await this.uploadPhoto(photos[i]);
+          if (uploadRes && uploadRes.url) {
+            uploadedPhotos.push(uploadRes.url);
+          }
+        } catch (err) {
+          console.error('上传照片失败:', err);
+        }
+      }
       
       const submitData = {
         item_id: selectedItem.id,
@@ -298,7 +320,8 @@ Page({
         promotion_info: form.promoInfo.trim() || null,
         remark: form.remark.trim() || null,
         longitude: form.longitude,
-        latitude: form.latitude
+        latitude: form.latitude,
+        photos: uploadedPhotos
       };
       
       await app.request({
@@ -329,12 +352,80 @@ Page({
     }
   },
 
+  // ========== 拍照相关方法 ==========
+
+  // 上传单张照片
+  uploadPhoto(filePath) {
+    return new Promise((resolve, reject) => {
+      wx.uploadFile({
+        url: `${app.globalData.baseUrl}/api/upload`,
+        filePath: filePath,
+        name: 'file',
+        formData: { type: 'image' },
+        header: {
+          'Authorization': `Bearer ${app.globalData.token || ''}`
+        },
+        success: (res) => {
+          if (res.statusCode === 200) {
+            try {
+              const data = JSON.parse(res.data);
+              resolve(data);
+            } catch (e) {
+              reject(new Error('解析响应失败'));
+            }
+          } else {
+            reject(new Error('上传失败'));
+          }
+        },
+        fail: reject
+      });
+    });
+  },
+
+  // 拍照
+  takePhoto() {
+    wx.chooseMedia({
+      count: 1,
+      mediaType: ['image'],
+      sourceType: ['camera'],
+      camera: 'back',
+      success: (res) => {
+        const tempFilePath = res.tempFiles[0].tempFilePath;
+        const photos = this.data.photos.concat(tempFilePath);
+        this.setData({ photos });
+      },
+      fail: (err) => {
+        if (err.errMsg && err.errMsg.includes('cancel')) {
+          return; // 用户取消，不提示
+        }
+        wx.showToast({ title: '拍照失败', icon: 'none' });
+      }
+    });
+  },
+
+  // 预览照片
+  previewPhoto(e) {
+    const index = e.currentTarget.dataset.index;
+    wx.previewImage({
+      urls: this.data.photos,
+      current: this.data.photos[index]
+    });
+  },
+
+  // 删除照片
+  deletePhoto(e) {
+    const index = e.currentTarget.dataset.index;
+    const photos = this.data.photos.filter((_, i) => i !== index);
+    this.setData({ photos });
+  },
+
   resetFormForNext() {
     const form = this.data.form;
     this.setData({
       selectedItem: null,
       suggestList: [],
       showSuggest: false,
+      photos: [],
       form: {
         itemId: null,
         name: '',

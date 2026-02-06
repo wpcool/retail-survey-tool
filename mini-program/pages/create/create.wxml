@@ -151,6 +151,35 @@
         bindinput="onInput"
       />
     </view>
+
+    <!-- 拍照上传 -->
+    <view class="form-item">
+      <view class="form-label">商品照片 <text class="required">*</text></view>
+      <view class="photo-section">
+        <view class="photo-list">
+          <block wx:for="{{photos}}" wx:key="index">
+            <view class="photo-item">
+              <image 
+                class="photo-image" 
+                src="{{item}}" 
+                mode="aspectFill"
+                bindtap="previewPhoto"
+                data-index="{{index}}"
+              />
+              <view class="photo-delete" bindtap="deletePhoto" data-index="{{index}}">
+                <text class="delete-icon">×</text>
+              </view>
+            </view>
+          </block>
+          <view class="photo-add" bindtap="takePhoto" wx:if="{{photos.length < 3}}">
+            <text class="add-icon">📷</text>
+            <text class="add-text">拍照</text>
+            <text class="add-tip">{{photos.length}}/3</text>
+          </view>
+        </view>
+        <view class="photo-tip">请拍摄商品和价格标签，最多3张</view>
+      </view>
+    </view>
   </view>
 
   <!-- 店铺信息 -->
