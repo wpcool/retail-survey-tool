@@ -233,16 +233,6 @@
     />
   </view>
 
-  <!-- 测试按钮（仅用于排查问题，正式环境可删除） -->
-  <view class="form-card" style="background: #f0f9ff; border: 1rpx solid #bae6fd;">
-    <view class="form-title" style="color: #0369a1;">
-      <text class="form-icon">🧪</text>
-      调试工具
-    </view>
-    <button class="btn-test" bindtap="testGeocoder">测试位置服务</button>
-    <view class="test-tip">如照片水印不显示地址，点击测试排查问题</view>
-  </view>
-
   <!-- 提交按钮 -->
   <view class="submit-section">
     <button class="btn-submit" bindtap="saveRecord">保存记录</button>
