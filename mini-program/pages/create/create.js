@@ -224,7 +224,7 @@ Page({
 
   reverseGeocode(lat, lng) {
     return new Promise((resolve, reject) => {
-      const url = 'https://apis.map.qq.com/ws/geocoder/v1/?location=' + lat + ',' + lng + '&key=YOUR_TENCENT_MAP_KEY';
+      const url = 'https://apis.map.qq.com/ws/geocoder/v1/?location=' + lat + ',' + lng + '&key=4C2BZ-TD3KJ-RLSFO-DU6JY-PATN5-C4BDJ';
       
       wx.request({
         url: url,
