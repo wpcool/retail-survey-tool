@@ -237,4 +237,7 @@
   <view class="submit-section">
     <button class="btn-submit" bindtap="saveRecord">保存记录</button>
   </view>
+
+  <!-- 隐藏的 canvas 用于添加水印 -->
+  <canvas type="2d" id="watermarkCanvas" style="position: fixed; left: -9999px; top: -9999px; width: 1px; height: 1px;"></canvas>
 </view>

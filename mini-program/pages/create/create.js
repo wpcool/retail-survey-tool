@@ -203,52 +203,60 @@ Page({
   },
 
   getLocation() {
-    wx.showLoading({ title: '定位中...' });
-    
-    wx.getLocation({
-      type: 'gcj02',
-      success: (res) => {
-        const lat = res.latitude;
-        const lng = res.longitude;
-        this.reverseGeocode(lat, lng);
-      },
-      fail: () => {
-        wx.hideLoading();
-        wx.showToast({ title: '定位失败', icon: 'none' });
-      }
+    return new Promise((resolve, reject) => {
+      wx.showLoading({ title: '定位中...' });
+      
+      wx.getLocation({
+        type: 'gcj02',
+        success: (res) => {
+          const lat = res.latitude;
+          const lng = res.longitude;
+          this.reverseGeocode(lat, lng).then(resolve).catch(reject);
+        },
+        fail: () => {
+          wx.hideLoading();
+          wx.showToast({ title: '定位失败', icon: 'none' });
+          reject(new Error('定位失败'));
+        }
+      });
     });
   },
 
   reverseGeocode(lat, lng) {
-    const url = 'https://apis.map.qq.com/ws/geocoder/v1/?location=' + lat + ',' + lng + '&key=YOUR_TENCENT_MAP_KEY';
-    
-    wx.request({
-      url: url,
-      success: (res) => {
-        wx.hideLoading();
-        if (res.data && res.data.status === 0) {
-          this.setData({
-            'form.shopAddress': res.data.result.address,
-            'form.latitude': lat,
-            'form.longitude': lng
-          });
-          wx.showToast({ title: '定位成功', icon: 'success' });
-        } else {
+    return new Promise((resolve, reject) => {
+      const url = 'https://apis.map.qq.com/ws/geocoder/v1/?location=' + lat + ',' + lng + '&key=YOUR_TENCENT_MAP_KEY';
+      
+      wx.request({
+        url: url,
+        success: (res) => {
+          wx.hideLoading();
+          if (res.data && res.data.status === 0) {
+            this.setData({
+              'form.shopAddress': res.data.result.address,
+              'form.latitude': lat,
+              'form.longitude': lng
+            });
+            wx.showToast({ title: '定位成功', icon: 'success' });
+            resolve();
+          } else {
+            this.setData({
+              'form.shopAddress': 'lat:' + lat.toFixed(4) + ', lng:' + lng.toFixed(4),
+              'form.latitude': lat,
+              'form.longitude': lng
+            });
+            resolve();
+          }
+        },
+        fail: () => {
+          wx.hideLoading();
           this.setData({
             'form.shopAddress': 'lat:' + lat.toFixed(4) + ', lng:' + lng.toFixed(4),
             'form.latitude': lat,
             'form.longitude': lng
           });
+          resolve(); // 即使失败也继续
         }
-      },
-      fail: () => {
-        wx.hideLoading();
-        this.setData({
-          'form.shopAddress': 'lat:' + lat.toFixed(4) + ', lng:' + lng.toFixed(4),
-          'form.latitude': lat,
-          'form.longitude': lng
-        });
-      }
+      });
     });
   },
 
@@ -384,15 +392,46 @@ Page({
 
   // 拍照
   takePhoto() {
+    // 如果还没有获取位置，先获取位置
+    const form = this.data.form;
+    if (!form.latitude || !form.longitude) {
+      this.getLocation().then(() => {
+        this.doTakePhoto();
+      }).catch(() => {
+        // 获取位置失败也继续拍照
+        this.doTakePhoto();
+      });
+    } else {
+      this.doTakePhoto();
+    }
+  },
+
+  // 执行拍照
+  doTakePhoto() {
     wx.chooseMedia({
       count: 1,
       mediaType: ['image'],
       sourceType: ['camera'],
       camera: 'back',
-      success: (res) => {
+      success: async (res) => {
         const tempFilePath = res.tempFiles[0].tempFilePath;
-        const photos = this.data.photos.concat(tempFilePath);
-        this.setData({ photos });
+        
+        wx.showLoading({ title: '处理中...', mask: true });
+        
+        try {
+          // 添加水印
+          const watermarkedPath = await this.addWatermark(tempFilePath);
+          const photos = this.data.photos.concat(watermarkedPath);
+          this.setData({ photos });
+          wx.hideLoading();
+        } catch (err) {
+          console.error('添加水印失败:', err);
+          wx.hideLoading();
+          // 如果水印添加失败，使用原图
+          const photos = this.data.photos.concat(tempFilePath);
+          this.setData({ photos });
+          wx.showToast({ title: '水印添加失败，使用原图', icon: 'none' });
+        }
       },
       fail: (err) => {
         if (err.errMsg && err.errMsg.includes('cancel')) {
@@ -400,6 +439,113 @@ Page({
         }
         wx.showToast({ title: '拍照失败', icon: 'none' });
       }
+    });
+  },
+
+  // 添加水印
+  addWatermark(imagePath) {
+    return new Promise((resolve, reject) => {
+      // 获取图片信息
+      wx.getImageInfo({
+        src: imagePath,
+        success: (imageInfo) => {
+          const width = imageInfo.width;
+          const height = imageInfo.height;
+          
+          // 创建 canvas 上下文
+          const query = wx.createSelectorQuery();
+          query.select('#watermarkCanvas')
+            .fields({ node: true, size: true })
+            .exec((res) => {
+              if (!res[0] || !res[0].node) {
+                reject(new Error('canvas 创建失败'));
+                return;
+              }
+              
+              const canvas = res[0].node;
+              const ctx = canvas.getContext('2d');
+              
+              // 设置 canvas 尺寸为图片尺寸
+              canvas.width = width;
+              canvas.height = height;
+              
+              // 绘制原图
+              const img = canvas.createImage();
+              img.src = imagePath;
+              img.onload = () => {
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // 获取当前时间和位置信息
+                const now = new Date();
+                const timeStr = now.toLocaleString('zh-CN', {
+                  year: 'numeric',
+                  month: '2-digit',
+                  day: '2-digit',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  second: '2-digit'
+                });
+                
+                const form = this.data.form;
+                const locationStr = form.shopAddress || '未知位置';
+                const latStr = form.latitude ? `Lat: ${form.latitude.toFixed(4)}` : '';
+                const lngStr = form.longitude ? `Lng: ${form.longitude.toFixed(4)}` : '';
+                
+                // 水印样式
+                const padding = 20;
+                const lineHeight = 36;
+                const fontSize = 24;
+                const bgPadding = 12;
+                
+                // 计算水印背景高度
+                let textY = height - padding - bgPadding;
+                const lines = [];
+                
+                // 添加时间行
+                lines.push(`📅 ${timeStr}`);
+                // 添加位置行
+                if (locationStr && locationStr !== '未知位置') {
+                  lines.push(`📍 ${locationStr}`);
+                }
+                // 添加坐标行
+                if (latStr && lngStr) {
+                  lines.push(`🌐 ${latStr}, ${lngStr}`);
+                }
+                
+                const bgHeight = lines.length * lineHeight + bgPadding * 2;
+                const bgY = height - bgHeight - padding;
+                
+                // 绘制半透明背景
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+                ctx.fillRect(padding, bgY, width - padding * 2, bgHeight);
+                
+                // 绘制文字
+                ctx.fillStyle = '#ffffff';
+                ctx.font = `${fontSize}px sans-serif`;
+                ctx.textBaseline = 'top';
+                
+                lines.forEach((line, index) => {
+                  const y = bgY + bgPadding + index * lineHeight;
+                  ctx.fillText(line, padding + bgPadding, y);
+                });
+                
+                // 导出图片
+                wx.canvasToTempFilePath({
+                  canvas: canvas,
+                  success: (exportRes) => {
+                    resolve(exportRes.tempFilePath);
+                  },
+                  fail: reject
+                });
+              };
+              
+              img.onerror = () => {
+                reject(new Error('图片加载失败'));
+              };
+            });
+        },
+        fail: reject
+      });
     });
   },
 
