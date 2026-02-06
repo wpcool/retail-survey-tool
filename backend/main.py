@@ -11,6 +11,8 @@ from typing import List, Optional
 import shutil
 import os
 import hashlib
+import json
+import random
 from datetime import datetime, timedelta
 
 from models import get_db, SessionLocal, Surveyor, SurveyTask, SurveyItem, SurveyRecord, Product
@@ -420,10 +422,12 @@ def upload_file(
     if file.content_type not in allowed_types:
         raise HTTPException(status_code=400, detail=f"不支持的文件格式: {file.content_type}")
     
-    # 生成文件名
+    # 生成文件名（使用时间戳+随机数确保唯一）
     timestamp = int(datetime.now().timestamp())
+    random_suffix = random.randint(1000, 9999)
     file_ext = file.filename.split(".")[-1] if "." in file.filename else "jpg"
-    filename = f"{type}_{timestamp}_{hashlib.md5(str(timestamp).encode()).hexdigest()[:8]}.{file_ext}"
+    unique_str = f"{timestamp}_{random_suffix}"
+    filename = f"{type}_{unique_str}_{hashlib.md5(unique_str.encode()).hexdigest()[:8]}.{file_ext}"
     
     # 确保目录存在
     upload_dir = f"static/photos"
@@ -472,6 +476,14 @@ def list_records(
     
     records = []
     for record, item, surveyor, product in results:
+        # 解析多张照片
+        photos = None
+        if record.photos:
+            try:
+                photos = json.loads(record.photos)
+            except:
+                photos = None
+        
         records.append(SurveyRecordResponse(
             id=record.id,
             item_id=record.item_id,
@@ -484,6 +496,7 @@ def list_records(
             latitude=record.latitude,
             longitude=record.longitude,
             photo_path=record.photo_path,
+            photos=photos,
             created_at=record.created_at,
             updated_at=record.updated_at,
             product_name=item.product_name,
@@ -647,6 +660,15 @@ def get_record(record_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="记录不存在")
     
     record, item, surveyor = result
+    
+    # 解析多张照片
+    photos = None
+    if record.photos:
+        try:
+            photos = json.loads(record.photos)
+        except:
+            photos = None
+    
     return SurveyRecordResponse(
         id=record.id,
         item_id=record.item_id,
@@ -659,6 +681,7 @@ def get_record(record_id: int, db: Session = Depends(get_db)):
         latitude=record.latitude,
         longitude=record.longitude,
         photo_path=record.photo_path,
+        photos=photos,
         created_at=record.created_at,
         updated_at=record.updated_at,
         product_name=item.product_name,

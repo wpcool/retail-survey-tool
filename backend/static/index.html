@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>零售市场调研管理系统</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/chart.js"></script>
     <style>
         :root {
             --primary: #6366f1;
@@ -703,7 +703,7 @@
         }
         
         // ==================== 配置 ====================
-        const API_BASE = 'http://localhost:8000';
+        const API_BASE = '';
         let currentPage = 'dashboard';
         let currentData = {};
         
@@ -2027,7 +2027,7 @@
                                                             <td style="padding: 8px 12px;">${r.promotion_info ? `<span style="color: var(--warning);">${r.promotion_info}</span>` : '-'}</td>
                                                             <td style="padding: 8px 12px; text-align: center;">
                                                                 <div class="action-btns" style="justify-content: center;">
-                                                                    ${r.photo_path ? `<button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); viewPhoto('${API_BASE}${r.photo_path}')" style="padding: 2px 8px; font-size: 11px;">📷</button>` : ''}
+                                                                    ${(r.photos && r.photos.length > 0) ? `<button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); viewPhotos(${JSON.stringify(r.photos).replace(/"/g, '&quot;')})" style="padding: 2px 8px; font-size: 11px;">📷${r.photos.length}</button>` : (r.photo_path ? `<button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); viewPhoto('${API_BASE}${r.photo_path}')" style="padding: 2px 8px; font-size: 11px;">📷</button>` : '')}
                                                                     <button class="btn btn-sm btn-default" onclick="event.stopPropagation(); viewRecord(${r.id})" style="padding: 2px 8px; font-size: 11px;">👁️</button>
                                                                     <button class="btn btn-sm btn-danger" onclick="event.stopPropagation(); deleteRecord(${r.id})" style="padding: 2px 8px; font-size: 11px;">🗑️</button>
                                                                 </div>
@@ -2080,7 +2080,7 @@
                     <div class="detail-item"><span class="label">价格</span><span class="value" style="color: #059669; font-size: 24px;">¥${record.price?.toFixed(2)}</span></div>
                     <div class="detail-item"><span class="label">促销信息</span><span class="value">${record.promotion_info || '-'}</span></div>
                 </div>
-                ${record.photo_path ? `<div style="margin-top: 28px;"><h4>调研照片</h4><img src="${API_BASE}${record.photo_path}" style="max-width: 100%; max-height: 340px; border-radius: 16px; margin-top: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); cursor: pointer;" onclick="viewPhoto('${API_BASE}${record.photo_path}')"></div>` : ''}
+                ${(record.photos && record.photos.length > 0) ? `<div style="margin-top: 28px;"><h4>调研照片 (${record.photos.length}张)</h4><div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px;">${record.photos.map((p, i) => `<img src="${API_BASE}${p}" style="max-width: 100%; max-height: 340px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); cursor: pointer;" onclick="viewPhoto('${API_BASE}${p}')" title="照片${i+1}">`).join('')}</div></div>` : (record.photo_path ? `<div style="margin-top: 28px;"><h4>调研照片</h4><img src="${API_BASE}${record.photo_path}" style="max-width: 100%; max-height: 340px; border-radius: 16px; margin-top: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); cursor: pointer;" onclick="viewPhoto('${API_BASE}${record.photo_path}')"></div>` : '')}
             `, null, false);
         }
         
@@ -2634,6 +2634,18 @@
         function confirmModal() { if (window.currentModalConfirm) window.currentModalConfirm(); }
         function viewPhoto(url) { document.getElementById('photoPreview').src = url; document.getElementById('photoModal').classList.add('active'); }
         function closePhotoModal() { document.getElementById('photoModal').classList.remove('active'); }
+        
+        // 查看多张照片
+        function viewPhotos(photos) {
+            if (!photos || photos.length === 0) return;
+            if (photos.length === 1) {
+                viewPhoto(`${API_BASE}${photos[0]}`);
+                return;
+            }
+            // 多张照片显示在弹窗中
+            const photosHtml = photos.map((p, i) => `<img src="${API_BASE}${p}" style="max-width: 100%; max-height: 300px; border-radius: 8px; cursor: pointer;" onclick="viewPhoto('${API_BASE}${p}')" title="点击查看大图">`).join('<br><br>');
+            openModal(`📷 调研照片 (${photos.length}张)`, `<div style="text-align: center;">${photosHtml}</div>`, null, false);
+        }
         
         // ==================== 商品管理页 ====================
         // 商品管理分页状态

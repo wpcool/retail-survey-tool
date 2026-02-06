@@ -115,7 +115,8 @@ class SurveyRecordCreate(SurveyRecordBase):
 class SurveyRecordResponse(SurveyRecordBase):
     id: int
     surveyor_id: int
-    photo_path: Optional[str] = None
+    photo_path: Optional[str] = None  # 兼容旧数据，第一张图片
+    photos: Optional[List[str]] = None  # 多张照片URL列表
     created_at: datetime
     updated_at: datetime
     
