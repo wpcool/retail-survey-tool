@@ -104,16 +104,6 @@
       </view>
     </view>
 
-    <view class="form-item">
-      <view class="form-label">品牌</view>
-      <input 
-        class="form-input" 
-        placeholder="请输入品牌"
-        value="{{form.brand}}"
-        data-field="brand"
-        bindinput="onInput"
-      />
-    </view>
   </view>
 
   <!-- 价格信息 -->

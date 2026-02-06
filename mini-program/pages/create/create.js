@@ -17,7 +17,6 @@ Page({
       name: '',
       category: '',
       specification: '',
-      brand: '',
       price: '',
       promoPrice: '',
       promoInfo: '',
@@ -172,7 +171,6 @@ Page({
       'form.name': item.name,
       'form.category': item.category,
       'form.specification': item.spec || '',
-      'form.brand': item.brand || '',
       suggestList: [],
       showSuggest: false
     });
@@ -342,7 +340,6 @@ Page({
         name: '',
         category: '',
         specification: '',
-        brand: '',
         price: '',
         promoPrice: '',
         promoInfo: '',
