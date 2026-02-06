@@ -632,5 +632,61 @@ Page({
     });
     
     wx.showToast({ title: '请继续选择商品录入', icon: 'none', duration: 1500 });
+  },
+
+  // ========== 测试功能 ==========
+  
+  // 测试逆地理编码（用于排查问题）
+  testGeocoder() {
+    wx.showLoading({ title: '测试中...' });
+    
+    // 使用北京天安门作为测试坐标
+    const testLat = 39.9049;
+    const testLng = 116.4053;
+    
+    const url = 'https://apis.map.qq.com/ws/geocoder/v1/?location=' + testLat + ',' + testLng + '&key=4C2BZ-TD3KJ-RLSFO-DU6JY-PATN5-C4BDJ';
+    
+    wx.request({
+      url: url,
+      success: (res) => {
+        wx.hideLoading();
+        console.log('测试逆地理编码返回:', res.data);
+        
+        if (res.data && res.data.status === 0) {
+          const address = res.data.result && res.data.result.address ? res.data.result.address : '';
+          const recommend = res.data.result && res.data.result.formatted_addresses && res.data.result.formatted_addresses.recommend ? 
+            res.data.result.formatted_addresses.recommend : '';
+          
+          wx.showModal({
+            title: '逆地理编码测试成功',
+            content: `标准地址: ${address}\n推荐地址: ${recommend}`,
+            showCancel: false
+          });
+        } else {
+          const status = res.data ? res.data.status : '未知';
+          const message = res.data && res.data.message ? res.data.message : '未知错误';
+          
+          let tip = '';
+          if (status === 311) tip = '（Key未绑定小程序）';
+          else if (status === 310) tip = '（Key权限不足）';
+          else if (status === 120) tip = '（请求来源未被授权）';
+          
+          wx.showModal({
+            title: '逆地理编码测试失败',
+            content: `状态码: ${status}\n错误信息: ${message}${tip}\n\n请在腾讯地图控制台检查Key配置`,
+            showCancel: false
+          });
+        }
+      },
+      fail: (err) => {
+        wx.hideLoading();
+        console.error('测试请求失败:', err);
+        wx.showModal({
+          title: '请求失败',
+          content: '网络请求失败，请检查网络连接和域名配置',
+          showCancel: false
+        });
+      }
+    });
   }
 });
