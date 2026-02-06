@@ -263,16 +263,20 @@ Page({
             
             // 常见错误提示
             let tip = '';
-            if (res.data && res.data.status === 311) {
+            const statusCode = res.data ? res.data.status : 0;
+            
+            if (statusCode === 199) {
+              tip = 'Key未开启WebService API功能\n\n解决方法：\n1. 访问 lbs.qq.com 登录控制台\n2. 应用管理 → 我的应用\n3. 找到Key，点击「设置」\n4. 勾选「WebService API」并保存';
+            } else if (statusCode === 311) {
               tip = 'Key未绑定小程序，请在腾讯地图控制台绑定';
-            } else if (res.data && res.data.status === 310) {
+            } else if (statusCode === 310) {
               tip = 'Key权限不足，请申请webservice API权限';
             }
             
             if (tip) {
               wx.showModal({
                 title: '定位服务配置错误',
-                content: tip + '\n错误码: ' + res.data.status,
+                content: tip + '\n\n错误码: ' + statusCode,
                 showCancel: false
               });
             }
@@ -667,7 +671,8 @@ Page({
           const message = res.data && res.data.message ? res.data.message : '未知错误';
           
           let tip = '';
-          if (status === 311) tip = '（Key未绑定小程序）';
+          if (status === 199) tip = '\n\n【解决方法】\n1. 访问 https://lbs.qq.com/ 登录控制台\n2. 进入「应用管理」→「我的应用」\n3. 找到当前Key，点击「设置」\n4. 勾选「WebService API」权限并保存';
+          else if (status === 311) tip = '（Key未绑定小程序）';
           else if (status === 310) tip = '（Key权限不足）';
           else if (status === 120) tip = '（请求来源未被授权）';
           
