@@ -224,7 +224,7 @@ Page({
 
   reverseGeocode(lat, lng) {
     return new Promise((resolve, reject) => {
-      const url = 'https://apis.map.qq.com/ws/geocoder/v1/?location=' + lat + ',' + lng + '&key=4C2BZ-TD3KJ-RLSFO-DU6JY-PATN5-C4BDJ';
+      const url = 'https://apis.map.qq.com/ws/geocoder/v1/?location=' + lat + ',' + lng + '&key=4C2BZ-TD3KJ-RLSFO-DU6JY-PATN5-C4BDJ&get_poi=1';
       
       wx.request({
         url: url,
@@ -234,15 +234,31 @@ Page({
           
           if (res.data && res.data.status === 0) {
             // 逆地理编码成功
-            const address = res.data.result && res.data.result.address ? res.data.result.address : '';
-            const formattedAddress = res.data.result && res.data.result.formatted_addresses && res.data.result.formatted_addresses.recommend ? 
-              res.data.result.formatted_addresses.recommend : address;
+            const result = res.data.result;
+            const address = result && result.address ? result.address : '';
+            const formattedAddress = result && result.formatted_addresses && result.formatted_addresses.recommend ? 
+              result.formatted_addresses.recommend : address;
             
-            console.log('获取到地址:', formattedAddress || address);
+            // 获取最近的 POI（商店/楼宇）
+            let nearestPoi = '';
+            if (result.pois && result.pois.length > 0) {
+              // 按距离排序，取最近的一个
+              const sortedPois = result.pois.sort((a, b) => (a._distance || 0) - (b._distance || 0));
+              nearestPoi = sortedPois[0].title || '';
+              console.log('最近的POI:', nearestPoi, '距离:', sortedPois[0]._distance + '米');
+            }
             
-            if (formattedAddress || address) {
+            // 组合地址：如果有POI，显示POI+地址，否则只显示地址
+            let displayAddress = formattedAddress || address;
+            if (nearestPoi && !displayAddress.includes(nearestPoi)) {
+              displayAddress = nearestPoi + ' (' + displayAddress + ')';
+            }
+            
+            console.log('最终显示地址:', displayAddress);
+            
+            if (displayAddress) {
               this.setData({
-                'form.shopAddress': formattedAddress || address,
+                'form.shopAddress': displayAddress,
                 'form.latitude': lat,
                 'form.longitude': lng
               });
@@ -648,7 +664,7 @@ Page({
     const testLat = 39.9049;
     const testLng = 116.4053;
     
-    const url = 'https://apis.map.qq.com/ws/geocoder/v1/?location=' + testLat + ',' + testLng + '&key=4C2BZ-TD3KJ-RLSFO-DU6JY-PATN5-C4BDJ';
+    const url = 'https://apis.map.qq.com/ws/geocoder/v1/?location=' + testLat + ',' + testLng + '&key=4C2BZ-TD3KJ-RLSFO-DU6JY-PATN5-C4BDJ&get_poi=1';
     
     wx.request({
       url: url,
@@ -657,13 +673,22 @@ Page({
         console.log('测试逆地理编码返回:', res.data);
         
         if (res.data && res.data.status === 0) {
-          const address = res.data.result && res.data.result.address ? res.data.result.address : '';
-          const recommend = res.data.result && res.data.result.formatted_addresses && res.data.result.formatted_addresses.recommend ? 
-            res.data.result.formatted_addresses.recommend : '';
+          const result = res.data.result;
+          const address = result && result.address ? result.address : '';
+          const recommend = result && result.formatted_addresses && result.formatted_addresses.recommend ? 
+            result.formatted_addresses.recommend : '';
+          
+          // 获取最近的 POI
+          let poiInfo = '附近无POI';
+          if (result.pois && result.pois.length > 0) {
+            const sortedPois = result.pois.sort((a, b) => (a._distance || 0) - (b._distance || 0));
+            const nearest = sortedPois[0];
+            poiInfo = `最近POI: ${nearest.title}\n距离: ${nearest._distance}米\n分类: ${nearest.category || '未知'}`;
+          }
           
           wx.showModal({
             title: '逆地理编码测试成功',
-            content: `标准地址: ${address}\n推荐地址: ${recommend}`,
+            content: `推荐地址: ${recommend || address}\n\n${poiInfo}`,
             showCancel: false
           });
         } else {
