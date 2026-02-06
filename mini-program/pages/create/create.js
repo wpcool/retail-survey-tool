@@ -230,27 +230,32 @@ Page({
         url: url,
         success: (res) => {
           wx.hideLoading();
+          console.log('腾讯地图 API 返回:', res.data);
+          
           if (res.data && res.data.status === 0) {
+            const address = res.data.result && res.data.result.address ? res.data.result.address : '';
+            console.log('获取到地址:', address);
             this.setData({
-              'form.shopAddress': res.data.result.address,
+              'form.shopAddress': address,
               'form.latitude': lat,
               'form.longitude': lng
             });
             wx.showToast({ title: '定位成功', icon: 'success' });
             resolve();
           } else {
+            console.error('地理编码失败:', res.data);
+            // 失败时不设置 shopAddress，让水印显示"未知位置"
             this.setData({
-              'form.shopAddress': 'lat:' + lat.toFixed(4) + ', lng:' + lng.toFixed(4),
               'form.latitude': lat,
               'form.longitude': lng
             });
             resolve();
           }
         },
-        fail: () => {
+        fail: (err) => {
           wx.hideLoading();
+          console.error('请求失败:', err);
           this.setData({
-            'form.shopAddress': 'lat:' + lat.toFixed(4) + ', lng:' + lng.toFixed(4),
             'form.latitude': lat,
             'form.longitude': lng
           });
@@ -503,11 +508,15 @@ Page({
                 
                 // 添加时间行
                 lines.push(`📅 ${timeStr}`);
-                // 添加位置行
-                if (locationStr && locationStr !== '未知位置') {
+                
+                // 添加位置行（只有当有真实地址时，且地址不是坐标字符串）
+                if (locationStr && locationStr.trim() !== '' && 
+                    locationStr !== '未知位置' && 
+                    !locationStr.includes('lat:')) {
                   lines.push(`📍 ${locationStr}`);
                 }
-                // 添加坐标行
+                
+                // 添加坐标行（无论地址是否获取成功，都显示坐标）
                 if (latStr && lngStr) {
                   lines.push(`🌐 ${latStr}, ${lngStr}`);
                 }
