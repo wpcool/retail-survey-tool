@@ -233,18 +233,51 @@ Page({
           console.log('腾讯地图 API 返回:', res.data);
           
           if (res.data && res.data.status === 0) {
+            // 逆地理编码成功
             const address = res.data.result && res.data.result.address ? res.data.result.address : '';
-            console.log('获取到地址:', address);
-            this.setData({
-              'form.shopAddress': address,
-              'form.latitude': lat,
-              'form.longitude': lng
-            });
-            wx.showToast({ title: '定位成功', icon: 'success' });
+            const formattedAddress = res.data.result && res.data.result.formatted_addresses && res.data.result.formatted_addresses.recommend ? 
+              res.data.result.formatted_addresses.recommend : address;
+            
+            console.log('获取到地址:', formattedAddress || address);
+            
+            if (formattedAddress || address) {
+              this.setData({
+                'form.shopAddress': formattedAddress || address,
+                'form.latitude': lat,
+                'form.longitude': lng
+              });
+              wx.showToast({ title: '定位成功', icon: 'success' });
+            } else {
+              // 有响应但没有地址
+              wx.showToast({ title: '未获取到地址信息', icon: 'none' });
+              this.setData({
+                'form.latitude': lat,
+                'form.longitude': lng
+              });
+            }
             resolve();
           } else {
+            // API 返回错误
             console.error('地理编码失败:', res.data);
-            // 失败时不设置 shopAddress，让水印显示"未知位置"
+            const errorMsg = res.data && res.data.message ? res.data.message : '未知错误';
+            
+            // 常见错误提示
+            let tip = '';
+            if (res.data && res.data.status === 311) {
+              tip = 'Key未绑定小程序，请在腾讯地图控制台绑定';
+            } else if (res.data && res.data.status === 310) {
+              tip = 'Key权限不足，请申请webservice API权限';
+            }
+            
+            if (tip) {
+              wx.showModal({
+                title: '定位服务配置错误',
+                content: tip + '\n错误码: ' + res.data.status,
+                showCancel: false
+              });
+            }
+            
+            // 失败时不设置 shopAddress，让水印显示坐标
             this.setData({
               'form.latitude': lat,
               'form.longitude': lng
@@ -255,6 +288,7 @@ Page({
         fail: (err) => {
           wx.hideLoading();
           console.error('请求失败:', err);
+          wx.showToast({ title: '网络请求失败', icon: 'none' });
           this.setData({
             'form.latitude': lat,
             'form.longitude': lng
