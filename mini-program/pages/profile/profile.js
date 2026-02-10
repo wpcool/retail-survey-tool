@@ -35,46 +35,52 @@ Page({
     this.setData({ loading: true });
     
     try {
-      const userInfo = this.data.userInfo;
+      // 确保获取用户信息
+      let userInfo = this.data.userInfo;
       if (!userInfo || !userInfo.id) {
-        console.log('未获取到用户信息，尝试从缓存加载');
-        const cachedUserInfo = wx.getStorageSync('userInfo');
-        if (cachedUserInfo && cachedUserInfo.id) {
-          this.setData({ userInfo: cachedUserInfo });
+        userInfo = wx.getStorageSync('userInfo');
+        if (userInfo && userInfo.id) {
+          this.setData({ userInfo });
         } else {
-          console.log('缓存中也没有用户信息');
+          console.log('未获取到用户信息');
           this.setData({ loading: false });
           return;
         }
       }
       
-      const currentUserInfo = this.data.userInfo || wx.getStorageSync('userInfo');
-      console.log('开始加载统计数据，用户ID:', currentUserInfo.id);
+      console.log('开始加载统计数据，用户ID:', userInfo.id);
       
       // 调用后端API获取统计
       const res = await app.request({
-        url: `/api/surveyors/${currentUserInfo.id}/stats`,
+        url: `/api/surveyors/${userInfo.id}/stats`,
         method: 'GET'
       });
       
       console.log('统计API返回:', res);
       
-      this.setData({
-        stats: {
-          totalRecords: res.total_records || 0,
-          todayRecords: res.today_records || 0,
-          distinctDays: res.distinct_days || 0,
-          distinctProducts: res.distinct_products || 0
-        },
-        last7Days: res.last_7_days || [],
-        recentRecords: res.recent_records || [],
-        loading: false
-      });
+      // 确保数据格式正确
+      if (res && typeof res === 'object') {
+        this.setData({
+          stats: {
+            totalRecords: res.total_records || 0,
+            todayRecords: res.today_records || 0,
+            distinctDays: res.distinct_days || 0,
+            distinctProducts: res.distinct_products || 0
+          },
+          last7Days: res.last_7_days || [],
+          recentRecords: res.recent_records || [],
+          loading: false
+        });
+        console.log('统计数据已更新:', this.data.stats);
+      } else {
+        throw new Error('API返回数据格式不正确');
+      }
     } catch (error) {
       console.error('加载统计失败:', error);
       wx.showToast({ 
-        title: '加载失败，使用本地数据', 
-        icon: 'none' 
+        title: error.message || '加载失败', 
+        icon: 'none',
+        duration: 2000
       });
       // 使用模拟数据
       this.setData({
