@@ -516,6 +516,11 @@ Page({
         success: (modalRes) => {
           if (modalRes.confirm) {
             this.resetFormForNext();
+            // 重新加载完成状态，更新商品调研次数
+            const selectedTask = wx.getStorageSync('selectedTask');
+            if (selectedTask && selectedTask.id) {
+              this.loadCompletionStatus(selectedTask.id);
+            }
           } else {
             wx.switchTab({ url: '/pages/index/index' });
           }
