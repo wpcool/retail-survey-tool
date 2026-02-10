@@ -43,3 +43,6 @@ backend/data/*.db
 
 # Uploads
 backend/static/photos/
+
+# 启动脚本（本地环境相关，不提交）
+start.sh
