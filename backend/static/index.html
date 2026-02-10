@@ -593,6 +593,69 @@
         /* 响应式 */
         @media (max-width: 1200px) { .stats-row { grid-template-columns: repeat(2, 1fr); } .chart-row { grid-template-columns: 1fr; } }
         @media (max-width: 768px) { .sidebar { transform: translateX(-100%); } .main-content { margin-left: 0; padding: 20px; } .stats-row { grid-template-columns: 1fr; } }
+        
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-top: 24px;
+        }
+        
+        .page-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 12px;
+            border: none;
+            border-radius: 8px;
+            background: white;
+            color: #475569;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .page-btn:hover:not(:disabled) {
+            background: #6366f1;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+        }
+        
+        .page-btn.active {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #e2e8f0;
+        }
+        
+        .pagination-info {
+            color: #64748b;
+            font-size: 14px;
+            margin-left: 16px;
+            padding-left: 16px;
+            border-left: 2px solid #e2e8f0;
+        }
+        
+        .pagination-ellipsis {
+            color: #94a3b8;
+            padding: 0 8px;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -2177,7 +2240,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div id="surveyorPagination" style="margin-top: 20px; display: flex; justify-content: center;"></div>
+                        <div id="surveyorPagination" class="pagination"></div>
                     </div>
                 </div>
                 
@@ -2240,7 +2303,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <div id="competitorStoresPagination" style="margin-top: 20px; display: flex; justify-content: center;"></div>
+                        <div id="competitorStoresPagination" class="pagination"></div>
                     </div>
                 </div>
             `;
@@ -2361,22 +2424,45 @@
             }
             
             let html = `
-                <div class="pagination">
-                    <button class="page-btn" ${currentSurveyorPage === 1 ? 'disabled' : ''} onclick="goToSurveyorPage(${currentSurveyorPage - 1})">上一页</button>
+                <button class="page-btn" ${currentSurveyorPage === 1 ? 'disabled' : ''} onclick="goToSurveyorPage(${currentSurveyorPage - 1})">上一页</button>
             `;
             
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentSurveyorPage - 1 && i <= currentSurveyorPage + 1)) {
-                    html += `<button class="page-btn ${i === currentSurveyorPage ? 'active' : ''}" onclick="goToSurveyorPage(${i})">${i}</button>`;
-                } else if (i === currentSurveyorPage - 2 || i === currentSurveyorPage + 2) {
-                    html += `<span style="color: #94a3b8;">...</span>`;
-                }
+            // 始终显示第一页
+            html += `<button class="page-btn ${1 === currentSurveyorPage ? 'active' : ''}" onclick="goToSurveyorPage(1)">1</button>`;
+            
+            // 计算中间页码显示范围
+            let startPage = Math.max(2, currentSurveyorPage - 1);
+            let endPage = Math.min(totalPages - 1, currentSurveyorPage + 1);
+            
+            if (currentSurveyorPage <= 3) {
+                endPage = Math.min(totalPages - 1, 4);
+            } else if (currentSurveyorPage >= totalPages - 2) {
+                startPage = Math.max(2, totalPages - 3);
+            }
+            
+            // 前面省略号
+            if (startPage > 2) {
+                html += `<span class="pagination-ellipsis">...</span>`;
+            }
+            
+            // 中间页码
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="page-btn ${i === currentSurveyorPage ? 'active' : ''}" onclick="goToSurveyorPage(${i})">${i}</button>`;
+            }
+            
+            // 后面省略号
+            if (endPage < totalPages - 1) {
+                html += `<span class="pagination-ellipsis">...</span>`;
+            }
+            
+            // 最后一页
+            if (totalPages > 1) {
+                html += `<button class="page-btn ${totalPages === currentSurveyorPage ? 'active' : ''}" onclick="goToSurveyorPage(${totalPages})">${totalPages}</button>`;
             }
             
             html += `
-                    <button class="page-btn" ${currentSurveyorPage === totalPages ? 'disabled' : ''} onclick="goToSurveyorPage(${currentSurveyorPage + 1})">下一页</button>
-                    <span style="margin-left: 16px; color: #64748b; font-size: 14px;">共 ${filteredSurveyors.length} 人</span>
-                </div>
+                <button class="page-btn" ${currentSurveyorPage === totalPages ? 'disabled' : ''} onclick="goToSurveyorPage(${currentSurveyorPage + 1})">下一页</button>
+                <span class="pagination-info">共 ${filteredSurveyors.length} 人</span>
             `;
             
             document.getElementById('surveyorPagination').innerHTML = html;
@@ -2491,22 +2577,48 @@
             }
             
             let html = `
-                <div class="pagination">
-                    <button class="page-btn" ${currentCompetitorPage === 1 ? 'disabled' : ''} onclick="goToCompetitorPage(${currentCompetitorPage - 1})">上一页</button>
+                <button class="page-btn" ${currentCompetitorPage === 1 ? 'disabled' : ''} onclick="goToCompetitorPage(${currentCompetitorPage - 1})">上一页</button>
             `;
             
-            for (let i = 1; i <= totalPages; i++) {
-                if (i === 1 || i === totalPages || (i >= currentCompetitorPage - 1 && i <= currentCompetitorPage + 1)) {
-                    html += `<button class="page-btn ${i === currentCompetitorPage ? 'active' : ''}" onclick="goToCompetitorPage(${i})">${i}</button>`;
-                } else if (i === currentCompetitorPage - 2 || i === currentCompetitorPage + 2) {
-                    html += `<span style="color: #94a3b8;">...</span>`;
-                }
+            // 始终显示第一页
+            html += `<button class="page-btn ${1 === currentCompetitorPage ? 'active' : ''}" onclick="goToCompetitorPage(1)">1</button>`;
+            
+            // 计算中间页码显示范围
+            let startPage = Math.max(2, currentCompetitorPage - 1);
+            let endPage = Math.min(totalPages - 1, currentCompetitorPage + 1);
+            
+            // 如果当前页靠近开始，显示更多后面的页
+            if (currentCompetitorPage <= 3) {
+                endPage = Math.min(totalPages - 1, 4);
+            }
+            // 如果当前页靠近结束，显示更多前面的页
+            else if (currentCompetitorPage >= totalPages - 2) {
+                startPage = Math.max(2, totalPages - 3);
+            }
+            
+            // 显示前面的省略号
+            if (startPage > 2) {
+                html += `<span class="pagination-ellipsis">...</span>`;
+            }
+            
+            // 显示中间页码
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="page-btn ${i === currentCompetitorPage ? 'active' : ''}" onclick="goToCompetitorPage(${i})">${i}</button>`;
+            }
+            
+            // 显示后面的省略号
+            if (endPage < totalPages - 1) {
+                html += `<span class="pagination-ellipsis">...</span>`;
+            }
+            
+            // 始终显示最后一页（如果不是第一页）
+            if (totalPages > 1) {
+                html += `<button class="page-btn ${totalPages === currentCompetitorPage ? 'active' : ''}" onclick="goToCompetitorPage(${totalPages})">${totalPages}</button>`;
             }
             
             html += `
-                    <button class="page-btn" ${currentCompetitorPage === totalPages ? 'disabled' : ''} onclick="goToCompetitorPage(${currentCompetitorPage + 1})">下一页</button>
-                    <span style="margin-left: 16px; color: #64748b; font-size: 14px;">共 ${filteredCompetitorStores.length} 条</span>
-                </div>
+                <button class="page-btn" ${currentCompetitorPage === totalPages ? 'disabled' : ''} onclick="goToCompetitorPage(${currentCompetitorPage + 1})">下一页</button>
+                <span class="pagination-info">共 ${filteredCompetitorStores.length} 条</span>
             `;
             
             document.getElementById('competitorStoresPagination').innerHTML = html;
