@@ -70,7 +70,8 @@ class SurveyRecord(Base):
     id = Column(Integer, primary_key=True, index=True)
     item_id = Column(Integer, ForeignKey("survey_items.id"))
     surveyor_id = Column(Integer, ForeignKey("surveyors.id"))
-    store_name = Column(String(200))  # 超市名称
+    own_store_name = Column(String(100), nullable=True)  # 自己的门店名称（如：蔡家坡店）
+    store_name = Column(String(200))  # 竞争店铺名称（如：超美佳）
     store_address = Column(String(500), nullable=True)  # 地址
     price = Column(Float)  # 单价
     promotion_info = Column(String(500), nullable=True)  # 促销信息

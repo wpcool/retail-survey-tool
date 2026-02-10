@@ -106,7 +106,8 @@ Page({
             selectedStoreIndex: storeIndex,
             competitorList: competitorList,
             selectedCompetitorIndex: competitorIndex,
-            'form.shop': competitorIndex !== -1 ? lastCompetitor : ''
+            'form.shop': competitorIndex !== -1 ? lastCompetitor : '',
+            'form.ownStoreName': lastStore  // 保存自己的门店名称
           });
         }
       };
@@ -124,7 +125,8 @@ Page({
       selectedStoreIndex: index,
       competitorList: competitorList,
       selectedCompetitorIndex: -1,
-      'form.shop': ''
+      'form.shop': '',
+      'form.ownStoreName': storeName  // 保存自己的门店名称
     });
     
     // 保存选择
@@ -487,7 +489,8 @@ Page({
       const submitData = {
         item_id: selectedItem.id,
         surveyor_id: userInfo.id || 1,
-        store_name: form.shop.trim(),
+        own_store_name: this.data.storeList[this.data.selectedStoreIndex] || '',  // 自己的门店名称
+        store_name: form.shop.trim(),  // 竞争店铺名称
         store_address: form.shopAddress.trim() || null,
         price: parseFloat(form.price),
         promotion_info: form.promoInfo.trim() || null,

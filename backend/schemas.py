@@ -99,7 +99,8 @@ class SurveyTaskSimple(BaseModel):
 # ========== 调研记录相关 ==========
 class SurveyRecordBase(BaseModel):
     item_id: int
-    store_name: str
+    own_store_name: Optional[str] = None  # 自己的门店名称
+    store_name: str  # 竞争店铺名称
     store_address: Optional[str] = None
     price: float
     promotion_info: Optional[str] = None

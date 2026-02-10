@@ -2011,7 +2011,8 @@
                                                     <tr style="background: var(--gray-100);">
                                                         <th style="padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-600);">时间</th>
                                                         <th style="padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-600);">人员</th>
-                                                        <th style="padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-600);">超市</th>
+                                                        <th style="padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-600);">自己门店</th>
+                                                        <th style="padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-600);">竞争店铺</th>
                                                         <th style="padding: 8px 12px; text-align: right; font-weight: 600; color: var(--gray-600);">价格</th>
                                                         <th style="padding: 8px 12px; text-align: left; font-weight: 600; color: var(--gray-600);">促销</th>
                                                         <th style="padding: 8px 12px; text-align: center; font-weight: 600; color: var(--gray-600);">操作</th>
@@ -2022,6 +2023,7 @@
                                                         <tr style="border-bottom: 1px solid var(--gray-100);">
                                                             <td style="padding: 8px 12px; color: var(--gray-600);">${new Date(r.created_at).toLocaleString('zh-CN', {month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'})}</td>
                                                             <td style="padding: 8px 12px;"><span style="color: var(--primary); font-weight: 500;">${r.surveyor_name}</span></td>
+                                                            <td style="padding: 8px 12px;"><span style="color: var(--success); font-weight: 500;">${r.own_store_name || '-'}</span></td>
                                                             <td style="padding: 8px 12px;">${r.store_name}</td>
                                                             <td style="padding: 8px 12px; text-align: right; font-weight: 600;">¥${r.price.toFixed(2)}</td>
                                                             <td style="padding: 8px 12px;">${r.promotion_info ? `<span style="color: var(--warning);">${r.promotion_info}</span>` : '-'}</td>
@@ -2073,8 +2075,9 @@
                 <div class="detail-grid">
                     <div class="detail-item"><span class="label">调研人员</span><span class="value">${record.surveyor_name}</span></div>
                     <div class="detail-item"><span class="label">记录时间</span><span class="value">${new Date(record.created_at).toLocaleString()}</span></div>
-                    <div class="detail-item"><span class="label">超市名称</span><span class="value">${record.store_name}</span></div>
-                    <div class="detail-item"><span class="label">超市地址</span><span class="value">${record.store_address || '-'}</span></div>
+                    <div class="detail-item"><span class="label">自己门店</span><span class="value" style="color: #059669;">${record.own_store_name || '-'}</span></div>
+                    <div class="detail-item"><span class="label">竞争店铺</span><span class="value">${record.store_name}</span></div>
+                    <div class="detail-item"><span class="label">店铺地址</span><span class="value">${record.store_address || '-'}</span></div>
                     <div class="detail-item"><span class="label">商品类别</span><span class="value"><span class="tag tag-default">${record.category}</span></span></div>
                     <div class="detail-item"><span class="label">商品名称</span><span class="value">${record.product_name}</span></div>
                     <div class="detail-item"><span class="label">价格</span><span class="value" style="color: #059669; font-size: 24px;">¥${record.price?.toFixed(2)}</span></div>
@@ -2097,8 +2100,8 @@
         function exportRecords() {
             const records = currentData.records || [];
             if (records.length === 0) { showToast('没有数据可导出', 'error'); return; }
-            const headers = ['ID', '时间', '调研人员', '超市', '地址', '品类', '商品', '价格', '促销信息', '备注'];
-            const rows = records.map(r => [r.id, new Date(r.created_at).toLocaleString(), r.surveyor_name, r.store_name, r.store_address || '', r.category, r.product_name, r.price, r.promotion_info || '', r.remark || '']);
+            const headers = ['ID', '时间', '调研人员', '自己门店', '竞争店铺', '地址', '品类', '商品', '价格', '促销信息', '备注'];
+            const rows = records.map(r => [r.id, new Date(r.created_at).toLocaleString(), r.surveyor_name, r.own_store_name || '', r.store_name, r.store_address || '', r.category, r.product_name, r.price, r.promotion_info || '', r.remark || '']);
             const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
             const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');

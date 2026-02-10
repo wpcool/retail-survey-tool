@@ -323,7 +323,8 @@ class RecordCreateRequest(BaseModel):
     """创建调研记录请求（JSON格式）"""
     item_id: int
     surveyor_id: int
-    store_name: str
+    own_store_name: Optional[str] = None  # 自己的门店名称
+    store_name: str  # 竞争店铺名称
     store_address: Optional[str] = None
     price: float
     promotion_info: Optional[str] = None
@@ -350,6 +351,7 @@ def create_record(
     record = SurveyRecord(
         item_id=request.item_id,
         surveyor_id=request.surveyor_id,
+        own_store_name=request.own_store_name,
         store_name=request.store_name,
         store_address=request.store_address,
         price=request.price,
@@ -493,6 +495,7 @@ def list_records(
             id=record.id,
             item_id=record.item_id,
             surveyor_id=record.surveyor_id,
+            own_store_name=record.own_store_name,
             store_name=record.store_name,
             store_address=record.store_address,
             price=record.price,
@@ -678,6 +681,7 @@ def get_record(record_id: int, db: Session = Depends(get_db)):
         id=record.id,
         item_id=record.item_id,
         surveyor_id=record.surveyor_id,
+        own_store_name=record.own_store_name,
         store_name=record.store_name,
         store_address=record.store_address,
         price=record.price,
