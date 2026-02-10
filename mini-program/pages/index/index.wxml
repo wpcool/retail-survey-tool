@@ -22,11 +22,11 @@
     </view>
     <view class="stat-item">
       <text class="stat-value">{{stats.completed}}</text>
-      <text class="stat-label">已完成</text>
+      <text class="stat-label">已调研商品数</text>
     </view>
     <view class="stat-item">
       <text class="stat-value">{{stats.pending}}</text>
-      <text class="stat-label">待完成</text>
+      <text class="stat-label">待调研商品数</text>
     </view>
   </view>
 
