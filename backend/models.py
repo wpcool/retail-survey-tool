@@ -129,6 +129,17 @@ class Product(Base):
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
 
+class CompetitorStore(Base):
+    """竞店信息"""
+    __tablename__ = "competitor_stores"
+    
+    id = Column(Integer, primary_key=True, index=True)
+    store_name = Column(String(100), index=True, nullable=False)  # 门店名称（如：蔡家坡店）
+    competitor_name = Column(String(200), nullable=False)  # 竞店名称
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
+
+
 # 创建数据库表
 Base.metadata.create_all(bind=engine)
 

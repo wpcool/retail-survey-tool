@@ -2229,10 +2229,11 @@
                                         <th>门店名称</th>
                                         <th>竞店数量</th>
                                         <th>竞店列表</th>
+                                        <th>操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="competitorStoresTable">
-                                    <tr><td colspan="3" class="empty-state">加载中...</td></tr>
+                                    <tr><td colspan="4" class="empty-state">加载中...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -2420,7 +2421,7 @@
             } catch (e) {
                 console.error('加载竞店数据失败:', e);
                 document.getElementById('competitorStoresTable').innerHTML = 
-                    '<tr><td colspan="3" class="empty-state"><span class="icon">❌</span><p>加载失败，请重试</p></td></tr>';
+                    '<tr><td colspan="4" class="empty-state"><span class="icon">❌</span><p>加载失败，请重试</p></td></tr>';
             }
         }
         
@@ -2447,7 +2448,7 @@
             
             if (filteredCompetitorStores.length === 0) {
                 document.getElementById('competitorStoresTable').innerHTML = `
-                    <tr><td colspan="3" class="empty-state">
+                    <tr><td colspan="4" class="empty-state">
                         <span class="icon" style="font-size: 48px;">🔍</span>
                         <p style="margin-top: 16px; font-size: 16px;">没有找到匹配的竞店数据</p>
                     </td></tr>
@@ -2457,8 +2458,8 @@
             }
             
             const html = pageData.map((item, i) => {
-                const competitorsHtml = item.competitors.map((c, idx) => 
-                    `<span class="tag tag-default" style="margin: 2px; display: inline-block;">${idx + 1}. ${c}</span>`
+                const competitorsHtml = item.competitors.map(c => 
+                    `<span class="tag tag-default" style="margin: 2px; display: inline-block;">${c}</span>`
                 ).join('');
                 
                 return `
@@ -2466,6 +2467,11 @@
                         <td><strong style="color: var(--primary); font-size: 15px;">${item.store}</strong></td>
                         <td><span class="tag tag-success">${item.count} 家</span></td>
                         <td style="max-width: 600px; line-height: 2;">${competitorsHtml}</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-sm btn-primary" onclick="manageCompetitors('${item.store}')">🏪 管理竞店</button>
+                            </div>
+                        </td>
                     </tr>
                 `;
             }).join('');
@@ -2523,6 +2529,185 @@
             link.click();
             
             showToast('竞店数据导出成功', 'success');
+        }
+        
+        // 当前管理的门店
+        let currentManagingStore = null;
+        let currentStoreCompetitors = [];
+        
+        // 打开竞店管理弹窗
+        async function manageCompetitors(storeName) {
+            currentManagingStore = storeName;
+            
+            // 获取该门店的竞店列表（带ID）
+            try {
+                const res = await fetch(`${API_BASE}/api/competitor-stores/${encodeURIComponent(storeName)}`);
+                currentStoreCompetitors = await res.json();
+            } catch (e) {
+                showToast('获取竞店数据失败', 'error');
+                return;
+            }
+            
+            const body = `
+                <div style="margin-bottom: 20px;">
+                    <div style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: white; padding: 16px 20px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="font-size: 12px; opacity: 0.9; margin-bottom: 4px;">管理门店</div>
+                        <div style="font-size: 20px; font-weight: 700;">🏪 ${storeName}</div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 16px;">
+                        <input type="text" id="newCompetitorName" class="form-control" placeholder="输入竞店名称..." style="flex: 1;">
+                        <button class="btn btn-primary" onclick="addNewCompetitor()">➕ 添加</button>
+                    </div>
+                    
+                    <div id="competitorsList" style="max-height: 300px; overflow-y: auto;">
+                        ${renderCompetitorsList()}
+                    </div>
+                </div>
+            `;
+            
+            openModal(`🏪 管理竞店 - ${storeName}`, body, null, false);
+        }
+        
+        // 渲染竞店列表
+        function renderCompetitorsList() {
+            if (currentStoreCompetitors.length === 0) {
+                return `
+                    <div class="empty-state" style="padding: 40px;">
+                        <span class="icon" style="font-size: 48px;">📭</span>
+                        <p style="margin-top: 16px; color: #64748b;">暂无竞店数据</p>
+                    </div>
+                `;
+            }
+            
+            return currentStoreCompetitors.map((c, idx) => `
+                <div class="competitor-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 8px; margin-bottom: 8px; animation: slideInUp 0.3s both; animation-delay: ${idx * 0.05}s;">
+                    <span style="background: #6366f1; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0;">${idx + 1}</span>
+                    <span class="competitor-name" style="flex: 1; font-weight: 500; color: #1e293b;">${c.name}</span>
+                    <input type="text" class="competitor-edit-input form-control" value="${c.name}" style="flex: 1; display: none; padding: 8px 12px;">
+                    <div class="action-btns">
+                        <button class="btn btn-sm btn-warning edit-btn" onclick="startEditCompetitor(${c.id}, this)">✏️ 编辑</button>
+                        <button class="btn btn-sm btn-primary save-btn" onclick="saveEditCompetitor(${c.id}, this)" style="display: none;">💾 保存</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteCompetitorItem(${c.id})">🗑️ 删除</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // 添加新竞店
+        async function addNewCompetitor() {
+            const input = document.getElementById('newCompetitorName');
+            const name = input.value.trim();
+            
+            if (!name) {
+                showToast('请输入竞店名称', 'error');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/competitor-stores`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        store_name: currentManagingStore,
+                        competitor_name: name
+                    })
+                });
+                
+                if (res.ok) {
+                    showToast('添加成功', 'success');
+                    input.value = '';
+                    // 刷新列表
+                    const refreshRes = await fetch(`${API_BASE}/api/competitor-stores/${encodeURIComponent(currentManagingStore)}`);
+                    currentStoreCompetitors = await refreshRes.json();
+                    document.getElementById('competitorsList').innerHTML = renderCompetitorsList();
+                    // 刷新主列表
+                    loadCompetitorStores();
+                } else {
+                    const err = await res.json();
+                    showToast(err.detail || '添加失败', 'error');
+                }
+            } catch (e) {
+                showToast('网络错误', 'error');
+            }
+        }
+        
+        // 开始编辑
+        function startEditCompetitor(id, btn) {
+            const item = btn.closest('.competitor-item');
+            const nameSpan = item.querySelector('.competitor-name');
+            const editInput = item.querySelector('.competitor-edit-input');
+            const saveBtn = item.querySelector('.save-btn');
+            const editBtn = item.querySelector('.edit-btn');
+            
+            nameSpan.style.display = 'none';
+            editInput.style.display = 'block';
+            editBtn.style.display = 'none';
+            saveBtn.style.display = 'inline-flex';
+            editInput.focus();
+        }
+        
+        // 保存编辑
+        async function saveEditCompetitor(id, btn) {
+            const item = btn.closest('.competitor-item');
+            const editInput = item.querySelector('.competitor-edit-input');
+            const newName = editInput.value.trim();
+            
+            if (!newName) {
+                showToast('竞店名称不能为空', 'error');
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/competitor-stores/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ competitor_name: newName })
+                });
+                
+                if (res.ok) {
+                    showToast('修改成功', 'success');
+                    // 刷新列表
+                    const refreshRes = await fetch(`${API_BASE}/api/competitor-stores/${encodeURIComponent(currentManagingStore)}`);
+                    currentStoreCompetitors = await refreshRes.json();
+                    document.getElementById('competitorsList').innerHTML = renderCompetitorsList();
+                    // 刷新主列表
+                    loadCompetitorStores();
+                } else {
+                    const err = await res.json();
+                    showToast(err.detail || '修改失败', 'error');
+                }
+            } catch (e) {
+                showToast('网络错误', 'error');
+            }
+        }
+        
+        // 删除竞店
+        async function deleteCompetitorItem(id) {
+            if (!confirm('确定要删除这个竞店吗？')) {
+                return;
+            }
+            
+            try {
+                const res = await fetch(`${API_BASE}/api/competitor-stores/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (res.ok) {
+                    showToast('删除成功', 'success');
+                    // 刷新列表
+                    const refreshRes = await fetch(`${API_BASE}/api/competitor-stores/${encodeURIComponent(currentManagingStore)}`);
+                    currentStoreCompetitors = await refreshRes.json();
+                    document.getElementById('competitorsList').innerHTML = renderCompetitorsList();
+                    // 刷新主列表
+                    loadCompetitorStores();
+                } else {
+                    const err = await res.json();
+                    showToast(err.detail || '删除失败', 'error');
+                }
+            } catch (e) {
+                showToast('网络错误', 'error');
+            }
         }
         
         function showLoading(tableId) {
