@@ -464,7 +464,16 @@ def list_records(
     db: Session = Depends(get_db)
 ):
     """获取调研记录"""
-    query = db.query(SurveyRecord, SurveyItem, Surveyor, Product).join(
+    from sqlalchemy import distinct
+    
+    # 使用 distinct 避免因 Product 表重复数据导致记录重复
+    query = db.query(
+        SurveyRecord, SurveyItem, Surveyor, 
+        Product.category_level1_name, 
+        Product.category_level2_name,
+        Product.category_level3_name,
+        Product.category_level4_name
+    ).distinct(SurveyRecord.id).join(
         SurveyItem, SurveyRecord.item_id == SurveyItem.id
     ).join(
         Surveyor, SurveyRecord.surveyor_id == Surveyor.id
@@ -482,7 +491,7 @@ def list_records(
     results = query.order_by(SurveyRecord.created_at.desc()).all()
     
     records = []
-    for record, item, surveyor, product in results:
+    for record, item, surveyor, cat1, cat2, cat3, cat4 in results:
         # 解析多张照片
         photos = None
         if record.photos:
@@ -510,10 +519,10 @@ def list_records(
             product_name=item.product_name,
             category=item.category,
             surveyor_name=surveyor.name,
-            category_level1_name=product.category_level1_name if product else None,
-            category_level2_name=product.category_level2_name if product else None,
-            category_level3_name=product.category_level3_name if product else None,
-            category_level4_name=product.category_level4_name if product else None
+            category_level1_name=cat1,
+            category_level2_name=cat2,
+            category_level3_name=cat3,
+            category_level4_name=cat4
         ))
     
     return records
