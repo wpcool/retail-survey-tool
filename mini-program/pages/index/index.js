@@ -80,8 +80,8 @@ Page({
         loading: false,
         stats: {
           today: tasks.length,
-          completed: completedTasks,
-          pending: totalCompletedItems,
+          completed: totalCompletedItems,  // 已完成的商品数
+          pending: totalItems - totalCompletedItems,  // 待完成的商品数
           totalItems: totalItems
         }
       });
