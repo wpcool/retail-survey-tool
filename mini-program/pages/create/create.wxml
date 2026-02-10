@@ -200,6 +200,19 @@
       />
     </view>
 
+    <!-- 竞店信息展示 -->
+    <view class="competitor-section" wx:if="{{showCompetitors && competitorStores.length > 0}}">
+      <view class="competitor-label">
+        <text class="competitor-icon">🎯</text>
+        <text>竞店信息（仅供参考）</text>
+      </view>
+      <view class="competitor-list">
+        <view class="competitor-tag" wx:for="{{competitorStores}}" wx:key="index">
+          {{item}}
+        </view>
+      </view>
+    </view>
+
     <view class="form-item">
       <view class="form-label">店铺地址</view>
       <view class="location-row">
