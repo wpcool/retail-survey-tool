@@ -17,6 +17,10 @@ from datetime import datetime, timedelta
 
 from models import get_db, SessionLocal, Surveyor, SurveyTask, SurveyItem, SurveyRecord, Product
 from schemas import *
+from competitor_stores import (
+    load_competitor_data, get_all_stores, get_store_competitors,
+    get_all_competitors, search_competitors, get_competitor_stats
+)
 
 
 # ========== 请求模型 ==========
@@ -1499,6 +1503,36 @@ def init_data():
         
     finally:
         db.close()
+
+
+# ========== 竞店管理 API ==========
+@app.get("/api/competitor-stores")
+def get_competitor_stores_api(store: str = "", keyword: str = ""):
+    """获取竞店列表，支持按门店和关键词筛选"""
+    data = search_competitors(keyword=keyword, store=store)
+    result = []
+    for store_name, competitors in data.items():
+        result.append({
+            "store": store_name,
+            "competitors": competitors,
+            "count": len(competitors)
+        })
+    return result
+
+@app.get("/api/competitor-stores/stats")
+def get_competitor_stores_stats():
+    """获取竞店统计数据"""
+    return get_competitor_stats()
+
+@app.get("/api/competitor-stores/stores")
+def get_all_store_names():
+    """获取所有门店名称列表"""
+    return get_all_stores()
+
+@app.get("/api/competitor-stores/competitors")
+def get_all_competitor_names():
+    """获取所有竞店名称列表（去重）"""
+    return get_all_competitors()
 
 
 if __name__ == "__main__":

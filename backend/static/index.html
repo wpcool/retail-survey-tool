@@ -616,7 +616,7 @@
                 <div class="nav-item active" data-page="dashboard"><span class="nav-icon">📈</span><span>数据概览</span></div>
                 <div class="nav-item" data-page="tasks"><span class="nav-icon">📋</span><span>任务管理</span></div>
                 <div class="nav-item" data-page="records"><span class="nav-icon">📝</span><span>调研记录</span></div>
-                <div class="nav-item" data-page="surveyors"><span class="nav-icon">👥</span><span>人员管理</span></div>
+                <div class="nav-item" data-page="surveyors"><span class="nav-icon">👥</span><span>人员与竞店管理</span></div>
                 <div class="nav-item" data-page="products"><span class="nav-icon">🛍️</span><span>商品管理</span></div>
                 <div class="nav-item" data-page="reports"><span class="nav-icon">📊</span><span>统计报表</span></div>
             </nav>
@@ -746,7 +746,7 @@
         }
         
         function updateBreadcrumb(page) {
-            const map = { dashboard: '首页 / 数据概览', tasks: '任务管理 / 调研任务', records: '数据管理 / 调研记录', surveyors: '人员管理 / 调研人员', products: '商品管理 / 商品库', reports: '统计报表 / 数据分析' };
+            const map = { dashboard: '首页 / 数据概览', tasks: '任务管理 / 调研任务', records: '数据管理 / 调研记录', surveyors: '人员与竞店管理 / 调研人员与竞店', products: '商品管理 / 商品库', reports: '统计报表 / 数据分析' };
             document.getElementById('breadcrumb').textContent = map[page] || '首页';
         }
         
@@ -2177,6 +2177,68 @@
                         <div id="surveyorPagination" style="margin-top: 20px; display: flex; justify-content: center;"></div>
                     </div>
                 </div>
+                
+                <!-- 竞店管理部分 -->
+                <div class="stats-row" style="grid-template-columns: repeat(4, 1fr); margin-top: 32px;">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">🏪</div>
+                        <div class="stat-info">
+                            <h3>门店总数</h3>
+                            <div class="value" id="competitorStoreTotal">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">🏢</div>
+                        <div class="stat-info">
+                            <h3>竞店总数</h3>
+                            <div class="value" id="competitorTotal">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">📊</div>
+                        <div class="stat-info">
+                            <h3>平均竞店数</h3>
+                            <div class="value" id="competitorAvg">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon red">🏆</div>
+                        <div class="stat-info">
+                            <h3>竞店最多</h3>
+                            <div class="value" id="competitorMaxStore" style="font-size: 18px;">-</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">🏪 竞店管理</span>
+                        <button class="btn btn-success" onclick="exportCompetitorStores()">📥 导出数据</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="search-bar">
+                            <select class="search-input" id="competitorStoreFilter" onchange="filterCompetitorStores()">
+                                <option value="">所有门店</option>
+                            </select>
+                            <input type="text" class="search-input" id="competitorKeywordFilter" placeholder="🔍 搜索竞店名称..." oninput="filterCompetitorStores()">
+                            <button class="btn btn-default" onclick="loadCompetitorStores()">🔄 刷新</button>
+                        </div>
+                        <div class="table-container" id="competitorStoresContainer">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>门店名称</th>
+                                        <th>竞店数量</th>
+                                        <th>竞店列表</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="competitorStoresTable">
+                                    <tr><td colspan="3" class="empty-state">加载中...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="competitorStoresPagination" style="margin-top: 20px; display: flex; justify-content: center;"></div>
+                    </div>
+                </div>
             `;
         }
         
@@ -2201,6 +2263,9 @@
                 
                 // 应用过滤
                 filterSurveyors();
+                
+                // 同时加载竞店数据
+                loadCompetitorStores();
             } catch (e) { 
                 document.getElementById('surveyorTable').innerHTML = '<tr><td colspan="7" class="empty-state"><span class="icon">❌</span><p>加载失败，请重试</p></td></tr>'; 
             }
@@ -2317,6 +2382,147 @@
             currentSurveyorPage = page;
             renderSurveyorTable();
             document.getElementById('surveyorTable').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        // ==================== 竞店管理 ====================
+        let competitorStoresData = [];
+        let filteredCompetitorStores = [];
+        let currentCompetitorPage = 1;
+        const COMPETITOR_PAGE_SIZE = 10;
+        
+        async function loadCompetitorStores() {
+            try {
+                showLoading('competitorStoresTable');
+                
+                // 加载统计数据
+                const statsRes = await fetch(`${API_BASE}/api/competitor-stores/stats`);
+                const stats = await statsRes.json();
+                
+                animateNumber(document.getElementById('competitorStoreTotal'), stats.total_stores);
+                animateNumber(document.getElementById('competitorTotal'), stats.total_competitors);
+                animateNumber(document.getElementById('competitorAvg'), stats.avg_competitors);
+                document.getElementById('competitorMaxStore').textContent = stats.max_store || '-';
+                
+                // 加载门店下拉选项
+                const storesRes = await fetch(`${API_BASE}/api/competitor-stores/stores`);
+                const stores = await storesRes.json();
+                const storeSelect = document.getElementById('competitorStoreFilter');
+                if (storeSelect) {
+                    storeSelect.innerHTML = '<option value="">所有门店</option>' + 
+                        stores.map(s => `<option value="${s}">${s}</option>`).join('');
+                }
+                
+                // 加载竞店数据
+                const res = await fetch(`${API_BASE}/api/competitor-stores`);
+                competitorStoresData = await res.json();
+                
+                filterCompetitorStores();
+            } catch (e) {
+                console.error('加载竞店数据失败:', e);
+                document.getElementById('competitorStoresTable').innerHTML = 
+                    '<tr><td colspan="3" class="empty-state"><span class="icon">❌</span><p>加载失败，请重试</p></td></tr>';
+            }
+        }
+        
+        function filterCompetitorStores() {
+            const storeFilter = document.getElementById('competitorStoreFilter')?.value || '';
+            const keywordFilter = document.getElementById('competitorKeywordFilter')?.value.toLowerCase() || '';
+            
+            filteredCompetitorStores = competitorStoresData.filter(item => {
+                const matchStore = !storeFilter || item.store === storeFilter;
+                const matchKeyword = !keywordFilter || 
+                    item.store.toLowerCase().includes(keywordFilter) ||
+                    item.competitors.some(c => c.toLowerCase().includes(keywordFilter));
+                return matchStore && matchKeyword;
+            });
+            
+            currentCompetitorPage = 1;
+            renderCompetitorStoresTable();
+        }
+        
+        function renderCompetitorStoresTable() {
+            const start = (currentCompetitorPage - 1) * COMPETITOR_PAGE_SIZE;
+            const end = start + COMPETITOR_PAGE_SIZE;
+            const pageData = filteredCompetitorStores.slice(start, end);
+            
+            if (filteredCompetitorStores.length === 0) {
+                document.getElementById('competitorStoresTable').innerHTML = `
+                    <tr><td colspan="3" class="empty-state">
+                        <span class="icon" style="font-size: 48px;">🔍</span>
+                        <p style="margin-top: 16px; font-size: 16px;">没有找到匹配的竞店数据</p>
+                    </td></tr>
+                `;
+                document.getElementById('competitorStoresPagination').innerHTML = '';
+                return;
+            }
+            
+            const html = pageData.map((item, i) => {
+                const competitorsHtml = item.competitors.map((c, idx) => 
+                    `<span class="tag tag-default" style="margin: 2px; display: inline-block;">${idx + 1}. ${c}</span>`
+                ).join('');
+                
+                return `
+                    <tr style="animation-delay: ${i * 0.05}s">
+                        <td><strong style="color: var(--primary); font-size: 15px;">${item.store}</strong></td>
+                        <td><span class="tag tag-success">${item.count} 家</span></td>
+                        <td style="max-width: 600px; line-height: 2;">${competitorsHtml}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('competitorStoresTable').innerHTML = html;
+            renderCompetitorStoresPagination();
+        }
+        
+        function renderCompetitorStoresPagination() {
+            const totalPages = Math.ceil(filteredCompetitorStores.length / COMPETITOR_PAGE_SIZE);
+            if (totalPages <= 1) {
+                document.getElementById('competitorStoresPagination').innerHTML = '';
+                return;
+            }
+            
+            let html = `
+                <div class="pagination">
+                    <button class="page-btn" ${currentCompetitorPage === 1 ? 'disabled' : ''} onclick="goToCompetitorPage(${currentCompetitorPage - 1})">上一页</button>
+            `;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentCompetitorPage - 1 && i <= currentCompetitorPage + 1)) {
+                    html += `<button class="page-btn ${i === currentCompetitorPage ? 'active' : ''}" onclick="goToCompetitorPage(${i})">${i}</button>`;
+                } else if (i === currentCompetitorPage - 2 || i === currentCompetitorPage + 2) {
+                    html += `<span style="color: #94a3b8;">...</span>`;
+                }
+            }
+            
+            html += `
+                    <button class="page-btn" ${currentCompetitorPage === totalPages ? 'disabled' : ''} onclick="goToCompetitorPage(${currentCompetitorPage + 1})">下一页</button>
+                    <span style="margin-left: 16px; color: #64748b; font-size: 14px;">共 ${filteredCompetitorStores.length} 条</span>
+                </div>
+            `;
+            
+            document.getElementById('competitorStoresPagination').innerHTML = html;
+        }
+        
+        function goToCompetitorPage(page) {
+            currentCompetitorPage = page;
+            renderCompetitorStoresTable();
+            document.getElementById('competitorStoresTable').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        
+        function exportCompetitorStores() {
+            // 导出竞店数据为CSV
+            let csv = '门店名称,竞店数量,竞店列表\n';
+            filteredCompetitorStores.forEach(item => {
+                csv += `"${item.store}",${item.count},"${item.competitors.join('; ')}"\n`;
+            });
+            
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `竞店数据_${new Date().toLocaleDateString()}.csv`;
+            link.click();
+            
+            showToast('竞店数据导出成功', 'success');
         }
         
         function showLoading(tableId) {
