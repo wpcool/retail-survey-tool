@@ -12,26 +12,6 @@
     </view>
   </view>
 
-  <!-- 统计概览 -->
-  <view class="stats-card">
-    <view class="stat-item">
-      <view class="stat-number">{{loading ? '--' : stats.totalRecords}}</view>
-      <view class="stat-label">总记录</view>
-    </view>
-    <view class="stat-item">
-      <view class="stat-number">{{loading ? '--' : stats.todayRecords}}</view>
-      <view class="stat-label">今日</view>
-    </view>
-    <view class="stat-item">
-      <view class="stat-number">{{loading ? '--' : stats.distinctDays}}</view>
-      <view class="stat-label">调研天数</view>
-    </view>
-    <view class="stat-item">
-      <view class="stat-number">{{loading ? '--' : stats.distinctProducts}}</view>
-      <view class="stat-label">商品种类</view>
-    </view>
-  </view>
-
   <!-- 近7天调研趋势 -->
   <view class="section-card" wx:if="{{last7Days.length > 0}}">
     <view class="section-title">
