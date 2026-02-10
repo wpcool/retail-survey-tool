@@ -189,28 +189,28 @@
       店铺信息
     </view>
 
+    <!-- 门店选择 -->
     <view class="form-item">
-      <view class="form-label">店铺名称 <text class="required">*</text></view>
-      <input 
-        class="form-input" 
-        placeholder="请输入店铺名称"
-        value="{{form.shop}}"
-        data-field="shop"
-        bindinput="onInput"
-      />
+      <view class="form-label">选择门店 <text class="required">*</text></view>
+      <picker mode="selector" range="{{storeList}}" value="{{selectedStoreIndex}}" bindchange="onStoreChange">
+        <view class="picker {{selectedStoreIndex === -1 ? 'placeholder' : ''}}">
+          <text wx:if="{{selectedStoreIndex === -1}}">请选择门店</text>
+          <text wx:else>{{storeList[selectedStoreIndex]}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
     </view>
 
-    <!-- 竞店信息展示 -->
-    <view class="competitor-section" wx:if="{{showCompetitors && competitorStores.length > 0}}">
-      <view class="competitor-label">
-        <text class="competitor-icon">🎯</text>
-        <text>竞店信息（仅供参考）</text>
-      </view>
-      <view class="competitor-list">
-        <view class="competitor-tag" wx:for="{{competitorStores}}" wx:key="index">
-          {{item}}
+    <!-- 竞店选择 -->
+    <view class="form-item" wx:if="{{selectedStoreIndex !== -1}}">
+      <view class="form-label">选择竞店 <text class="required">*</text></view>
+      <picker mode="selector" range="{{competitorList}}" value="{{selectedCompetitorIndex}}" bindchange="onCompetitorChange">
+        <view class="picker {{selectedCompetitorIndex === -1 ? 'placeholder' : ''}}">
+          <text wx:if="{{selectedCompetitorIndex === -1}}">请选择竞店</text>
+          <text wx:else>{{competitorList[selectedCompetitorIndex]}}</text>
+          <text class="picker-arrow">▼</text>
         </view>
-      </view>
+      </picker>
     </view>
 
     <view class="form-item">

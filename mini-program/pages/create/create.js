@@ -14,10 +14,12 @@ Page({
     categories: ['生鲜', '粮油', '饮料', '零食', '日用品', '家电', '服装', '其他'],
     // 照片列表
     photos: [],
-    // 竞店信息
-    competitorStores: [],
-    showCompetitors: false,
-    allStores: [],
+    // 门店和竞店选择
+    storeList: [],           // 所有门店列表
+    competitorList: [],      // 当前门店的竞店列表
+    selectedStoreIndex: -1,  // 选中的门店索引
+    selectedCompetitorIndex: -1, // 选中的竞店索引
+    storeCompetitorMap: {},  // 门店-竞店映射
     form: {
       itemId: null,
       name: '',
@@ -41,60 +43,106 @@ Page({
         taskTitle: decodeURIComponent(options.taskTitle || '')
       });
     }
-    // 加载所有门店列表（用于匹配竞店）
-    this.loadAllStores();
+    // 加载所有门店和竞店数据
+    this.loadStoreData();
+    // 加载上次保存的门店选择
+    this.loadLastStoreSelection();
   },
 
-  // 加载所有门店列表
-  async loadAllStores() {
+  // 加载门店和竞店数据
+  async loadStoreData() {
     try {
+      // 获取所有门店及其竞店
       const res = await app.request({
-        url: '/api/competitor-stores/stores',
-        method: 'GET'
-      });
-      if (Array.isArray(res)) {
-        this.setData({ allStores: res });
-      }
-    } catch (error) {
-      console.error('加载门店列表失败:', error);
-    }
-  },
-
-  // 根据门店名称获取竞店信息
-  async loadCompetitorStores(storeName) {
-    if (!storeName || storeName.trim() === '') {
-      this.setData({ competitorStores: [], showCompetitors: false });
-      return;
-    }
-    
-    // 检查输入的门店名称是否在门店列表中
-    const matchedStore = this.data.allStores.find(s => 
-      storeName.includes(s) || s.includes(storeName)
-    );
-    
-    if (!matchedStore) {
-      this.setData({ competitorStores: [], showCompetitors: false });
-      return;
-    }
-    
-    try {
-      const res = await app.request({
-        url: `/api/competitor-stores/${encodeURIComponent(matchedStore)}`,
+        url: '/api/competitor-stores',
         method: 'GET'
       });
       
-      if (Array.isArray(res) && res.length > 0) {
-        this.setData({
-          competitorStores: res.map(item => item.name || item),
-          showCompetitors: true
+      if (Array.isArray(res)) {
+        // 构建门店-竞店映射
+        const storeCompetitorMap = {};
+        const storeList = [];
+        
+        res.forEach(item => {
+          storeList.push(item.store);
+          storeCompetitorMap[item.store] = item.competitors || [];
         });
-      } else {
-        this.setData({ competitorStores: [], showCompetitors: false });
+        
+        this.setData({ 
+          storeList: storeList,
+          storeCompetitorMap: storeCompetitorMap
+        });
       }
     } catch (error) {
-      console.error('加载竞店信息失败:', error);
-      this.setData({ competitorStores: [], showCompetitors: false });
+      console.error('加载门店数据失败:', error);
+      wx.showToast({ title: '加载门店数据失败', icon: 'none' });
     }
+  },
+
+  // 加载上次保存的门店选择
+  loadLastStoreSelection() {
+    const lastStore = wx.getStorageSync('lastSelectedStore');
+    const lastCompetitor = wx.getStorageSync('lastSelectedCompetitor');
+    
+    if (lastStore) {
+      // 等待数据加载完成后设置
+      const checkAndSet = () => {
+        const { storeList, storeCompetitorMap } = this.data;
+        if (storeList.length === 0) {
+          setTimeout(checkAndSet, 100);
+          return;
+        }
+        
+        const storeIndex = storeList.findIndex(s => s === lastStore);
+        if (storeIndex !== -1) {
+          const competitorList = storeCompetitorMap[lastStore] || [];
+          let competitorIndex = -1;
+          
+          if (lastCompetitor) {
+            competitorIndex = competitorList.findIndex(c => c === lastCompetitor);
+          }
+          
+          this.setData({
+            selectedStoreIndex: storeIndex,
+            competitorList: competitorList,
+            selectedCompetitorIndex: competitorIndex,
+            'form.shop': competitorIndex !== -1 ? lastCompetitor : ''
+          });
+        }
+      };
+      checkAndSet();
+    }
+  },
+
+  // 门店选择变化
+  onStoreChange(e) {
+    const index = parseInt(e.detail.value);
+    const storeName = this.data.storeList[index];
+    const competitorList = this.data.storeCompetitorMap[storeName] || [];
+    
+    this.setData({
+      selectedStoreIndex: index,
+      competitorList: competitorList,
+      selectedCompetitorIndex: -1,
+      'form.shop': ''
+    });
+    
+    // 保存选择
+    wx.setStorageSync('lastSelectedStore', storeName);
+  },
+
+  // 竞店选择变化
+  onCompetitorChange(e) {
+    const index = parseInt(e.detail.value);
+    const competitorName = this.data.competitorList[index];
+    
+    this.setData({
+      selectedCompetitorIndex: index,
+      'form.shop': competitorName
+    });
+    
+    // 保存选择
+    wx.setStorageSync('lastSelectedCompetitor', competitorName);
   },
 
   onShow() {
@@ -252,18 +300,6 @@ Page({
     const field = e.currentTarget.dataset.field;
     const value = e.detail.value;
     this.setData({ ['form.' + field]: value });
-    
-    // 如果是店铺名称字段，自动查询竞店信息
-    if (field === 'shop') {
-      // 添加延迟，避免频繁请求
-      if (this.data.competitorTimer) {
-        clearTimeout(this.data.competitorTimer);
-      }
-      const timer = setTimeout(() => {
-        this.loadCompetitorStores(value);
-      }, 500);
-      this.setData({ competitorTimer: timer });
-    }
   },
 
   onCategoryChange(e) {
@@ -699,12 +735,16 @@ Page({
   },
 
   resetFormForNext() {
-    const form = this.data.form;
+    const { form, selectedStoreIndex, selectedCompetitorIndex, competitorList } = this.data;
     this.setData({
       selectedItem: null,
       suggestList: [],
       showSuggest: false,
       photos: [],
+      // 保留门店和竞店选择
+      selectedStoreIndex: selectedStoreIndex,
+      selectedCompetitorIndex: selectedCompetitorIndex,
+      competitorList: competitorList,
       form: {
         itemId: null,
         name: '',
