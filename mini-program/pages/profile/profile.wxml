@@ -15,19 +15,19 @@
   <!-- 统计概览 -->
   <view class="stats-card">
     <view class="stat-item">
-      <view class="stat-number">{{stats.totalRecords}}</view>
+      <view class="stat-number">{{loading ? '--' : stats.totalRecords}}</view>
       <view class="stat-label">总记录</view>
     </view>
     <view class="stat-item">
-      <view class="stat-number">{{stats.todayRecords}}</view>
+      <view class="stat-number">{{loading ? '--' : stats.todayRecords}}</view>
       <view class="stat-label">今日</view>
     </view>
     <view class="stat-item">
-      <view class="stat-number">{{stats.distinctDays}}</view>
+      <view class="stat-number">{{loading ? '--' : stats.distinctDays}}</view>
       <view class="stat-label">调研天数</view>
     </view>
     <view class="stat-item">
-      <view class="stat-number">{{stats.distinctProducts}}</view>
+      <view class="stat-number">{{loading ? '--' : stats.distinctProducts}}</view>
       <view class="stat-label">商品种类</view>
     </view>
   </view>
