@@ -37,15 +37,27 @@ Page({
     try {
       const userInfo = this.data.userInfo;
       if (!userInfo || !userInfo.id) {
-        this.setData({ loading: false });
-        return;
+        console.log('未获取到用户信息，尝试从缓存加载');
+        const cachedUserInfo = wx.getStorageSync('userInfo');
+        if (cachedUserInfo && cachedUserInfo.id) {
+          this.setData({ userInfo: cachedUserInfo });
+        } else {
+          console.log('缓存中也没有用户信息');
+          this.setData({ loading: false });
+          return;
+        }
       }
+      
+      const currentUserInfo = this.data.userInfo || wx.getStorageSync('userInfo');
+      console.log('开始加载统计数据，用户ID:', currentUserInfo.id);
       
       // 调用后端API获取统计
       const res = await app.request({
-        url: `/api/surveyors/${userInfo.id}/stats`,
+        url: `/api/surveyors/${currentUserInfo.id}/stats`,
         method: 'GET'
       });
+      
+      console.log('统计API返回:', res);
       
       this.setData({
         stats: {
@@ -60,6 +72,10 @@ Page({
       });
     } catch (error) {
       console.error('加载统计失败:', error);
+      wx.showToast({ 
+        title: '加载失败，使用本地数据', 
+        icon: 'none' 
+      });
       // 使用模拟数据
       this.setData({
         stats: {

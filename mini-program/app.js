@@ -1,7 +1,10 @@
 App({
   globalData: {
     userInfo: null,
-    baseUrl: 'http://39.97.236.234', // 云端后端API地址（Nginx代理80端口）
+    // 本地开发环境使用 localhost，生产环境使甩云端地址
+    baseUrl: wx.getSystemInfoSync().platform === 'devtools' 
+      ? 'http://127.0.0.1:8000'  // 开发工具环境
+      : 'http://39.97.236.234',   // 真机/预览环境
     token: null
   },
 
