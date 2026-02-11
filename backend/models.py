@@ -123,6 +123,7 @@ class Product(Base):
     supplier_code = Column(String(50), nullable=True)  # 供应商编码
     supplier_name = Column(String(200), nullable=True)  # 供应商名称
     purchaser = Column(String(50), nullable=True)  # 采购员
+    product_attribute = Column(String(50), nullable=True)  # 商品属性
     
     # 状态
     status = Column(String(50), nullable=True)  # 经营状态名称

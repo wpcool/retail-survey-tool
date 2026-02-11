@@ -187,6 +187,7 @@ class ProductBase(BaseModel):
     supplier_code: Optional[str] = None
     supplier_name: Optional[str] = None
     purchaser: Optional[str] = None
+    product_attribute: Optional[str] = None
     # 状态
     status: Optional[str] = "正常"
     is_active: bool = True

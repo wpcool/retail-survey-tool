@@ -96,6 +96,7 @@ def import_new_products():
                     supplier_code=str(row.get('供应商编码', '')) if pd.notna(row.get('供应商编码')) else None,
                     supplier_name=str(row.get('供应商名称', '')) if pd.notna(row.get('供应商名称')) else None,
                     purchaser=str(row.get('采购', '')) if pd.notna(row.get('采购')) else None,
+                    product_attribute=str(row.get('商品属性', '')) if pd.notna(row.get('商品属性')) else None,
                     
                     # 状态
                     status=str(row.get('经营状态名称', '')) if pd.notna(row.get('经营状态名称')) else None,
