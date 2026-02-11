@@ -2151,11 +2151,32 @@
         }
         
         async function deleteRecord(id) {
-            openModal('⚠️ 确认删除', '确定要删除这条记录吗？', async () => {
+            const confirmCode = `DELETE_RECORD_${id}`;
+            openModal('⚠️ 安全确认', `
+                <div style="color: #ef4444; margin-bottom: 12px;">
+                    <strong>⚠️ 危险操作警告</strong>
+                </div>
+                <p>确定要删除这条记录吗？</p>
+                <p style="color: #666; font-size: 13px; margin: 12px 0;">
+                    为防止误操作，请在下方输入确认码：
+                </p>
+                <div style="background: #f1f5f9; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 14px; text-align: center; margin: 12px 0;">
+                    ${confirmCode}
+                </div>
+                <input type="text" id="deleteConfirmInput" placeholder="请输入确认码" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+            `, async () => {
+                const input = document.getElementById('deleteConfirmInput').value.trim();
+                if (input !== confirmCode) {
+                    showToast('确认码错误，操作已取消', 'error');
+                    return;
+                }
                 try {
-                    const res = await fetch(`${API_BASE}/api/records/${id}`, { method: 'DELETE' });
+                    const res = await fetch(`${API_BASE}/api/records/${id}?confirm=${confirmCode}`, { method: 'DELETE' });
                     if (res.ok) { showToast('删除成功', 'success'); closeModal(); loadRecords(); }
-                    else showToast('删除失败', 'error');
+                    else {
+                        const err = await res.json();
+                        showToast(err.detail || '删除失败', 'error');
+                    }
                 } catch (e) { showToast('网络错误', 'error'); }
             });
         }
@@ -2990,11 +3011,35 @@
         
         function deleteSurveyor(id) {
             const surveyor = currentData.surveyors?.find(s => s.id === id);
-            openModal('⚠️ 确认删除', `<p>确定要删除人员 <strong>${surveyor?.name}</strong> 吗？</p><p style="color: #ef4444; margin-top: 8px; font-size: 14px;">⚠️ 此操作不可恢复，该人员的所有调研记录也将被删除！</p>`, async () => {
+            const confirmCode = `DELETE_SURVEYOR_${id}`;
+            openModal('🔴 危险操作 - 删除调研人员', `
+                <div style="color: #ef4444; margin-bottom: 12px;">
+                    <strong>⚠️ 严重警告：此操作不可恢复！</strong>
+                </div>
+                <p>确定要删除人员 <strong>${surveyor?.name}</strong> 吗？</p>
+                <p style="color: #ef4444; margin-top: 8px; font-size: 14px;">
+                    删除后，该人员的所有调研记录也将被删除！
+                </p>
+                <p style="color: #666; font-size: 13px; margin: 16px 0 8px 0;">
+                    为防止误操作，请在下方输入确认码：
+                </p>
+                <div style="background: #fef2f2; border: 2px solid #ef4444; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 14px; text-align: center; margin: 12px 0; color: #ef4444;">
+                    ${confirmCode}
+                </div>
+                <input type="text" id="deleteSurveyorConfirmInput" placeholder="请输入确认码" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px;">
+            `, async () => {
+                const input = document.getElementById('deleteSurveyorConfirmInput').value.trim();
+                if (input !== confirmCode) {
+                    showToast('确认码错误，操作已取消', 'error');
+                    return;
+                }
                 try {
-                    const res = await fetch(`${API_BASE}/api/surveyors/${id}`, { method: 'DELETE' });
+                    const res = await fetch(`${API_BASE}/api/surveyors/${id}?confirm=${confirmCode}`, { method: 'DELETE' });
                     if (res.ok) { showToast('删除成功', 'success'); closeModal(); loadSurveyors(); }
-                    else showToast('删除失败', 'error');
+                    else {
+                        const err = await res.json();
+                        showToast(err.detail || '删除失败', 'error');
+                    }
                 } catch (e) { showToast('网络错误', 'error'); }
             });
         }

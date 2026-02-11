@@ -1,13 +1,18 @@
 """
 导入商品明细数据
 先清空旧数据，然后导入新的商品明细.xlsx
+
+⚠️ 安全警告：此脚本会清空 products 表数据，执行前需要双重确认
+如需跳过确认（自动化脚本），设置环境变量：export DB_GUARD_SKIP=1
 """
 import sys
+import os
 import pandas as pd
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Product, Base
 from datetime import datetime
+from db_guard import guard_truncate_table
 
 # 数据库配置
 DATABASE_URL = "sqlite:///data/survey.db"
@@ -15,10 +20,16 @@ engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 def clear_old_products():
-    """清空旧商品数据"""
+    """清空旧商品数据 - 受数据库保护机制保护"""
     db = SessionLocal()
     try:
         count = db.query(Product).count()
+        
+        # 🛡️ 数据库保护：清空表前需要双重确认
+        if not guard_truncate_table("products", count):
+            print("❌ 操作已取消")
+            sys.exit(0)
+        
         print(f"正在清空 {count} 条旧商品数据...")
         db.query(Product).delete()
         db.commit()
@@ -34,7 +45,7 @@ def import_new_products():
     """导入新商品数据"""
     # 读取Excel
     print("\n正在读取商品明细.xlsx...")
-    df = pd.read_excel('../商品明细.xlsx')
+    df = pd.read_excel('/Users/wangpeng/Documents/WorkSpace/Develop/MyCode/LSR/MarketSearchTools/商品明细2.5.xlsx')
     print(f"✓ 读取完成，共 {len(df)} 条数据")
     
     # 查看列名
@@ -84,6 +95,7 @@ def import_new_products():
                     # 供应商
                     supplier_code=str(row.get('供应商编码', '')) if pd.notna(row.get('供应商编码')) else None,
                     supplier_name=str(row.get('供应商名称', '')) if pd.notna(row.get('供应商名称')) else None,
+                    purchaser=str(row.get('采购', '')) if pd.notna(row.get('采购')) else None,
                     
                     # 状态
                     status=str(row.get('经营状态名称', '')) if pd.notna(row.get('经营状态名称')) else None,

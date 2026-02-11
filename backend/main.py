@@ -17,6 +17,7 @@ from datetime import datetime, timedelta
 
 from models import get_db, SessionLocal, Surveyor, SurveyTask, SurveyItem, SurveyRecord, Product
 from schemas import *
+from db_guard import check_dangerous_sql
 from competitor_stores import (
     get_all_stores, get_store_competitors, get_all_competitor_stores,
     get_all_competitors, search_competitors, get_competitor_stats,
@@ -161,15 +162,32 @@ def reset_surveyor_password(surveyor_id: int, request: PasswordResetRequest, db:
 
 
 @app.delete("/api/surveyors/{surveyor_id}")
-def delete_surveyor(surveyor_id: int, db: Session = Depends(get_db)):
-    """删除调研人员"""
+def delete_surveyor(
+    surveyor_id: int, 
+    confirm: str = None,  # 需要传入确认码
+    db: Session = Depends(get_db)
+):
+    """
+    删除调研人员
+    
+    需要在confirm参数中传入 "DELETE_SURVEYOR_123" 格式的确认码
+    （其中123是surveyor_id）
+    """
     surveyor = db.query(Surveyor).filter(Surveyor.id == surveyor_id).first()
     if not surveyor:
         raise HTTPException(status_code=404, detail="人员不存在")
     
+    # 🛡️ 确认保护机制
+    expected_confirm = f"DELETE_SURVEYOR_{surveyor_id}"
+    if confirm != expected_confirm:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"操作需要确认。请在confirm参数中传入: {expected_confirm}"
+        )
+    
     db.delete(surveyor)
     db.commit()
-    return {"success": True, "message": "删除成功"}
+    return {"success": True, "message": f"已删除调研人员: {surveyor.name}"}
 
 
 # ========== 调研任务管理 ==========
@@ -1026,11 +1044,28 @@ def get_surveyor_stats(year: Optional[int] = None, month: Optional[int] = None, 
 
 # ========== 调研记录删除 ==========
 @app.delete("/api/records/{record_id}")
-def delete_record(record_id: int, db: Session = Depends(get_db)):
-    """删除调研记录"""
+def delete_record(
+    record_id: int, 
+    confirm: str = None,  # 需要传入确认码
+    db: Session = Depends(get_db)
+):
+    """
+    删除调研记录
+    
+    需要在confirm参数中传入 "DELETE_RECORD_123" 格式的确认码
+    （其中123是record_id）
+    """
     record = db.query(SurveyRecord).filter(SurveyRecord.id == record_id).first()
     if not record:
         raise HTTPException(status_code=404, detail="记录不存在")
+    
+    # 🛡️ 确认保护机制
+    expected_confirm = f"DELETE_RECORD_{record_id}"
+    if confirm != expected_confirm:
+        raise HTTPException(
+            status_code=400,
+            detail=f"操作需要确认。请在confirm参数中传入: {expected_confirm}"
+        )
     
     # 删除照片文件
     if record.photo_path:
