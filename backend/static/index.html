@@ -3401,6 +3401,10 @@
                                     ${catPath}
                                     ${p.brand_name ? `<span style="margin-left: 8px; color: var(--primary);">🏷️ ${p.brand_name}</span>` : ''}
                                 </div>
+                                <div style="font-size: 11px; color: var(--gray-500); margin-top: 4px;">
+                                    ${p.purchaser ? `<span style="background: #fef3c7; color: #92400e; padding: 1px 6px; border-radius: 4px; font-size: 10px;">👤 采购: ${p.purchaser}</span>` : ''}
+                                    ${p.supplier_name ? `<span style="margin-left: 6px; color: var(--gray-400);">🏪 ${p.supplier_name}</span>` : ''}
+                                </div>
                             </div>
                             <div style="text-align: right; flex-shrink: 0;">
                                 <div style="font-weight: 700; color: var(--primary); font-size: 16px;">¥${p.sale_price || '-'}</div>
