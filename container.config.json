@@ -1,0 +1,16 @@
+{
+  "containerPort": 80,
+  "minNum": 0,
+  "maxNum": 10,
+  "cpu": 0.25,
+  "mem": 0.5,
+  "policyType": "cpu",
+  "policyThreshold": 60,
+  "envParams": {},
+  "customLogs": "stdout",
+  "dataBaseName": "retail_survey",
+  "executeSQLs": [
+    "CREATE TABLE IF NOT EXISTS surveyors (id INTEGER PRIMARY KEY, username VARCHAR(50), password_hash VARCHAR(255), name VARCHAR(100), phone VARCHAR(20), is_active BOOLEAN DEFAULT 1, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);",
+    "CREATE TABLE IF NOT EXISTS survey_records (id INTEGER PRIMARY KEY, item_id INTEGER, surveyor_id INTEGER, own_store_name VARCHAR(100), store_name VARCHAR(200), store_address VARCHAR(500), price FLOAT, promotion_info VARCHAR(500), photo_path VARCHAR(500), photos TEXT, remark TEXT, latitude FLOAT, longitude FLOAT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"
+  ]
+}
