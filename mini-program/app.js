@@ -1,7 +1,7 @@
 App({
   globalData: {
     userInfo: null,
-    baseUrl: 'http://39.97.236.234',  // 默认使用云端地址
+    baseUrl: 'http://8.152.197.205',  // 默认使用云端地址
     token: null
   },
 
