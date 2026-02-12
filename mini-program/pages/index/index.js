@@ -200,7 +200,11 @@ Page({
     const task = e.currentTarget.dataset.task;
     // 存储选中的任务
     wx.setStorageSync('selectedTask', task);
-    wx.showToast({ title: '已选择任务', icon: 'success' });
+    
+    // 跳转到新建记录页面
+    wx.navigateTo({
+      url: '/pages/create/create'
+    });
   },
 
   // 开始调研
