@@ -53,16 +53,16 @@
     <!-- 任务卡片列表 -->
     <view class="task-list" wx:else>
       <view 
-        class="task-card" 
+        class="task-card {{item.status === 'cancelled' ? 'cancelled' : ''}}" 
         wx:for="{{tasks}}" 
         wx:key="id"
-        bindtap="onSelectTask"
+        bindtap="{{item.status === 'cancelled' ? '' : 'onSelectTask'}}"
         data-task="{{item}}"
       >
         <view class="task-header">
           <text class="task-title">{{item.title}}</text>
-          <text class="task-status status-{{item.status}}">
-            {{item.status === 'active' ? '进行中' : '已完成'}}
+          <text class="task-status status-{{item.status}} {{item.status === 'cancelled' ? 'status-cancelled' : ''}}">
+            {{item.status === 'active' ? '进行中' : (item.status === 'cancelled' ? '已作废' : '已完成')}}
           </text>
         </view>
         

@@ -198,6 +198,17 @@ Page({
   // 选择任务（点击卡片）
   onSelectTask(e) {
     const task = e.currentTarget.dataset.task;
+    
+    // 作废任务不可进入
+    if (task.status === 'cancelled') {
+      wx.showToast({
+        title: '该任务已作废',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    
     // 存储选中的任务
     wx.setStorageSync('selectedTask', task);
     
