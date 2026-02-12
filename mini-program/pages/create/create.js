@@ -312,19 +312,34 @@ Page({
 
   getLocation() {
     return new Promise((resolve, reject) => {
-      wx.showLoading({ title: '定位中...' });
-      
-      wx.getLocation({
-        type: 'gcj02',
+      // 使用 wx.chooseLocation 让用户选择位置（审核更容易通过）
+      wx.chooseLocation({
         success: (res) => {
+          console.log('选择位置:', res);
           const lat = res.latitude;
           const lng = res.longitude;
-          this.reverseGeocode(lat, lng).then(resolve).catch(reject);
+          const address = res.address || '';
+          const name = res.name || '';
+          
+          // 更新表单数据
+          this.setData({
+            'form.latitude': lat,
+            'form.longitude': lng,
+            'form.storeAddress': address + (name ? ' (' + name + ')' : '')
+          });
+          
+          wx.showToast({ title: '位置已选择', icon: 'success' });
+          resolve({ latitude: lat, longitude: lng, address: address, name: name });
         },
-        fail: () => {
-          wx.hideLoading();
-          wx.showToast({ title: '定位失败', icon: 'none' });
-          reject(new Error('定位失败'));
+        fail: (err) => {
+          console.log('选择位置失败:', err);
+          // 用户取消选择，不报错
+          if (err.errMsg && err.errMsg.includes('cancel')) {
+            resolve(null);
+          } else {
+            wx.showToast({ title: '选择位置失败', icon: 'none' });
+            reject(err);
+          }
         }
       });
     });
@@ -565,18 +580,23 @@ Page({
 
   // 拍照
   takePhoto() {
-    // 如果还没有获取位置，先获取位置
+    // 检查是否已选择位置
     const form = this.data.form;
     if (!form.latitude || !form.longitude) {
-      this.getLocation().then(() => {
-        this.doTakePhoto();
-      }).catch(() => {
-        // 获取位置失败也继续拍照
-        this.doTakePhoto();
+      wx.showModal({
+        title: '提示',
+        content: '请先选择店铺位置后再拍照',
+        confirmText: '去选择位置',
+        cancelText: '暂不拍照',
+        success: (res) => {
+          if (res.confirm) {
+            this.getLocation();
+          }
+        }
       });
-    } else {
-      this.doTakePhoto();
+      return;
     }
+    this.doTakePhoto();
   },
 
   // 执行拍照

@@ -218,7 +218,7 @@
       <view class="location-row">
         <input 
           class="form-input" 
-          placeholder="点击右侧定位获取地址"
+          placeholder="点击右侧按钮选择店铺位置"
           value="{{form.shopAddress}}"
           data-field="shopAddress"
           bindinput="onInput"
