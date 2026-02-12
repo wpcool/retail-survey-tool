@@ -1943,11 +1943,24 @@
         
         // ==================== 调研记录页 ====================
         function renderRecordsPage() {
+            const today = new Date().toISOString().split('T')[0];
             return `
                 <div class="card">
                     <div class="card-header"><span class="card-title">📝 调研记录（按四级分类归类）</span><button class="btn btn-success" onclick="exportRecords()">📥 导出Excel</button></div>
                     <div class="card-body">
-                        <div class="search-bar"><input type="date" class="search-input" id="recordDateFilter" value="${new Date().toISOString().split('T')[0]}"><input type="text" class="search-input" id="recordProductFilter" placeholder="🔍 商品名称..."><button class="btn btn-default" onclick="loadRecords()">筛选</button><button class="btn btn-default" onclick="resetRecordFilter()">重置</button></div>
+                        <div class="search-bar" style="flex-wrap: wrap; gap: 10px;">
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <label style="font-size: 13px; color: var(--gray-600);">日期范围：</label>
+                                <input type="date" class="search-input" id="recordStartDate" value="${today}" style="width: 140px;">
+                                <span style="color: var(--gray-400);">至</span>
+                                <input type="date" class="search-input" id="recordEndDate" value="${today}" style="width: 140px;">
+                            </div>
+                            <input type="text" class="search-input" id="recordProductFilter" placeholder="🔍 商品名称..." style="flex: 1; min-width: 150px;">
+                            <div style="display: flex; gap: 8px;">
+                                <button class="btn btn-default" onclick="loadRecords()">筛选</button>
+                                <button class="btn btn-default" onclick="resetRecordFilter()">重置</button>
+                            </div>
+                        </div>
                         <div id="recordGroupsContainer"><div class="empty-state"><span class="icon">⏳</span><p>加载中...</p></div></div>
                     </div>
                 </div>
@@ -1956,11 +1969,20 @@
         
         async function loadRecords() {
             try {
-                const date = document.getElementById('recordDateFilter')?.value;
+                const startDate = document.getElementById('recordStartDate')?.value;
+                const endDate = document.getElementById('recordEndDate')?.value;
                 const productKeyword = document.getElementById('recordProductFilter')?.value?.toLowerCase();
                 
                 let url = `${API_BASE}/api/records`;
-                if (date) url += `?date=${date}`;
+                const params = [];
+                
+                // 日期范围筛选
+                if (startDate) params.push(`start_date=${startDate}`);
+                if (endDate) params.push(`end_date=${endDate}`);
+                
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
                 
                 const res = await fetch(url);
                 let records = await res.json();
@@ -2126,7 +2148,9 @@
         }
         
         function resetRecordFilter() { 
-            document.getElementById('recordDateFilter').value = ''; 
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('recordStartDate').value = today;
+            document.getElementById('recordEndDate').value = today;
             document.getElementById('recordProductFilter').value = ''; 
             loadRecords(); 
         }

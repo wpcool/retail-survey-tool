@@ -479,9 +479,17 @@ def list_records(
     surveyor_id: Optional[int] = None,
     task_id: Optional[int] = None,
     date: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
     db: Session = Depends(get_db)
 ):
-    """获取调研记录"""
+    """获取调研记录
+    
+    参数:
+    - date: 指定日期（精确匹配，如 2024-01-15）
+    - start_date: 开始日期（范围查询，如 2024-01-01）
+    - end_date: 结束日期（范围查询，如 2024-01-31）
+    """
     from sqlalchemy import distinct
     
     # 使用 distinct 避免因 Product 表重复数据导致记录重复
@@ -505,6 +513,17 @@ def list_records(
         query = query.filter(SurveyItem.task_id == task_id)
     if date:
         query = query.filter(SurveyRecord.created_at.contains(date))
+    
+    # 日期范围查询
+    if start_date and end_date:
+        query = query.filter(
+            SurveyRecord.created_at >= f"{start_date} 00:00:00",
+            SurveyRecord.created_at <= f"{end_date} 23:59:59"
+        )
+    elif start_date:
+        query = query.filter(SurveyRecord.created_at >= f"{start_date} 00:00:00")
+    elif end_date:
+        query = query.filter(SurveyRecord.created_at <= f"{end_date} 23:59:59")
     
     results = query.order_by(SurveyRecord.created_at.desc()).all()
     
