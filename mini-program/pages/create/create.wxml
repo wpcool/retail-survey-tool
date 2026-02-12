@@ -17,6 +17,54 @@
     <view class="task-name">{{taskTitle}}</view>
   </view>
 
+  <!-- 店铺信息 -->
+  <view class="form-card">
+    <view class="form-title">
+      <text class="form-icon">🏪</text>
+      店铺信息
+    </view>
+
+    <!-- 门店选择 -->
+    <view class="form-item">
+      <view class="form-label">选择门店 <text class="required">*</text></view>
+      <picker mode="selector" range="{{storeList}}" value="{{selectedStoreIndex}}" bindchange="onStoreChange">
+        <view class="picker {{selectedStoreIndex === -1 ? 'placeholder' : ''}}">
+          <text wx:if="{{selectedStoreIndex === -1}}">请选择门店</text>
+          <text wx:else>{{storeList[selectedStoreIndex]}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 竞店选择 -->
+    <view class="form-item" wx:if="{{selectedStoreIndex !== -1}}">
+      <view class="form-label">选择竞店 <text class="required">*</text></view>
+      <picker mode="selector" range="{{competitorList}}" value="{{selectedCompetitorIndex}}" bindchange="onCompetitorChange">
+        <view class="picker {{selectedCompetitorIndex === -1 ? 'placeholder' : ''}}">
+          <text wx:if="{{selectedCompetitorIndex === -1}}">请选择竞店</text>
+          <text wx:else>{{competitorList[selectedCompetitorIndex]}}</text>
+          <text class="picker-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">店铺地址</view>
+      <view class="location-row">
+        <input 
+          class="form-input" 
+          placeholder="点击右侧按钮选择店铺位置"
+          value="{{form.shopAddress}}"
+          data-field="shopAddress"
+          bindinput="onInput"
+        />
+        <view class="location-btn" bindtap="getLocation">
+          <text class="location-icon">📍</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- 商品选择（从任务列表中选择） -->
   <view class="form-card" wx:if="{{taskItems.length > 0}}">
     <view class="form-title">
@@ -178,54 +226,6 @@
           </view>
         </view>
         <view class="photo-tip">请拍摄商品和价格标签，最多3张</view>
-      </view>
-    </view>
-  </view>
-
-  <!-- 店铺信息 -->
-  <view class="form-card">
-    <view class="form-title">
-      <text class="form-icon">🏪</text>
-      店铺信息
-    </view>
-
-    <!-- 门店选择 -->
-    <view class="form-item">
-      <view class="form-label">选择门店 <text class="required">*</text></view>
-      <picker mode="selector" range="{{storeList}}" value="{{selectedStoreIndex}}" bindchange="onStoreChange">
-        <view class="picker {{selectedStoreIndex === -1 ? 'placeholder' : ''}}">
-          <text wx:if="{{selectedStoreIndex === -1}}">请选择门店</text>
-          <text wx:else>{{storeList[selectedStoreIndex]}}</text>
-          <text class="picker-arrow">▼</text>
-        </view>
-      </picker>
-    </view>
-
-    <!-- 竞店选择 -->
-    <view class="form-item" wx:if="{{selectedStoreIndex !== -1}}">
-      <view class="form-label">选择竞店 <text class="required">*</text></view>
-      <picker mode="selector" range="{{competitorList}}" value="{{selectedCompetitorIndex}}" bindchange="onCompetitorChange">
-        <view class="picker {{selectedCompetitorIndex === -1 ? 'placeholder' : ''}}">
-          <text wx:if="{{selectedCompetitorIndex === -1}}">请选择竞店</text>
-          <text wx:else>{{competitorList[selectedCompetitorIndex]}}</text>
-          <text class="picker-arrow">▼</text>
-        </view>
-      </picker>
-    </view>
-
-    <view class="form-item">
-      <view class="form-label">店铺地址</view>
-      <view class="location-row">
-        <input 
-          class="form-input" 
-          placeholder="点击右侧按钮选择店铺位置"
-          value="{{form.shopAddress}}"
-          data-field="shopAddress"
-          bindinput="onInput"
-        />
-        <view class="location-btn" bindtap="getLocation">
-          <text class="location-icon">📍</text>
-        </view>
       </view>
     </view>
   </view>
