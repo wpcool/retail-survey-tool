@@ -325,7 +325,7 @@ Page({
           this.setData({
             'form.latitude': lat,
             'form.longitude': lng,
-            'form.storeAddress': address + (name ? ' (' + name + ')' : '')
+            'form.shopAddress': address + (name ? ' (' + name + ')' : '')
           });
           
           wx.showToast({ title: '位置已选择', icon: 'success' });
