@@ -85,6 +85,8 @@
             box-shadow: 4px 0 24px rgba(0,0,0,0.3);
             z-index: 100;
             animation: slideInLeft 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
         }
         
         @keyframes slideInLeft {
@@ -656,6 +658,146 @@
             padding: 0 8px;
             font-weight: 600;
         }
+        
+        /* 登录页面样式 */
+        .login-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 50%, #3730a3 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .login-container.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        
+        .login-box {
+            background: white;
+            padding: 48px;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            width: 100%;
+            max-width: 420px;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        
+        .login-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            color: white;
+        }
+        
+        .login-header h2 {
+            font-size: 28px;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+        
+        .login-header p {
+            color: var(--gray-500);
+            font-size: 14px;
+        }
+        
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.2s;
+            background: var(--gray-50);
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99,102,241,0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99,102,241,0.3);
+        }
+        
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .login-error {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .login-error.show {
+            display: block;
+            animation: shake 0.5s ease;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
     </style>
 </head>
 <body>
@@ -663,6 +805,29 @@
     <div class="floating-orb orb-1"></div>
     <div class="floating-orb orb-2"></div>
     <div class="floating-orb orb-3"></div>
+
+    <!-- 登录页面 -->
+    <div class="login-container" id="loginContainer">
+        <div class="login-box">
+            <div class="login-header">
+                <div class="login-icon">📊</div>
+                <h2>零售调研系统</h2>
+                <p>后台管理登录</p>
+            </div>
+            <div class="login-error" id="loginError">用户名或密码错误</div>
+            <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="adminUsername">用户名</label>
+                    <input type="text" id="adminUsername" placeholder="请输入用户名" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">密码</label>
+                    <input type="password" id="adminPassword" placeholder="请输入密码" required>
+                </div>
+                <button type="submit" class="login-btn" id="loginBtn">登录</button>
+            </form>
+        </div>
+    </div>
 
     <div class="layout">
         <aside class="sidebar">
@@ -683,6 +848,14 @@
                 <div class="nav-item" data-page="products"><span class="nav-icon">🛍️</span><span>商品管理</span></div>
                 <div class="nav-item" data-page="reports"><span class="nav-icon">📊</span><span>统计报表</span></div>
             </nav>
+            
+            <!-- 退出登录 -->
+            <div style="margin-top: auto; padding: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <div class="nav-item" onclick="logout()" style="cursor: pointer; opacity: 0.8;">
+                    <span class="nav-icon">🚪</span>
+                    <span>退出登录</span>
+                </div>
+            </div>
         </aside>
 
         <main class="main-content">
@@ -718,6 +891,56 @@
     </div>
 
     <script>
+        // ==================== 登录功能 ====================
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = 'admin123';
+        
+        // 检查登录状态
+        function checkLoginStatus() {
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            if (isLoggedIn === 'true') {
+                document.getElementById('loginContainer').classList.add('hidden');
+            }
+        }
+        
+        // 页面加载时检查登录状态
+        document.addEventListener('DOMContentLoaded', checkLoginStatus);
+        
+        // 登录处理
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value;
+            const errorDiv = document.getElementById('loginError');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = '登录中...';
+            
+            // 模拟API调用延迟
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                document.getElementById('loginContainer').classList.add('hidden');
+                errorDiv.classList.remove('show');
+            } else {
+                errorDiv.textContent = '用户名或密码错误';
+                errorDiv.classList.add('show');
+                setTimeout(() => errorDiv.classList.remove('show'), 3000);
+            }
+            
+            loginBtn.disabled = false;
+            loginBtn.textContent = '登录';
+        }
+        
+        // 退出登录
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
+        
         // ==================== 粒子背景 ====================
         function initParticles() {
             const canvas = document.getElementById('particles-canvas');
