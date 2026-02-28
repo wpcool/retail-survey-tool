@@ -54,21 +54,45 @@ sleep 2
 
 # 检查服务是否启动
 if curl -s http://localhost:8000/api/products > /dev/null 2>&1; then
-    echo "✅ 后端服务已启动: http://localhost:8000"
+    echo "✅ 后端服务已启动 (端口: 8000)"
 else
     echo "❌ 后端服务启动失败，请检查日志: backend/server.log"
     exit 1
 fi
 
 cd ..
+
+# 检查 Nginx (支持 macOS 和 Linux)
+if command -v systemctl &> /dev/null; then
+    # Linux (systemd)
+    if systemctl is-active --quiet nginx 2>/dev/null; then
+        echo "✅ Nginx 已在运行 (端口: 80)"
+    else
+        echo "🚀 启动 Nginx..."
+        sudo systemctl start nginx 2>/dev/null || echo "⚠️ 无法启动 Nginx，请手动启动"
+    fi
+elif command -v brew &> /dev/null; then
+    # macOS (Homebrew)
+    if brew services list | grep nginx | grep started &> /dev/null; then
+        echo "✅ Nginx 已在运行"
+    else
+        echo "🚀 启动 Nginx..."
+        brew services start nginx 2>/dev/null || echo "⚠️ 无法启动 Nginx，请手动运行: brew services start nginx"
+    fi
+else
+    echo "⚠️ 无法检测 Nginx 状态，请手动检查"
+fi
 echo ""
 echo "=========================================="
 echo "  服务启动完成！"
 echo "=========================================="
 echo ""
-echo "访问地址:"
-echo "  - 后端API: http://localhost:8000"
-echo "  - 管理后台: http://localhost:8000/admin"
+echo "==================================="
+echo "服务访问地址:"
+echo "  首页:     http://39.97.236.234"
+echo "  后台:     http://39.97.236.234/admin"
+echo "  API文档:  http://39.97.236.234/docs"
+echo "===================================
 echo ""
 echo "⚠️  数据库保护机制已启用："
 echo "  - 删除调研人员需要确认码"
