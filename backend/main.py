@@ -18,6 +18,12 @@ from datetime import datetime, timedelta
 from models import get_db, SessionLocal, Surveyor, SurveyTask, SurveyItem, SurveyRecord, Product
 from schemas import *
 from db_guard import check_dangerous_sql
+from market_analysis import (
+    analyze_by_store_and_category2,
+    analyze_by_category3_and_purchaser,
+    export_analysis_to_excel,
+    get_analysis_summary
+)
 from competitor_stores import (
     get_all_stores, get_store_competitors, get_all_competitor_stores,
     get_all_competitors, search_competitors, get_competitor_stats,
@@ -1632,6 +1638,203 @@ def delete_competitor_api(competitor_id: int, db: Session = Depends(get_db)):
         return {"success": True, "message": "删除成功"}
     else:
         raise HTTPException(status_code=404, detail="竞店不存在")
+
+
+# ========== 市场调研分析API ==========
+
+@app.get("/api/analysis/store")
+def get_store_analysis(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    own_store_name: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    获取门店维度分析数据（按自己门店+二级分类汇总）
+    
+    参数:
+    - start_date: 开始日期 (可选, 格式: YYYY-MM-DD)
+    - end_date: 结束日期 (可选, 格式: YYYY-MM-DD)
+    - own_store_name: 自己门店名称筛选 (可选)
+    
+    返回字段:
+    - 自己门店、二级分类
+    - 本店供价、本店售价、调整后售价
+    - 竞争店售价(合计/平均)、价格指数(平均)
+    - 调前毛利率、调后毛利率
+    - 市调单品数、市调单品数占总数比
+    """
+    import pandas as pd
+    
+    try:
+        df = analyze_by_store_and_category2(db, start_date, end_date, own_store_name)
+        
+        # 将DataFrame转换为JSON可序列化的格式
+        data = []
+        for _, row in df.iterrows():
+            data.append({
+                'own_store': row['自己门店'],
+                'category2': row['二级分类'],
+                'purchase_price': float(row['本店供价']) if pd.notna(row['本店供价']) else 0,
+                'sale_price': float(row['本店售价']) if pd.notna(row['本店售价']) else 0,
+                'adjusted_price': float(row['调整后售价']) if pd.notna(row['调整后售价']) else 0,
+                'competitor_price_sum': float(row['竞争店售价(合计)']) if pd.notna(row['竞争店售价(合计)']) else 0,
+                'competitor_price_avg': float(row['竞争店售价(平均)']) if pd.notna(row['竞争店售价(平均)']) else 0,
+                'price_index_before': float(row['调前价格指数']) if pd.notna(row['调前价格指数']) else 0,
+                'price_index_after': float(row['调后价格指数']) if pd.notna(row['调后价格指数']) else 0,
+                'gross_margin_before': float(row['调前毛利率']) if pd.notna(row['调前毛利率']) else 0,
+                'gross_margin_after': float(row['调后毛利率']) if pd.notna(row['调后毛利率']) else 0,
+                'survey_product_count': int(row['市调单品数']) if pd.notna(row['市调单品数']) else 0,
+                'survey_product_ratio': float(row['市调单品数占总数比']) if pd.notna(row['市调单品数占总数比']) else 0,
+                'product_details': row['商品详情'] if '商品详情' in row else [],
+            })
+        
+        return {
+            "success": True,
+            "data": data,
+            "total": len(data)
+        }
+    except Exception as e:
+        import traceback
+        print(f"门店分析错误: {str(e)}")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"分析失败: {str(e)}")
+
+
+@app.get("/api/analysis/purchase")
+def get_purchase_analysis(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    own_store_name: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    获取采购维度分析数据（按三级分类+采购员汇总）
+    
+    参数:
+    - start_date: 开始日期（可选，格式：YYYY-MM-DD）
+    - end_date: 结束日期（可选，格式：YYYY-MM-DD）
+    - own_store_name: 自己门店名称筛选（可选）
+    
+    返回字段:
+    - 三级分类、采购员
+    - 本店供价、本店售价、调整后售价
+    - 竞争店售价(合计/平均)、价格指数(平均)
+    - 调前毛利率、调后毛利率
+    - 市调单品数、市调单品数占总数比
+    """
+    import pandas as pd
+    
+    try:
+        df = analyze_by_category3_and_purchaser(db, start_date, end_date, own_store_name)
+        
+        # 将DataFrame转换为JSON可序列化的格式
+        data = []
+        for _, row in df.iterrows():
+            data.append({
+                'category3': row['三级分类'],
+                'purchaser': row['采购员'],
+                'purchase_price': float(row['本店供价']) if pd.notna(row['本店供价']) else 0,
+                'sale_price': float(row['本店售价']) if pd.notna(row['本店售价']) else 0,
+                'adjusted_price': float(row['调整后售价']) if pd.notna(row['调整后售价']) else 0,
+                'competitor_price_sum': float(row['竞争店售价(合计)']) if pd.notna(row['竞争店售价(合计)']) else 0,
+                'competitor_price_avg': float(row['竞争店售价(平均)']) if pd.notna(row['竞争店售价(平均)']) else 0,
+                'price_index_before': float(row['调前价格指数']) if pd.notna(row['调前价格指数']) else 0,
+                'price_index_after': float(row['调后价格指数']) if pd.notna(row['调后价格指数']) else 0,
+                'gross_margin_before': float(row['调前毛利率']) if pd.notna(row['调前毛利率']) else 0,
+                'gross_margin_after': float(row['调后毛利率']) if pd.notna(row['调后毛利率']) else 0,
+                'survey_product_count': int(row['市调单品数']) if pd.notna(row['市调单品数']) else 0,
+                'survey_product_ratio': float(row['市调单品数占总数比']) if pd.notna(row['市调单品数占总数比']) else 0,
+                'product_details': row['商品详情'] if '商品详情' in row else [],
+            })
+        
+        return {
+            "success": True,
+            "data": data,
+            "total": len(data)
+        }
+    except Exception as e:
+        import traceback
+        print(f"采购分析错误: {str(e)}")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"分析失败: {str(e)}")
+
+
+@app.get("/api/analysis/summary")
+def get_analysis_summary_api(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    own_store_name: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    获取分析汇总统计信息
+    
+    返回:
+    - total_records: 总记录数
+    - total_stores: 涉及门店数
+    - total_products: 涉及商品数
+    - avg_price_index: 平均价格指数
+    - warning_count: 高价预警数（价格指数>0.95）
+    """
+    try:
+        summary = get_analysis_summary(db, start_date, end_date, own_store_name)
+        return {
+            "success": True,
+            "data": summary
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"获取汇总失败: {str(e)}")
+
+
+@app.get("/api/analysis/export")
+def export_analysis(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    own_store_name: Optional[str] = None,
+    db: Session = Depends(get_db)
+):
+    """
+    导出分析结果Excel
+    
+    包含两个Sheet：
+    1. 门店分析（按自己门店+二级分类）
+    2. 采购分析（按三级分类+采购员）
+    
+    格式化：
+    - 毛利率、价格指数显示为百分比
+    - 价格指数>0.95的单元格标红
+    """
+    import tempfile
+    import pandas as pd
+    from fastapi.responses import FileResponse
+    
+    try:
+        # 生成分析数据
+        df_store = analyze_by_store_and_category2(db, start_date, end_date, own_store_name)
+        df_purchase = analyze_by_category3_and_purchaser(db, start_date, end_date, own_store_name)
+        
+        # 创建临时文件
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx')
+        temp_file.close()
+        
+        # 导出Excel
+        export_analysis_to_excel(df_store, df_purchase, temp_file.name)
+        
+        # 生成文件名
+        filename = f"市场调研分析_{start_date or 'all'}_{end_date or 'all'}.xlsx"
+        
+        # 返回文件
+        return FileResponse(
+            temp_file.name,
+            filename=filename,
+            media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+    except Exception as e:
+        import traceback
+        print(f"导出错误: {str(e)}")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=f"导出失败: {str(e)}")
 
 
 if __name__ == "__main__":

@@ -847,6 +847,7 @@
                 <div class="nav-item" data-page="surveyors"><span class="nav-icon">👥</span><span>人员与竞店管理</span></div>
                 <div class="nav-item" data-page="products"><span class="nav-icon">🛍️</span><span>商品管理</span></div>
                 <div class="nav-item" data-page="reports"><span class="nav-icon">📊</span><span>统计报表</span></div>
+                <div class="nav-item" data-page="market-analysis"><span class="nav-icon">📈</span><span>市场分析</span></div>
             </nav>
             
             <!-- 退出登录 -->
@@ -915,6 +916,12 @@
             const errorDiv = document.getElementById('loginError');
             const loginBtn = document.getElementById('loginBtn');
             
+            // 调试日志
+            console.log('输入的用户名:', username, '期望:', ADMIN_USERNAME);
+            console.log('输入的密码:', password, '期望:', ADMIN_PASSWORD);
+            console.log('用户名匹配:', username === ADMIN_USERNAME);
+            console.log('密码匹配:', password === ADMIN_PASSWORD);
+            
             loginBtn.disabled = true;
             loginBtn.textContent = '登录中...';
             
@@ -922,10 +929,12 @@
             await new Promise(resolve => setTimeout(resolve, 500));
             
             if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                console.log('登录成功');
                 sessionStorage.setItem('adminLoggedIn', 'true');
                 document.getElementById('loginContainer').classList.add('hidden');
                 errorDiv.classList.remove('show');
             } else {
+                console.log('登录失败');
                 errorDiv.textContent = '用户名或密码错误';
                 errorDiv.classList.add('show');
                 setTimeout(() => errorDiv.classList.remove('show'), 3000);
@@ -1027,12 +1036,13 @@
                 case 'surveyors': content.innerHTML = renderSurveyorsPage(); setTimeout(loadSurveyors, 100); break;
                 case 'products': content.innerHTML = ''; setTimeout(() => { content.innerHTML = renderProductsPage(); setTimeout(loadProducts, 50); }, 10); break;
                 case 'reports': content.innerHTML = renderReportsPage(); setTimeout(loadReportData, 100); break;
+                case 'market-analysis': content.innerHTML = renderMarketAnalysisPage(); setTimeout(loadMarketAnalysis, 100); break;
             }
             updateBreadcrumb(page);
         }
         
         function updateBreadcrumb(page) {
-            const map = { dashboard: '首页 / 数据概览', tasks: '任务管理 / 调研任务', records: '数据管理 / 调研记录', surveyors: '人员与竞店管理 / 调研人员与竞店', products: '商品管理 / 商品库', reports: '统计报表 / 数据分析' };
+            const map = { dashboard: '首页 / 数据概览', tasks: '任务管理 / 调研任务', records: '数据管理 / 调研记录', surveyors: '人员与竞店管理 / 调研人员与竞店', products: '商品管理 / 商品库', reports: '统计报表 / 数据分析', 'market-analysis': '市场分析 / 调研结果分析' };
             document.getElementById('breadcrumb').textContent = map[page] || '首页';
         }
         
@@ -3972,6 +3982,397 @@
                 </div>
             `;
         }
+        
+        // ==================== 市场分析页 ====================
+        function renderMarketAnalysisPage() {
+            const today = new Date().toISOString().split('T')[0];
+            return `
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">📈 市场调研结果分析</span>
+                        <button class="btn btn-success" onclick="exportMarketAnalysis()">📥 导出Excel</button>
+                    </div>
+                    <div class="card-body">
+                        <!-- 筛选栏 -->
+                        <div class="search-bar" style="flex-wrap: wrap; gap: 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <label style="font-size: 13px; color: var(--gray-600);">日期范围：</label>
+                                <input type="date" class="search-input" id="analysisStartDate" value="${today}" style="width: 140px;">
+                                <span style="color: var(--gray-400);">至</span>
+                                <input type="date" class="search-input" id="analysisEndDate" value="${today}" style="width: 140px;">
+                            </div>
+                            <select class="search-input" id="analysisStoreFilter" style="min-width: 150px;">
+                                <option value="">所有门店</option>
+                            </select>
+                            <button class="btn btn-primary" onclick="loadMarketAnalysis()">🔍 开始分析</button>
+                            <button class="btn btn-default" onclick="resetMarketAnalysisFilter()">重置</button>
+                        </div>
+                        
+                        <!-- 统计卡片 -->
+                        <div class="stats-row" style="grid-template-columns: repeat(5, 1fr); margin: 24px 0;">
+                            <div class="stat-card">
+                                <div class="stat-icon blue">📝</div>
+                                <div class="stat-info">
+                                    <h3>调研记录数</h3>
+                                    <div class="value" id="analysisTotalRecords">0</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon green">🏪</div>
+                                <div class="stat-info">
+                                    <h3>涉及门店</h3>
+                                    <div class="value" id="analysisTotalStores">0</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon orange">📦</div>
+                                <div class="stat-info">
+                                    <h3>涉及商品</h3>
+                                    <div class="value" id="analysisTotalProducts">0</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon blue">📊</div>
+                                <div class="stat-info">
+                                    <h3>平均价格指数</h3>
+                                    <div class="value" id="analysisAvgPriceIndex">0%</div>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon red">⚠️</div>
+                                <div class="stat-info">
+                                    <h3>高价预警</h3>
+                                    <div class="value" id="analysisWarningCount">0</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 门店分析表格 -->
+                        <div class="card" style="margin-top: 24px;">
+                            <div class="card-header">
+                                <span class="card-title">🏪 门店维度分析（按二级分类汇总）</span>
+                                <span style="color: var(--gray-500); font-size: 12px;">价格指数>95%标红警告</span>
+                            </div>
+                            <div class="table-container">
+                                <table id="storeAnalysisTable">
+                                    <thead>
+                                        <tr>
+                                            <th>自己门店</th>
+                                            <th>二级分类</th>
+                                            <th>本店售价</th>
+                                            <th>调整后售价</th>
+                                            <th>竞争店售价(平均)</th>
+                                            <th>调前价格指数</th>
+                                            <th>调后价格指数</th>
+                                            <th>调前毛利率</th>
+                                            <th>调后毛利率</th>
+                                            <th>市调单品数</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td colspan="9" class="empty-state">点击"开始分析"查看数据</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <!-- 采购分析表格 -->
+                        <div class="card" style="margin-top: 24px;">
+                            <div class="card-header">
+                                <span class="card-title">👤 采购维度分析（按三级分类+采购员汇总）</span>
+                                <span style="color: var(--gray-500); font-size: 12px;">价格指数>95%标红警告</span>
+                            </div>
+                            <div class="table-container">
+                                <table id="purchaseAnalysisTable">
+                                    <thead>
+                                        <tr>
+                                            <th>采购员</th>
+                                            <th>三级分类</th>
+                                            <th>本店售价</th>
+                                            <th>调整后售价</th>
+                                            <th>竞争店售价(平均)</th>
+                                            <th>调前价格指数</th>
+                                            <th>调后价格指数</th>
+                                            <th>调前毛利率</th>
+                                            <th>调后毛利率</th>
+                                            <th>市调单品数</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td colspan="9" class="empty-state">点击"开始分析"查看数据</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        async function loadMarketAnalysis() {
+            const startDate = document.getElementById('analysisStartDate').value;
+            const endDate = document.getElementById('analysisEndDate').value;
+            const ownStore = document.getElementById('analysisStoreFilter').value;
+            
+            // 显示加载状态
+            document.getElementById('storeAnalysisTable').querySelector('tbody').innerHTML = 
+                '<tr><td colspan="9" class="empty-state"><span class="icon">⏳</span><p>分析中...</p></td></tr>';
+            document.getElementById('purchaseAnalysisTable').querySelector('tbody').innerHTML = 
+                '<tr><td colspan="9" class="empty-state"><span class="icon">⏳</span><p>分析中...</p></td></tr>';
+            
+            try {
+                // 加载汇总统计
+                const summaryRes = await fetch(`${API_BASE}/api/analysis/summary?start_date=${startDate}&end_date=${endDate}&own_store_name=${ownStore}`);
+                const summaryData = await summaryRes.json();
+                
+                if (summaryData.success) {
+                    animateNumber(document.getElementById('analysisTotalRecords'), summaryData.data.total_records);
+                    animateNumber(document.getElementById('analysisTotalStores'), summaryData.data.total_stores);
+                    animateNumber(document.getElementById('analysisTotalProducts'), summaryData.data.total_products);
+                    document.getElementById('analysisAvgPriceIndex').textContent = (summaryData.data.avg_price_index * 100).toFixed(1) + '%';
+                    animateNumber(document.getElementById('analysisWarningCount'), summaryData.data.warning_count);
+                }
+                
+                // 加载门店分析
+                const storeRes = await fetch(`${API_BASE}/api/analysis/store?start_date=${startDate}&end_date=${endDate}&own_store_name=${ownStore}`);
+                const storeData = await storeRes.json();
+                
+                if (storeData.success) {
+                    renderStoreAnalysisTable(storeData.data);
+                }
+                
+                // 加载采购分析
+                const purchaseRes = await fetch(`${API_BASE}/api/analysis/purchase?start_date=${startDate}&end_date=${endDate}&own_store_name=${ownStore}`);
+                const purchaseData = await purchaseRes.json();
+                
+                if (purchaseData.success) {
+                    renderPurchaseAnalysisTable(purchaseData.data);
+                }
+                
+            } catch (e) {
+                console.error('加载分析数据失败:', e);
+                showToast('加载分析数据失败', 'error');
+                document.getElementById('storeAnalysisTable').querySelector('tbody').innerHTML = 
+                    '<tr><td colspan="9" class="empty-state"><span class="icon">❌</span><p>加载失败</p></td></tr>';
+                document.getElementById('purchaseAnalysisTable').querySelector('tbody').innerHTML = 
+                    '<tr><td colspan="9" class="empty-state"><span class="icon">❌</span><p>加载失败</p></td></tr>';
+            }
+        }
+        
+        function renderStoreAnalysisTable(data) {
+            const tbody = document.getElementById('storeAnalysisTable').querySelector('tbody');
+            
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="empty-state"><span class="icon">📭</span><p>暂无数据</p></td></tr>';
+                return;
+            }
+            
+            const html = data.map((row, i) => {
+                // 调前/调后价格指数>0.95标红
+                const priceIndexBeforeClass = row.price_index_before > 0.95 ? 'style="color: #dc2626; font-weight: 700;"' : '';
+                const priceIndexAfterClass = row.price_index_after > 0.95 ? 'style="color: #dc2626; font-weight: 700;"' : '';
+                
+                // 生成商品详情tooltip内容
+                const productDetails = row.product_details || [];
+                const tooltipContent = productDetails.map(p => 
+                    `• ${p.product_name} | 竞店:${p.competitor_store || '-'} | 售价:${p.competitor_price || '-'}${p.promotion_info ? ' ('+p.promotion_info+')' : ''}`
+                ).join('\\n');
+                
+                return `
+                    <tr style="animation-delay: ${i * 0.03}s">
+                        <td><strong>${row.own_store}</strong></td>
+                        <td>${row.category2}</td>
+                        <td>${row.sale_price.toFixed(2)}</td>
+                        <td>${row.adjusted_price.toFixed(2)}</td>
+                        <td>${row.competitor_price_avg.toFixed(2)}</td>
+                        <td ${priceIndexBeforeClass}>${(row.price_index_before * 100).toFixed(2)}%</td>
+                        <td ${priceIndexAfterClass}>${(row.price_index_after * 100).toFixed(2)}%</td>
+                        <td>${(row.gross_margin_before * 100).toFixed(2)}%</td>
+                        <td>${(row.gross_margin_after * 100).toFixed(2)}%</td>
+                        <td><span class="tag tag-default" style="cursor: pointer;" onmouseenter="showProductTooltip(event, '${escapeHtml(tooltipContent)}')" onmouseleave="hideProductTooltip()">${row.survey_product_count}</span></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = html;
+        }
+        
+        function renderPurchaseAnalysisTable(data) {
+            const tbody = document.getElementById('purchaseAnalysisTable').querySelector('tbody');
+            
+            if (!data || data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="empty-state"><span class="icon">📭</span><p>暂无数据</p></td></tr>';
+                return;
+            }
+            
+            const html = data.map((row, i) => {
+                // 调前/调后价格指数>0.95标红
+                const priceIndexBeforeClass = row.price_index_before > 0.95 ? 'style="color: #dc2626; font-weight: 700;"' : '';
+                const priceIndexAfterClass = row.price_index_after > 0.95 ? 'style="color: #dc2626; font-weight: 700;"' : '';
+                
+                // 生成商品详情tooltip内容
+                const productDetails = row.product_details || [];
+                const tooltipContent = productDetails.map(p => 
+                    `• ${p.product_name} | 竞店:${p.competitor_store || '-'} | 售价:${p.competitor_price || '-'}${p.promotion_info ? ' ('+p.promotion_info+')' : ''}`
+                ).join('\\n');
+                
+                return `
+                    <tr style="animation-delay: ${i * 0.03}s">
+                        <td><strong>${row.purchaser}</strong></td>
+                        <td>${row.category3}</td>
+                        <td>${row.sale_price.toFixed(2)}</td>
+                        <td>${row.adjusted_price.toFixed(2)}</td>
+                        <td>${row.competitor_price_avg.toFixed(2)}</td>
+                        <td ${priceIndexBeforeClass}>${(row.price_index_before * 100).toFixed(2)}%</td>
+                        <td ${priceIndexAfterClass}>${(row.price_index_after * 100).toFixed(2)}%</td>
+                        <td>${(row.gross_margin_before * 100).toFixed(2)}%</td>
+                        <td>${(row.gross_margin_after * 100).toFixed(2)}%</td>
+                        <td><span class="tag tag-default" style="cursor: pointer;" onmouseenter="showProductTooltip(event, '${escapeHtml(tooltipContent)}')" onmouseleave="hideProductTooltip()">${row.survey_product_count}</span></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            tbody.innerHTML = html;
+        }
+        
+        function resetMarketAnalysisFilter() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('analysisStartDate').value = today;
+            document.getElementById('analysisEndDate').value = today;
+            document.getElementById('analysisStoreFilter').value = '';
+            loadMarketAnalysis();
+        }
+        
+        function exportMarketAnalysis() {
+            const startDate = document.getElementById('analysisStartDate').value;
+            const endDate = document.getElementById('analysisEndDate').value;
+            const ownStore = document.getElementById('analysisStoreFilter').value;
+            
+            showToast('正在导出，请稍候...', 'success');
+            
+            // 构建URL并下载
+            let url = `${API_BASE}/api/analysis/export?start_date=${startDate}&end_date=${endDate}`;
+            if (ownStore) {
+                url += `&own_store_name=${encodeURIComponent(ownStore)}`;
+            }
+            
+            window.open(url);
+        }
+        
+        // 加载门店下拉选项
+        async function loadAnalysisStoreOptions() {
+            try {
+                // 从竞店API获取门店列表
+                const res = await fetch(`${API_BASE}/api/competitor-stores/stores`);
+                const stores = await res.json();
+                
+                const select = document.getElementById('analysisStoreFilter');
+                if (select && stores && stores.length > 0) {
+                    select.innerHTML = '<option value="">所有门店</option>' + 
+                        stores.map(s => `<option value="${s}">${s}</option>`).join('');
+                }
+            } catch (e) {
+                console.error('加载门店选项失败:', e);
+            }
+        }
+        
+        // HTML转义函数，防止XSS
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+        
+        // 商品详情Tooltip
+        let productTooltip = null;
+        
+        function showProductTooltip(event, content) {
+            // 移除已有的tooltip
+            hideProductTooltip();
+            
+            if (!content) return;
+            
+            // 创建tooltip元素
+            productTooltip = document.createElement('div');
+            productTooltip.className = 'product-tooltip';
+            productTooltip.innerHTML = `
+                <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                            color: white; 
+                            padding: 16px; 
+                            border-radius: 12px; 
+                            box-shadow: 0 20px 50px rgba(0,0,0,0.3); 
+                            max-width: 400px; 
+                            max-height: 300px; 
+                            overflow-y: auto;
+                            font-size: 13px;
+                            line-height: 1.6;
+                            border: 1px solid rgba(255,255,255,0.1);">
+                    <div style="font-weight: 700; margin-bottom: 10px; color: #60a5fa; font-size: 14px;">
+                        📦 调研商品详情 (${content.split('\\n').length}个)
+                    </div>
+                    <div style="white-space: pre-line;">${content.replace(/\\n/g, '<br>')}</div>
+                </div>
+            `;
+            
+            // 设置位置
+            const rect = event.target.getBoundingClientRect();
+            productTooltip.style.cssText = `
+                position: fixed;
+                z-index: 10000;
+                left: ${rect.left}px;
+                top: ${rect.bottom + 10}px;
+                pointer-events: none;
+                animation: tooltipFadeIn 0.2s ease;
+            `;
+            
+            document.body.appendChild(productTooltip);
+            
+            // 调整位置防止超出屏幕
+            const tooltipRect = productTooltip.getBoundingClientRect();
+            if (tooltipRect.right > window.innerWidth) {
+                productTooltip.style.left = (window.innerWidth - tooltipRect.width - 20) + 'px';
+            }
+            if (tooltipRect.bottom > window.innerHeight) {
+                productTooltip.style.top = (rect.top - tooltipRect.height - 10) + 'px';
+            }
+        }
+        
+        function hideProductTooltip() {
+            if (productTooltip) {
+                productTooltip.remove();
+                productTooltip = null;
+            }
+        }
+        
+        // 添加tooltip动画样式
+        const tooltipStyle = document.createElement('style');
+        tooltipStyle.textContent = `
+            @keyframes tooltipFadeIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .product-tooltip::-webkit-scrollbar {
+                width: 6px;
+            }
+            .product-tooltip::-webkit-scrollbar-track {
+                background: rgba(255,255,255,0.1);
+                border-radius: 3px;
+            }
+            .product-tooltip::-webkit-scrollbar-thumb {
+                background: rgba(255,255,255,0.3);
+                border-radius: 3px;
+            }
+        `;
+        document.head.appendChild(tooltipStyle);
+        
+        // 页面加载完成后加载门店选项
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(loadAnalysisStoreOptions, 1000);
+        });
     </script>
 </body>
 </html>
